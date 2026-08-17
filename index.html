@@ -969,22 +969,26 @@ service cloud.firestore {
 
         async function loadMyData() {
             try {
+                console.log("[GameVault] Loading user data...");
                 // Load completions
                 const compSnap = await db.collection("users").doc(currentUser.uid).collection("completions").get();
                 myCompletions = compSnap.docs.map(d => parseInt(d.id));
+                console.log("[GameVault] Completions loaded:", myCompletions.length);
 
                 // Load saves from flat collection
                 mySaves = {};
                 const savesSnap = await db.collection("users").doc(currentUser.uid).collection("saveFiles").get();
+                console.log("[GameVault] saveFiles docs:", savesSnap.docs.length);
                 savesSnap.docs.forEach(d => {
                     const data = d.data();
                     const gid = data.gameId;
                     if (!mySaves[gid]) mySaves[gid] = [];
                     mySaves[gid].push({ id: d.id, ...data });
                 });
+                console.log("[GameVault] Saves by game:", Object.keys(mySaves));
                 updateStats();
             } catch (err) {
-                console.error("loadMyData error:", err);
+                console.error("[GameVault] loadMyData error:", err);
                 showToast("Failed to load your data: " + err.message, true);
             }
         }
@@ -1003,15 +1007,7 @@ service cloud.firestore {
             return colors[(id - 1) % colors.length];
         }
 
-        function getCoverHtml(game, height) {
-            const color = getColor(game.id);
-            const initials = getInitials(game.title);
-            const h = height ? `height:${height};` : "";
-            if (game.steamId) {
-                return `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="position:absolute;inset:0;width:100%;${h}object-fit:cover;z-index:2;border-radius:inherit;" onload="this.nextElementSibling.style.display='none'" onerror="this.src=this.src.replace('library_600x900_2x.jpg','library_600x900.jpg');this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}"><div class="cover-fallback" style="display:none;width:100%;${h}align-items:center;justify-content:center;color:${color};font-size:2.75rem;font-weight:900;">${initials}</div>`;
-            }
-            return `<div style="width:100%;${h}display:flex;align-items:center;justify-content:center;color:${color};font-size:2.75rem;font-weight:900;">${initials}</div>`;
-        }
+
 
         function renderGames(filter = "") {
             const grid = document.getElementById("gamesGrid");
@@ -1025,9 +1021,12 @@ service cloud.firestore {
                 card.onclick = () => openGameModal(game);
                 const color = getColor(game.id);
                 const initials = getInitials(game.title);
-                const coverHtml = game.cover 
-                    ? `<img src="${game.cover}" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2.75rem;font-weight:900;color:${color};>${initials}</span>';">`
-                    : `<span style="font-size:2.75rem;font-weight:900;color:${color};">${initials}</span>`;
+                let coverHtml;
+                if (game.steamId) {
+                    coverHtml = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2.75rem;font-weight:900;color:${color};>${initials}</span>';}">`;
+                } else {
+                    coverHtml = `<span style="font-size:2.75rem;font-weight:900;color:${color};">${initials}</span>`;
+                }
                 card.innerHTML = `
                     <div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%);">
                         ${coverHtml}
@@ -1128,6 +1127,7 @@ service cloud.firestore {
                 return;
             }
             const gameId = currentGame.id;
+            console.log("[GameVault] Uploading save for game", gameId, "size:", file.size);
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
@@ -1141,6 +1141,7 @@ service cloud.firestore {
                             size: formatSize(file.size),
                             uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
+                    console.log("[GameVault] Save uploaded with ID:", fileDoc.id);
                     if (!mySaves[gameId]) mySaves[gameId] = [];
                     mySaves[gameId].push({ id: fileDoc.id, gameId: gameId, name: file.name, data: base64, size: formatSize(file.size) });
                     renderModalSaves();
@@ -1148,7 +1149,7 @@ service cloud.firestore {
                     showToast("Save file uploaded!");
                 } catch (err) {
                     showToast("Upload failed: " + err.message, true);
-                    console.error("Upload error:", err);
+                    console.error("[GameVault] Upload error:", err);
                 }
             };
             reader.readAsDataURL(file);
