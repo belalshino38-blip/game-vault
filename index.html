@@ -2200,46 +2200,61 @@ service cloud.firestore {
 
         // ===================== INIT =====================
         function init() {
-            if (!isConfigValid()) {
-                document.getElementById("setupWizard").classList.add("active");
-                document.getElementById("authModal").style.display = "none";
-                document.getElementById("appContainer").style.display = "none";
-                return;
-            }
-            try { firebase.initializeApp(firebaseConfig); } catch (err) {
-                console.error("Firebase init failed:", err);
-                alert("Firebase config is invalid. Error: " + err.message);
-                localStorage.removeItem("gameVault_firebaseConfig");
-                document.getElementById("setupWizard").classList.add("active");
-                document.getElementById("authModal").style.display = "none";
-                document.getElementById("appContainer").style.display = "none";
-                return;
-            }
-            auth = firebase.auth();
-            db = firebase.firestore();
-            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    document.getElementById("authModal").style.display = "none";
-                    document.getElementById("appContainer").style.display = "block";
-                    if (user.uid === ADMIN_UID) {
-                        document.getElementById("adminGear").style.display = "inline-block";
-                    }
-                    loadUserProfile();
-                    loadMyData();
-                    loadFriends();
-                    loadRequests();
-                    loadPosts();
-                    renderGames();
-                    setupGameCombobox();
-                    document.getElementById("userDropdownBtn").addEventListener("click", toggleUserDropdown);
-                } else {
-                    document.getElementById("authModal").style.display = "flex";
-                    document.getElementById("appContainer").style.display = "none";
-                }
-            });
+    // First, check if we have a config
+    if (!isConfigValid()) {
+        // Show setup wizard and hide auth modal
+        document.getElementById("setupWizard").classList.add("active");
+        document.getElementById("authModal").style.display = "none";
+        document.getElementById("appContainer").style.display = "none";
+        console.warn("Firebase config is invalid. Please set up config.");
+        return;
+    }
+
+    try {
+        // If already initialized, skip
+        if (firebase.apps.length) {
+            console.log("Firebase already initialized");
+        } else {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialized successfully");
         }
+    } catch (err) {
+        console.error("Firebase init failed:", err);
+        alert("Firebase config is invalid. Error: " + err.message + "\n\nClick the gear icon in your profile to re-enter config.");
+        // Show setup wizard anyway
+        document.getElementById("setupWizard").classList.add("active");
+        document.getElementById("authModal").style.display = "none";
+        document.getElementById("appContainer").style.display = "none";
+        return;
+    }
+
+    auth = firebase.auth();
+    db = firebase.firestore();
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            document.getElementById("authModal").style.display = "none";
+            document.getElementById("appContainer").style.display = "block";
+            // Admin gear (optional)
+            if (user.uid === ADMIN_UID) {
+                document.getElementById("adminGear").style.display = "inline-block";
+            }
+            loadUserProfile();
+            loadMyData();
+            loadFriends();
+            loadRequests();
+            loadPosts();
+            renderGames();
+            setupGameCombobox();
+            document.getElementById("userDropdownBtn").addEventListener("click", toggleUserDropdown);
+        } else {
+            document.getElementById("authModal").style.display = "flex";
+            document.getElementById("appContainer").style.display = "none";
+        }
+    });
+}
 
         function toggleUserDropdown(e) {
             e.stopPropagation();
