@@ -64,7 +64,6 @@
         .search-container input[type="text"] { flex: 1; min-width: 200px; }
         input[type="text"], input[type="email"], input[type="password"], input[type="color"], textarea, select { background: var(--surface); border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem 1rem; border-radius: 0.625rem; width: 100%; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
-        /* Edge Autofill Hack */
         input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active { -webkit-box-shadow: 0 0 0 30px var(--surface) inset !important; -webkit-text-fill-color: var(--text) !important; transition: background-color 5000s ease-in-out 0s; }
         .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1.25rem; padding: 0 2rem 2rem; }
         .game-card { background: var(--surface); border-radius: 0.875rem; overflow: hidden; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative; }
@@ -587,7 +586,7 @@ service cloud.firestore {
         }
         const savedCfg = localStorage.getItem("gameVault_firebaseConfig");
         if (savedCfg) { try { Object.assign(firebaseConfig, JSON.parse(savedCfg)); } catch (e) { console.error(e); } }
-                function generateGames() {
+        function generateGames() {
             const known = [
                 "The Witcher 3", "Red Dead Redemption 2", "Elden Ring", "God of War", "The Last of Us",
                 "Cyberpunk 2077", "Breath of the Wild", "Super Mario Odyssey", "Hollow Knight", "Hades",
@@ -600,7 +599,6 @@ service cloud.firestore {
                 "Madden NFL 23", "Rocket League", "Fortnite", "Apex Legends", "Valorant",
                 "Counter-Strike 2", "Overwatch 2", "League of Legends", "Dota 2", "World of Warcraft"
             ];
-            // Map the exact Steam App IDs for known games
             const steamIdMap = {
                 "The Witcher 3": 292030,
                 "Red Dead Redemption 2": 1174180,
@@ -623,7 +621,6 @@ service cloud.firestore {
                 "Divinity Original Sin 2": 435150,
                 "Stardew Valley": 413150,
                 "Terraria": 105600,
-                "Minecraft": null, // No Steam ID
                 "Portal 2": 620,
                 "Half-Life 2": 220,
                 "Doom Eternal": 782330,
@@ -632,11 +629,7 @@ service cloud.firestore {
                 "Forza Horizon 5": 1551360,
                 "Rocket League": 252950,
                 "Counter-Strike 2": 730,
-                "Overwatch 2": null, // Not on Steam
-                "League of Legends": null,
-                "Dota 2": 570,
-                "World of Warcraft": null,
-                "Valorant": null
+                "Dota 2": 570
             };
             const result = [];
             const genres = ["Action", "RPG", "Adventure", "Shooter", "Strategy", "Sports", "Racing", "Simulation", "Puzzle", "Fighting", "MMO", "MOBA", "Battle Royale", "Survival", "Horror"];
@@ -647,7 +640,6 @@ service cloud.firestore {
                 const genre = genres[id % genres.length];
                 const year = years[id % years.length];
                 const multiplayer = id % 3 === 0 || id % 5 === 0;
-                // Use the mapped Steam ID, or null if not mapped
                 const steamId = steamIdMap[title] || null; 
                 result.push({ id: id++, title: title, genre: genre, year: year, steamId: steamId, multiplayer: multiplayer });
             }
@@ -655,6 +647,62 @@ service cloud.firestore {
                 result.push({ id: result.length + 1, title: `Game ${result.length + 1}`, genre: genres[result.length % genres.length], year: years[result.length % years.length], steamId: null, multiplayer: result.length % 3 === 0 });
             }
             return result;
+        }
+        const games = generateGames();
+        let auth, db;
+        let currentUser = null;
+        let userProfile = null;
+        let myCompletions = [];
+        let myPlaying = [];
+        let myLooking = [];
+        let myLFG = [];
+        let mySaves = {};
+        let friendsList = [];
+        let friendRequests = [];
+        let currentGame = null;
+        let posts = [];
+        let editingPostId = null;
+        let friendPosts = [];
+        function init() {
+            if (!isConfigValid()) {
+                document.getElementById("setupWizard").classList.add("active");
+                document.getElementById("authModal").style.display = "none";
+                document.getElementById("appContainer").style.display = "none";
+                console.warn("Firebase config is invalid. Please set up config.");
+                return;
+            }
+            try {
+                if (firebase.apps.length) { console.log("Firebase already initialized"); } else { firebase.initializeApp(firebaseConfig); console.log("Firebase initialized successfully"); }
+            } catch (err) {
+                console.error("Firebase init failed:", err);
+                alert("Firebase config is invalid. Error: " + err.message + "\n\nClick the gear icon in your profile to re-enter config.");
+                document.getElementById("setupWizard").classList.add("active");
+                document.getElementById("authModal").style.display = "none";
+                document.getElementById("appContainer").style.display = "none";
+                return;
+            }
+            auth = firebase.auth();
+            db = firebase.firestore();
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById("authModal").style.display = "none";
+                    document.getElementById("appContainer").style.display = "block";
+                    if (user.uid === ADMIN_UID) { document.getElementById("adminGear").style.display = "inline-block"; }
+                    loadUserProfile();
+                    loadMyData();
+                    loadFriends();
+                    loadRequests();
+                    loadPosts();
+                    renderGames();
+                    setupGameCombobox();
+                    document.getElementById("userDropdownBtn").addEventListener("click", toggleUserDropdown);
+                } else {
+                    document.getElementById("authModal").style.display = "flex";
+                    document.getElementById("appContainer").style.display = "none";
+                }
+            });
         }
         function toggleUserDropdown(e) { e.stopPropagation(); document.getElementById("userDropdownMenu").classList.toggle("show"); }
         function closeUserDropdown() { document.getElementById("userDropdownMenu").classList.remove("show"); }
@@ -734,7 +782,7 @@ service cloud.firestore {
             const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
             return colors[(id - 1) % colors.length];
         }
-                function renderGames(filter = "") {
+        function renderGames(filter = "") {
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
             const filtered = games.filter(g => g.title.toLowerCase().includes(filter.toLowerCase()));
@@ -755,12 +803,12 @@ service cloud.firestore {
                 const color = getColor(game.id);
                 let coverHtml;
                 if (game.steamId) {
-                    // Try real Steam cover, fallback to gradient if blocked
-                    coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%);">
-                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(${Math.floor(Math.random() * 360)}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%)';this.parentElement.innerHTML+='<div class=\'fallback\' style=\'position:absolute; bottom:15px; left:15px; right:15px; font-size:1.4rem; text-align:left; z-index:2; color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); font-weight:800; line-height:1.1;\'>${game.title}</div>';">
+                    const angle = Math.floor(Math.random() * 360);
+                    coverHtml = `<div class="cover" style="background: linear-gradient(${angle}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
+                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" onerror="this.style.display='none';">
+                        <div class="fallback" style="position:absolute; bottom:15px; left:15px; right:15px; font-size:1.4rem; text-align:left; z-index:2; color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); font-weight:800; line-height:1.1;">${game.title}</div>
                     </div>`;
                 } else {
-                    // Pure CSS Gradient Cover
                     const angle1 = Math.floor(Math.random() * 360);
                     coverHtml = `<div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
                         <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
@@ -1454,7 +1502,14 @@ service cloud.firestore {
         function closeFriendProfile(e) {
             if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
         }
-                document.addEventListener("keydown", (e) => {
+        function showToast(msg, isError) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.className = "toast" + (isError ? " error" : "");
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+        document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
                 closeGameModal();
                 closeSearchModal();
@@ -1462,21 +1517,11 @@ service cloud.firestore {
                 closePostModal();
             }
         });
-
-        // Safe initialization: wait for the page, then run init if it exists
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof init !== 'undefined') {
                 init();
             }
         });
-            if (e.key === "Escape") {
-                closeGameModal();
-                closeSearchModal();
-                closeFriendProfile();
-                closePostModal();
-            }
-        });
-        window.addEventListener('load', init);
     </script>
 </body>
 </html>
