@@ -325,7 +325,7 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update: if request.auth != null && (
         request.auth.uid == resource.data.userId ||
-        request.resource.data.keys().hasOnly(['score', 'upvotes', 'downvotes'])
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['score', 'upvotes', 'downvotes'])
       );
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
@@ -642,14 +642,15 @@ service cloud.firestore {
         let games = [];
         async function loadGames() {
             try {
-                const response = await fetch('games.json');
+                // Fetch from the absolute root to avoid path issues on GitHub Pages
+                const response = await fetch('/games.json');
                 if (!response.ok) throw new Error('Failed to load games list');
                 const data = await response.json();
                 games = data;
-                renderGames();
+                filterGames();
             } catch (err) {
                 console.error("Error loading games:", err);
-                showToast("Could not load game database!", true);
+                showToast("Could not load game database! Make sure games.json exists.", true);
             }
         }
 
