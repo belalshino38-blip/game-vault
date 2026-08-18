@@ -751,11 +751,12 @@ service cloud.firestore {
             const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
             return colors[(id - 1) % colors.length];
         }
-        function renderGames(filter = "") {
+                function renderGames(filter = "") {
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
             const filtered = games.filter(g => g.title.toLowerCase().includes(filter.toLowerCase()));
             document.getElementById("resultsCount").textContent = filter ? `Found ${filtered.length} games` : "Showing all games";
+            
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
                 const isPlaying = myPlaying.includes(game.id);
@@ -769,21 +770,26 @@ service cloud.firestore {
                 if (isLFG) cls += " lfg";
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
+                
+                // Generate a beautiful, dynamic cover using pure CSS
                 const color = getColor(game.id);
-                let coverHtml;
-                if (game.steamId) {
-                    coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%);">
-                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" onerror="this.style.display='none';">
-                        <div class="fallback" style="z-index:2;">${game.title}</div>
+                const angle1 = Math.floor(Math.random() * 360);
+                const angle2 = (angle1 + 90 + Math.floor(Math.random() * 120)) % 360;
+                const letters = game.title.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                
+                let coverHtml = `
+                    <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
+                        <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
+                        <div class="fallback" style="position:absolute; bottom:15px; left:15px; right:15px; font-size:1.4rem; text-align:left; z-index:2; color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); font-weight:800; line-height:1.1;">${game.title}</div>
+                        <div style="position:absolute; top:15px; right:15px; font-size:0.8rem; color:rgba(255,255,255,0.3); font-weight:900; z-index:2;">${game.genre.slice(0,3).toUpperCase()}</div>
                     </div>`;
-                } else {
-                    coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}80, ${color});"><div class="fallback">${game.title}</div></div>`;
-                }
+                
                 let badge = "";
                 if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
                 else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
                 else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
                 else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
+                
                 card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}</div>${badge}</div>`;
                 grid.appendChild(card);
             });
