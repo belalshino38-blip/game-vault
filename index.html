@@ -11,7 +11,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
     </script>
     <style>
-        /* ========== RESET & VARIABLES ========== */
         :root {
             --bg: #0a0a0f;
             --surface: #13131f;
@@ -38,8 +37,6 @@
             min-height: 100vh;
             line-height: 1.5;
         }
-
-        /* Setup Wizard */
         .setup-wizard {
             max-width: 700px;
             margin: 3rem auto;
@@ -203,15 +200,6 @@
         }
         .btn-warning:hover {
             background: #fbbf24;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        .btn-outline:hover {
-            background: var(--primary);
-            color: #fff;
         }
         .nav-buttons {
             display: flex;
@@ -1270,20 +1258,15 @@
             <div class="code-block">rules_version = '2';
                 service cloud.firestore {
                 match /databases/{database}/documents {
-                match /users/{uid} { allow read, write: if request.auth != null && request.auth.uid == uid; }
-                match /users/{uid}/completions/{gameId} { allow read, write: if request.auth != null && request.auth.uid == uid; }
-                match /users/{uid}/gameStatus/{gameId} { allow read, write: if request.auth != null && request.auth.uid == uid; }
-                match /users/{uid}/saveFiles/{fileId} { allow read, write: if request.auth != null && request.auth.uid == uid; }
-                match /users/{uid}/friends/{friendId} { allow read, write: if request.auth != null && request.auth.uid == uid; }
-                match /users/{uid}/requests/{requestId} { allow read, write: if request.auth != null && request.auth.uid == uid; }
+                match /users/{uid} { allow read: if request.auth != null; allow write: if request.auth != null && request.auth.uid == uid; }
+                match /users/{uid}/{document=**} { allow read: if request.auth != null; allow write: if request.auth != null && request.auth.uid == uid; }
                 match /posts/{postId} {
                 allow read: if request.auth != null;
                 allow create: if request.auth != null;
-                allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
-                }
-                match /posts/{postId}/chat/{chatId} {
-                allow read: if request.auth != null;
-                allow create: if request.auth != null;
+                allow update: if request.auth != null && (
+                request.auth.uid == resource.data.userId ||
+                request.resource.data.diff(resource.data).affectedKeys.hasOnly(['chatMessages', 'chatCount'])
+                );
                 allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
                 }
                 }}
@@ -2102,7 +2085,6 @@
                 cover.style.color = color;
                 cover.style.background = `linear-gradient(135deg, ${color}18 0%, ${color}35 100%)`;
             }
-            // LFG option only for multiplayer (but we keep it as "Looking for Group")
             document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
             document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
             document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
@@ -2195,7 +2177,6 @@
                         myPlaying = myPlaying.filter(id => id !== currentGame.id);
                         document.getElementById("playingCheckbox").checked = false;
                     }
-                    // Also create a post automatically for this game with tag 'lfg'
                     await createPostForGame(currentGame.id, "lfg");
                 } else {
                     await ref.delete();
@@ -2316,7 +2297,6 @@
         }
 
         // ===================== POSTS SYSTEM =====================
-        // Collection name: "posts" (instead of lfgPosts)
         async function loadPosts() {
             try {
                 const snap = await db.collection("posts").orderBy("createdAt", "desc").get();
@@ -2376,7 +2356,7 @@
                                     <div class="chat-msg-body">
                                         <div class="chat-msg-user" style="color:${m.nameColor || '#f1f5f9'}">${m.displayName}</div>
                                         <div class="chat-msg-text">${m.message}</div>
-                                        <div class="chat-msg-time">${new Date(m.timestamp?.toMillis()).toLocaleString()}</div>
+                                        <div class="chat-msg-time">${new Date(m.timestamp).toLocaleString()}</div>
                                     </div>
                                     ${m.userId === currentUser.uid ? `<button class="btn-danger btn-small" onclick="deleteChatMessage('${post.id}','${m.id}')" style="font-size:0.6rem;padding:0.15rem 0.4rem;">✕</button>` : ''}
                                 </div>
@@ -2589,7 +2569,7 @@
                     avatarColor: userProfile.avatarColor || "#8b5cf6",
                     photoData: userProfile.photoData || "",
                     message: msg,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: Date.now() // ✅ FIX: Use simple number, not serverTimestamp()
                 };
                 messages.push(newMsg);
                 await postRef.update({
