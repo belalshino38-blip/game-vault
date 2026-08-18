@@ -39,7 +39,7 @@
             line-height: 1.5;
         }
 
-        /* Setup Wizard – hidden by default */
+        /* Setup Wizard – hidden by default, only admin can open */
         .setup-wizard {
             max-width: 700px;
             margin: 3rem auto;
@@ -1453,6 +1453,7 @@
         </div>
         <div class="setup-step">
             <h3>6. Set Firestore Rules</h3>
+            <p>Use this rule to allow chat (works for all authenticated users):</p>
             <div class="code-block">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -1467,10 +1468,7 @@ service cloud.firestore {
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
-      allow update: if request.auth != null && (
-        request.auth.uid == resource.data.userId ||
-        request.resource.data.keys().hasOnly(['chatMessages', 'chatCount'])
-      );
+      allow update: if request.auth != null;
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
   }
@@ -1567,7 +1565,7 @@ service cloud.firestore {
             <div class="posts-grid" id="postsGrid"></div>
         </div>
 
-        <!-- PROFILE VIEW (admin gear) -->
+        <!-- PROFILE VIEW -->
         <div class="profile-view" id="profileView">
             <div class="profile-header">
                 <div class="avatar" id="profileAvatar">?</div>
@@ -1581,7 +1579,7 @@ service cloud.firestore {
                         <div class="profile-stat"><span class="profile-stat-value" id="profileFriends">0</span><span class="profile-stat-label">Friends</span></div>
                     </div>
                 </div>
-                <!-- Admin gear – hidden by default -->
+                <!-- Admin gear – only shown if UID matches -->
                 <span class="admin-gear" id="adminGear" style="display:none;" title="Admin Setup" onclick="openSetupWizard()">⚙️</span>
             </div>
 
@@ -1790,7 +1788,7 @@ service cloud.firestore {
         };
 
         // 🔥 REPLACE WITH YOUR ACTUAL ADMIN UID (from Firebase Auth)
-        const ADMIN_UID = "VYVZEQsGVGTVATjNim3KrCRgXwg2"; // <-- paste your UID here
+        const ADMIN_UID = "YOUR_ADMIN_UID_HERE"; // <-- paste your UID here
 
         function isConfigValid() {
             return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR") &&
@@ -2264,14 +2262,15 @@ service cloud.firestore {
                 if (isLFG) cls += " lfg";
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
-                const color = getColor(game.id),
-                    initials = getInitials(game.title);
+                const color = getColor(game.id);
+                const initials = getInitials(game.title);
                 let coverHtml;
                 if (game.steamId) {
                     coverHtml =
-                        `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2.75rem;font-weight:900;color:${color};>${initials}</span>';}">`;
+                        `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML=\`<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.2rem;text-align:center;padding:0.5rem;word-break:break-word;border-radius:inherit;">${game.title}</div>\`;}">`;
                 } else {
-                    coverHtml = `<span style="font-size:2.75rem;font-weight:900;color:${color};">${initials}</span>`;
+                    coverHtml =
+                        `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.2rem;text-align:center;padding:0.5rem;word-break:break-word;border-radius:inherit;">${game.title}</div>`;
                 }
                 let badge = "";
                 if (isCompleted) badge =
@@ -2302,17 +2301,15 @@ service cloud.firestore {
             document.getElementById("modalTitle").textContent = game.title;
             document.getElementById("modalBadge").textContent = `${game.genre} &bull; ${game.year}`;
             document.getElementById("modalDesc").textContent = game.desc;
-            const cover = document.getElementById("modalCover"),
-                color = getColor(game.id),
-                initials = getInitials(game.title);
+            const cover = document.getElementById("modalCover");
+            const color = getColor(game.id);
             if (game.steamId) {
                 cover.innerHTML =
-                    `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;" onerror="this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.style.background='linear-gradient(135deg, ${color}18 0%, ${color}35 100%)';this.parentElement.innerHTML='<span style=font-size:4rem;font-weight:900;color:${color};>${initials}</span>';}">`;
+                    `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;" onerror="this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML=\`<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:0.75rem;">${game.title}</div>\`;}">`;
                 cover.style.background = "none";
             } else {
-                cover.textContent = initials;
-                cover.style.color = color;
-                cover.style.background = `linear-gradient(135deg, ${color}18 0%, ${color}35 100%)`;
+                cover.innerHTML =
+                    `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:0.75rem;">${game.title}</div>`;
             }
             const completeLabel = document.getElementById("completeLabel");
             if (game.multiplayer) {
