@@ -1431,7 +1431,7 @@ service cloud.firestore {
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") { closeGameModal(); closeSearchModal(); closeFriendProfile(); closePostModal(); }
         });
-        
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
