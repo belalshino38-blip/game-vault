@@ -1429,16 +1429,23 @@ service cloud.firestore {
         function closeFriendProfile(e) {
             if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
         }
-        function showToast(msg, isError) {
+               function showToast(msg, isError) {
             const toast = document.getElementById("toast");
             toast.textContent = msg;
             toast.className = "toast" + (isError ? " error" : "");
             toast.classList.add("show");
             setTimeout(() => toast.classList.remove("show"), 3000);
         }
+
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") { closeGameModal(); closeSearchModal(); closeFriendProfile(); closePostModal(); }
+            if (e.key === "Escape") {
+                closeGameModal();
+                closeSearchModal();
+                closeFriendProfile();
+                closePostModal();
+            }
         });
+
         window.addEventListener('load', init);
     </script>
 </body>
