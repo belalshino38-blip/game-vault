@@ -75,17 +75,13 @@
         .admin-gear { cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem; opacity: 0.6; transition: opacity 0.2s; }
         .admin-gear:hover { opacity: 1; }
 
-        .stats-bar { background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9)); padding: 1.25rem 2rem; display: flex; gap: 1rem; border-bottom: 1px solid #1e1e2e; flex-wrap: wrap; }
-        .stat { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem; border-radius: 50px; cursor: pointer; transition: all 0.2s; color: var(--text-muted); border: 1px solid transparent; }
-        .stat:hover { background: rgba(255, 255, 255, 0.05); color: var(--text); }
-        .stat.active { background: rgba(139, 92, 246, 0.15); color: var(--primary); border-color: rgba(139, 92, 246, 0.3); }
-        .stat-icon { font-size: 1.25rem; }
+        .stats-bar { background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9)); padding: 1rem 2rem; display: flex; gap: 1.5rem; border-bottom: 1px solid #1e1e2e; flex-wrap: wrap; align-items: center; }
+        .stat { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--text-muted); cursor: default; }
+        .stat.success { color: var(--success); }
+        .stat.playing { color: var(--info); }
+        .stat.accent { color: var(--accent); }
         .stat-value { font-size: 1.25rem; font-weight: 800; }
-        .stat.success .stat-value { color: var(--success); }
-        .stat.playing .stat-value { color: var(--info); }
-        .stat.accent .stat-value { color: var(--accent); }
-        .stat-clear { background: transparent; color: var(--text-muted); padding: 0.2rem 0.8rem; border: 1px dashed #2d2d44; border-radius: 50px; font-size: 0.75rem; cursor: pointer; display: none; }
-        .stat-clear:hover { border-color: var(--text); color: var(--text); }
+        .stat-icon { font-size: 1.5rem; }
 
         .search-container { padding: 1.5rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
         .search-container input[type="text"] { flex: 1; min-width: 200px; }
@@ -99,8 +95,12 @@
         .game-card:hover { transform: translateY(-6px); border-color: rgba(139, 92, 246, 0.3); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); }
         .game-card.completed { border-color: var(--success); }
         .game-card.playing { border-color: var(--info); }
+        .game-card.looking_for_players { border-color: var(--warning); }
+        .game-card.lfg { border-color: var(--danger); }
         .game-card.completed::after { content: '✓'; position: absolute; top: 10px; right: 10px; background: var(--success); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         .game-card.playing::after { content: '▶'; position: absolute; top: 10px; right: 10px; background: var(--info); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.looking_for_players::after { content: '🔍'; position: absolute; top: 10px; right: 10px; background: var(--warning); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.lfg::after { content: '👥'; position: absolute; top: 10px; right: 10px; background: var(--danger); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.3) 100%); border-radius: var(--radius) var(--radius) 0 0; }
         .cover::before {
@@ -155,6 +155,8 @@
         .checkbox-label input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
         .checkbox-label.checked { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success); }
         .checkbox-label.playing-checked { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: var(--info); }
+        .checkbox-label.looking-checked { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: var(--warning); }
+        .checkbox-label.lfg-checked { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger); }
 
         .upload-area { border: 2px dashed #2d2d44; border-radius: var(--radius); padding: 2rem; text-align: center; margin-top: 1rem; transition: all 0.2s; cursor: pointer; }
         .upload-area:hover { border-color: var(--primary); background: rgba(139, 92, 246, 0.03); }
@@ -366,7 +368,6 @@ service cloud.firestore {
                 <button class="nav-btn active" onclick="showGames()" id="navGames">Games</button>
                 <button class="nav-btn" onclick="showFriends()" id="navFriends">Friends</button>
                 <button class="nav-btn" onclick="showPosts()" id="navPosts">Posts</button>
-                <button class="nav-btn" onclick="showProfile()" id="navProfile">Profile</button>
                 <div class="user-dropdown">
                     <div class="user-dropdown-btn" id="userDropdownBtn">
                         <div class="user-avatar" id="headerAvatar">?</div>
@@ -381,22 +382,11 @@ service cloud.firestore {
             </div>
         </header>
         <div class="stats-bar">
-            <div class="stat success" onclick="filterByStatus('completed')" id="filterCompleted">
-                <span class="stat-icon">🏆</span><div><div class="stat-value" id="completedCount">0</div><div>Completed</div></div>
-            </div>
-            <div class="stat playing" onclick="filterByStatus('playing')" id="filterPlaying">
-                <span class="stat-icon">▶</span><div><div class="stat-value" id="playingCount">0</div><div>Playing</div></div>
-            </div>
-            <div class="stat" onclick="filterByStatus('saves')" id="filterSaves">
-                <span class="stat-icon">💾</span><div><div class="stat-value" id="savesCount">0</div><div>Save Files</div></div>
-            </div>
-            <div class="stat accent" onclick="filterByStatus('friends')" id="filterFriends">
-                <span class="stat-icon">👥</span><div><div class="stat-value" id="friendsCount">0</div><div>Friends</div></div>
-            </div>
-            <div class="stat" style="cursor:default;border-color:transparent;">
-                <span class="stat-icon">🎮</span><div><div class="stat-value" id="totalGames">1000+</div><div>Total Games</div></div>
-            </div>
-            <button class="stat-clear" onclick="filterByStatus('all')" id="clearFilterBtn">✕ Clear Filter</button>
+            <div class="stat success"><span class="stat-icon">🏆</span><div><div class="stat-value" id="completedCount">0</div></div></div>
+            <div class="stat playing"><span class="stat-icon">▶</span><div><div class="stat-value" id="playingCount">0</div></div></div>
+            <div class="stat accent"><span class="stat-icon">💾</span><div><div class="stat-value" id="savesCount">0</div></div></div>
+            <div class="stat"><span class="stat-icon">👥</span><div><div class="stat-value" id="friendsCount">0</div></div></div>
+            <div class="stat" style="cursor:default;border-color:transparent;"><span class="stat-icon">🎮</span><div><div class="stat-value" id="totalGames">1000+</div></div></div>
         </div>
         <div id="gamesView">
             <div class="search-container">
@@ -506,12 +496,14 @@ service cloud.firestore {
             <div class="modal-header"><div><h2 id="modalTitle" style="font-size:1.25rem;">Game</h2><span class="badge" id="modalBadge" style="margin-top:0.25rem;">RPG</span></div><button class="close-btn" onclick="closeGameModal()">×</button></div>
             <div class="modal-body">
                 <div style="display:flex;gap:1.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
-                    <div id="modalCover" style="width:160px;height:200px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:900;flex-shrink:0;border:1px solid #2d2d44;background:linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.4));overflow:hidden;">AB</div>
+                    <div id="modalCover" style="width:160px;height:200px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:900;flex-shrink:0;border:1px solid #2d2d44;overflow:hidden;">AB</div>
                     <div style="flex:1;min-width:200px;">
                         <p id="modalDesc" style="color:var(--text-muted);line-height:1.7;font-size:0.95rem;margin-bottom:1rem;"></p>
                         <div class="status-buttons" style="display:flex;flex-wrap:wrap;gap:0.5rem;">
                             <label class="checkbox-label" id="completeLabel" style="display:none;"><input type="checkbox" id="completeCheckbox" onchange="toggleComplete()"><span>✅ Completed</span></label>
                             <label class="checkbox-label" id="playingLabel"><input type="checkbox" id="playingCheckbox" onchange="togglePlaying()"><span>▶ Playing</span></label>
+                            <label class="checkbox-label" id="lookingLabel"><input type="checkbox" id="lookingCheckbox" onchange="toggleLooking()"><span>🔍 Looking for Players</span></label>
+                            <label class="checkbox-label" id="lfgLabel" style="display:none;"><input type="checkbox" id="lfgCheckbox" onchange="toggleLFG()"><span>👥 LFG</span></label>
                         </div>
                     </div>
                 </div>
@@ -677,7 +669,6 @@ service cloud.firestore {
             const genres = ["Action", "RPG", "Adventure", "Shooter", "Strategy", "Sports", "Racing", "Simulation", "Puzzle", "Fighting", "MMO", "MOBA", "Battle Royale", "Survival", "Horror"];
             const years = Array.from({ length: 30 }, (_, i) => 1994 + i);
             const result = [];
-            // Prefill 1000 slots
             for (let i = 1; i <= 1000; i++) {
                 const existing = games.find(g => g.id === i);
                 if (existing) {
@@ -701,6 +692,8 @@ service cloud.firestore {
         let userProfile = null;
         let myCompletions = [];
         let myPlaying = [];
+        let myLooking = [];
+        let myLFG = [];
         let mySaves = {};
         let friendsList = [];
         let friendRequests = [];
@@ -808,6 +801,10 @@ service cloud.firestore {
                 myCompletions = compSnap.docs.map(d => parseInt(d.id));
                 const playingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "playing").get();
                 myPlaying = playingSnap.docs.map(d => parseInt(d.id));
+                const lookingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "looking").get();
+                myLooking = lookingSnap.docs.map(d => parseInt(d.id));
+                const lfgSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "lfg").get();
+                myLFG = lfgSnap.docs.map(d => parseInt(d.id));
                 mySaves = {};
                 const savesSnap = await db.collection("users").doc(currentUser.uid).collection("saveFiles").get();
                 savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!mySaves[gid]) mySaves[gid] = []; mySaves[gid].push({ id: d.id, ...data }); });
@@ -831,6 +828,8 @@ service cloud.firestore {
                 let statusMatch = true;
                 if (currentFilterStatus === 'completed') statusMatch = myCompletions.includes(g.id);
                 else if (currentFilterStatus === 'playing') statusMatch = myPlaying.includes(g.id);
+                else if (currentFilterStatus === 'looking') statusMatch = myLooking.includes(g.id);
+                else if (currentFilterStatus === 'lfg') statusMatch = myLFG.includes(g.id);
                 return titleMatch && statusMatch;
             });
             switch(sort) {
@@ -846,10 +845,14 @@ service cloud.firestore {
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
                 const isPlaying = myPlaying.includes(game.id);
+                const isLooking = myLooking.includes(game.id);
+                const isLFG = myLFG.includes(game.id);
                 const card = document.createElement("div");
                 let cls = "game-card";
                 if (isCompleted) cls += " completed";
                 if (isPlaying) cls += " playing";
+                if (isLooking) cls += " looking_for_players";
+                if (isLFG) cls += " lfg";
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
                 const color = getColor(game.id);
@@ -876,6 +879,8 @@ service cloud.firestore {
                 let badge = "";
                 if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
                 else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
+                else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
+                else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
                 card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}${badge}</div></div>`;
                 grid.appendChild(card);
             });
@@ -885,16 +890,72 @@ service cloud.firestore {
             document.getElementById("modalTitle").textContent = game.title;
             document.getElementById("modalBadge").textContent = `${game.genre} • ${game.year}`;
             document.getElementById("modalDesc").textContent = game.desc || `${game.title} is a ${game.genre} game released in ${game.year}.`;
+
             const cover = document.getElementById("modalCover");
             const color = getColor(game.id);
+            cover.innerHTML = ''; // Clear previous content cleanly
+            cover.style.background = 'none';
+
+            // Securely create the cover element
             if (game.steamId) {
-                cover.innerHTML = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" onerror="this.style.display='none';this.parentElement.innerHTML='<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:var(--radius);">${game.title}</div>'" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius);">`;
-                cover.style.background = "none";
+                const img = document.createElement('img');
+                img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg`;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "var(--radius)";
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.style.display = "flex";
+                    fallback.style.alignItems = "center";
+                    fallback.style.justifyContent = "center";
+                    fallback.style.width = "100%";
+                    fallback.style.height = "100%";
+                    fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
+                    fallback.style.color = "#fff";
+                    fallback.style.fontWeight = "900";
+                    fallback.style.fontSize = "1.5rem";
+                    fallback.style.textAlign = "center";
+                    fallback.style.padding = "1rem";
+                    fallback.style.wordBreak = "break-word";
+                    fallback.style.borderRadius = "var(--radius)";
+                    fallback.textContent = game.title;
+                    cover.appendChild(fallback);
+                };
+                cover.appendChild(img);
             } else {
-                cover.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:var(--radius);">${game.title}</div>`;
+                const fallback = document.createElement('div');
+                fallback.style.display = "flex";
+                fallback.style.alignItems = "center";
+                fallback.style.justifyContent = "center";
+                fallback.style.width = "100%";
+                fallback.style.height = "100%";
+                fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
+                fallback.style.color = "#fff";
+                fallback.style.fontWeight = "900";
+                fallback.style.fontSize = "1.5rem";
+                fallback.style.textAlign = "center";
+                fallback.style.padding = "1rem";
+                fallback.style.wordBreak = "break-word";
+                fallback.style.borderRadius = "var(--radius)";
+                fallback.textContent = game.title;
+                cover.appendChild(fallback);
             }
+
+            const completeLabel = document.getElementById("completeLabel");
+            if (game.multiplayer) {
+                completeLabel.style.display = "none";
+                document.getElementById("completeCheckbox").checked = false;
+            } else {
+                completeLabel.style.display = "flex";
+            }
+            document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
+
             document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
             document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
+            document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
+            document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
             updateStatusLabels();
             renderModalSaves();
             await loadFriendSavesForGame(game.id);
@@ -911,9 +972,12 @@ service cloud.firestore {
         function updateStatusLabels() {
             document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox").checked);
             document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
+            document.getElementById("lookingLabel").classList.toggle("looking-checked", document.getElementById("lookingCheckbox").checked);
+            document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
         }
         async function toggleComplete() {
             if (!currentGame) return;
+            if (currentGame.multiplayer) { showToast("Cannot mark multiplayer games as completed", true); document.getElementById("completeCheckbox").checked = false; return; }
             const cb = document.getElementById("completeCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId);
             try {
                 if (cb.checked) { await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() }); if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id); } else { await ref.delete(); myCompletions = myCompletions.filter(id => id !== currentGame.id); }
@@ -927,8 +991,37 @@ service cloud.firestore {
                 if (cb.checked) {
                     await ref.set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
                     if (!myPlaying.includes(currentGame.id)) myPlaying.push(currentGame.id);
+                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
+                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
                 } else { await ref.delete(); myPlaying = myPlaying.filter(id => id !== currentGame.id); }
                 updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+        async function toggleLooking() {
+            if (!currentGame) return;
+            const cb = document.getElementById("lookingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myLooking.includes(currentGame.id)) myLooking.push(currentGame.id);
+                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
+                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
+                } else { await ref.delete(); myLooking = myLooking.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for players!" : "Removed from looking");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+        async function toggleLFG() {
+            if (!currentGame) return;
+            if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true); document.getElementById("lfgCheckbox").checked = false; return; }
+            const cb = document.getElementById("lfgCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myLFG.includes(currentGame.id)) myLFG.push(currentGame.id);
+                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
+                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
+                } else { await ref.delete(); myLFG = myLFG.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
             } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
         }
         function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
@@ -1298,6 +1391,8 @@ service cloud.firestore {
         function updateStats() {
             const count = myCompletions.length;
             const playingCount = myPlaying.length;
+            const lookingCount = myLooking.length;
+            const lfgCount = myLFG.length;
             const totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
             document.getElementById("completedCount").textContent = count;
             document.getElementById("playingCount").textContent = playingCount;
@@ -1310,7 +1405,7 @@ service cloud.firestore {
         function showFriends() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.add("active"); document.getElementById("postsView").style.display = "none"; renderFriends(); updateNav('friends'); }
         function renderProfile() {
             if (!userProfile) return;
-            const count = myCompletions.length, playingCount = myPlaying.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
+            const count = myCompletions.length, playingCount = myPlaying.length, lookingCount = myLooking.length, lfgCount = myLFG.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
             const avatar = document.getElementById("profileAvatar");
             setAvatarElement(avatar, userProfile);
             document.getElementById("profileName").textContent = userProfile.displayName;
