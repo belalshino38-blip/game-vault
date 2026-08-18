@@ -1452,14 +1452,21 @@ service cloud.firestore {
         function closeFriendProfile(e) {
             if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
         }
-        function showToast(msg, isError) {
-            const toast = document.getElementById("toast");
-            toast.textContent = msg;
-            toast.className = "toast" + (isError ? " error" : "");
-            toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
-        }
-        document.addEventListener("keydown", (e) => {
+                document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeGameModal();
+                closeSearchModal();
+                closeFriendProfile();
+                closePostModal();
+            }
+        });
+
+        // Safe initialization: wait for the page, then run init if it exists
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof init !== 'undefined') {
+                init();
+            }
+        });
             if (e.key === "Escape") {
                 closeGameModal();
                 closeSearchModal();
