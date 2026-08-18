@@ -2545,6 +2545,10 @@
         }
 
         function renderPosts(filter = "", tagFilter = "all") {
+           // At the top of renderPosts()
+filtered = filtered.filter((post, index, self) => 
+  index === self.findIndex(p => p.id === post.id)
+);
             const grid = document.getElementById("postsGrid");
             let filtered = posts.filter(p =>
                 p.gameTitle.toLowerCase().includes(filter.toLowerCase()) ||
