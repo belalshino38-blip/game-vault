@@ -1509,7 +1509,7 @@ service cloud.firestore {
             toast.classList.add("show");
             setTimeout(() => toast.classList.remove("show"), 3000);
         }
-        document.addEventListener("keydown", (e) => {
+                document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
                 closeGameModal();
                 closeSearchModal();
@@ -1517,11 +1517,12 @@ service cloud.firestore {
                 closePostModal();
             }
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof init !== 'undefined') {
-                init();
+                init(); 
             }
-        
+        });
     </script>
 </body>
 </html>
