@@ -38,6 +38,7 @@
             min-height: 100vh;
             line-height: 1.5;
         }
+
         /* Setup Wizard (unchanged) */
         .setup-wizard {
             max-width: 700px;
@@ -98,7 +99,8 @@
             outline: none;
             border-color: var(--primary);
         }
-        /* HEADER & NAV */
+
+        /* ========== HEADER ========== */
         header {
             background: rgba(19, 19, 31, 0.95);
             backdrop-filter: blur(10px);
@@ -121,7 +123,19 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .user-chip {
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== User dropdown ===== */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-dropdown-btn {
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -131,11 +145,15 @@
             border: 1px solid #2d2d44;
             cursor: pointer;
             transition: all 0.2s;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
-        .user-chip:hover {
+        .user-dropdown-btn:hover {
             border-color: var(--primary);
         }
-        .user-avatar {
+        .user-dropdown-btn .user-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -149,10 +167,42 @@
             background-position: center !important;
             flex-shrink: 0;
         }
-        .user-name {
-            font-weight: 600;
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            border-radius: 0.75rem;
+            min-width: 160px;
+            padding: 0.4rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 200;
+        }
+        .user-dropdown-menu.show {
+            display: block;
+        }
+        .user-dropdown-menu a {
+            display: block;
+            padding: 0.6rem 1.2rem;
+            color: var(--text);
+            text-decoration: none;
+            transition: background 0.15s;
+            cursor: pointer;
             font-size: 0.9rem;
         }
+        .user-dropdown-menu a:hover {
+            background: #2d2d44;
+        }
+        .user-dropdown-menu a.danger {
+            color: var(--danger);
+        }
+        .user-dropdown-menu a.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* ========== BUTTONS ========== */
         button {
             background: var(--primary);
             color: white;
@@ -204,13 +254,8 @@
         .btn-warning:hover {
             background: #fbbf24;
         }
-        .nav-buttons {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        /* Stats Bar – removed "Progress" */
+
+        /* Stats Bar */
         .stats-bar {
             background: linear-gradient(90deg, rgba(19, 19, 31, 0.8), rgba(30, 30, 47, 0.8));
             padding: 1.25rem 2rem;
@@ -246,7 +291,8 @@
         .stat.playing .stat-value {
             color: var(--info);
         }
-        /* SEARCH */
+
+        /* Search */
         .search-container {
             padding: 1.5rem 2rem;
             display: flex;
@@ -281,11 +327,8 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
-        input::placeholder,
-        textarea::placeholder {
-            color: #475569;
-        }
-        /* GAMES GRID */
+
+        /* Games Grid */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -373,12 +416,8 @@
             z-index: 5;
         }
         @keyframes popIn {
-            from {
-                transform: scale(0);
-            }
-            to {
-                transform: scale(1);
-            }
+            from { transform: scale(0); }
+            to { transform: scale(1); }
         }
         .cover {
             width: 100%;
@@ -395,7 +434,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.03) 100%);
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%);
         }
         .cover::after {
             content: '';
@@ -404,7 +443,7 @@
             left: 0;
             right: 0;
             height: 60%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
         }
         .game-info {
             padding: 0.875rem;
@@ -417,7 +456,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            letter-spacing: -0.01em;
         }
         .game-meta {
             font-size: 0.75rem;
@@ -433,11 +471,12 @@
             font-weight: 700;
             margin-top: 0.25rem;
         }
-        /* MODALS */
+
+        /* Modals */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0,0,0,0.85);
             backdrop-filter: blur(8px);
             display: none;
             align-items: center;
@@ -459,7 +498,7 @@
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid #2d2d44;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             transform: scale(0.95);
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -503,7 +542,8 @@
             background: #2d2d44;
             color: var(--text);
         }
-        /* AUTH */
+
+        /* Auth */
         .auth-tabs {
             display: flex;
             gap: 0.5rem;
@@ -538,7 +578,8 @@
             font-size: 0.85rem;
             display: none;
         }
-        /* CHECKBOX LABELS */
+
+        /* Checkbox Labels */
         .checkbox-label {
             display: flex;
             align-items: center;
@@ -563,21 +604,22 @@
             cursor: pointer;
         }
         .checkbox-label.checked {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(16,185,129,0.1);
             border-color: var(--success);
             color: var(--success);
         }
         .checkbox-label.playing-checked {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59,130,246,0.1);
             border-color: var(--info);
             color: var(--info);
         }
         .checkbox-label.lfg-checked {
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(245,158,11,0.1);
             border-color: var(--warning);
             color: var(--warning);
         }
-        /* UPLOAD */
+
+        /* Upload */
         .upload-area {
             border: 2px dashed #2d2d44;
             border-radius: 0.75rem;
@@ -589,11 +631,11 @@
         }
         .upload-area:hover {
             border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.03);
+            background: rgba(139,92,246,0.03);
         }
         .upload-area.dragover {
             border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.08);
+            background: rgba(139,92,246,0.08);
             transform: scale(1.01);
         }
         .upload-area p {
@@ -632,7 +674,8 @@
             color: var(--text-muted);
             margin-top: 0.15rem;
         }
-        /* PROFILE – removed progress ring */
+
+        /* Profile */
         .profile-view {
             display: none;
             padding: 2rem;
@@ -644,14 +687,8 @@
             animation: fadeIn 0.4s ease;
         }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .profile-header {
             display: flex;
@@ -675,7 +712,7 @@
             font-weight: 900;
             color: white;
             flex-shrink: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             background-size: cover !important;
             background-position: center !important;
         }
@@ -728,7 +765,8 @@
             border: 1px dashed #2d2d44;
             grid-column: 1 / -1;
         }
-        /* FRIENDS */
+
+        /* Friends */
         .friends-view {
             display: none;
             padding: 2rem;
@@ -790,7 +828,6 @@
             gap: 0.5rem;
             margin-top: 0.5rem;
         }
-        /* SEARCH RESULTS */
         .search-results {
             margin-top: 1rem;
             display: flex;
@@ -830,7 +867,7 @@
             font-size: 0.8rem;
             color: var(--text-muted);
         }
-        /* TABS */
+
         .tabs {
             display: flex;
             gap: 0.5rem;
@@ -855,7 +892,7 @@
         }
         .tab.active {
             color: var(--primary);
-            background: rgba(139, 92, 246, 0.1);
+            background: rgba(139,92,246,0.1);
         }
         .badge {
             display: inline-flex;
@@ -864,41 +901,41 @@
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 700;
-            background: rgba(139, 92, 246, 0.15);
+            background: rgba(139,92,246,0.15);
             color: var(--primary);
-            border: 1px solid rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(139,92,246,0.3);
         }
         .badge-success {
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16,185,129,0.15);
             color: var(--success);
-            border-color: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16,185,129,0.3);
         }
         .badge-warning {
-            background: rgba(245, 158, 11, 0.15);
+            background: rgba(245,158,11,0.15);
             color: var(--warning);
-            border-color: rgba(245, 158, 11, 0.3);
+            border-color: rgba(245,158,11,0.3);
         }
         .badge-info {
-            background: rgba(59, 130, 246, 0.15);
+            background: rgba(59,130,246,0.15);
             color: var(--info);
-            border-color: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59,130,246,0.3);
         }
         .badge-tip {
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16,185,129,0.15);
             color: var(--success);
-            border-color: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16,185,129,0.3);
         }
         .badge-help {
-            background: rgba(245, 158, 11, 0.15);
+            background: rgba(245,158,11,0.15);
             color: var(--warning);
-            border-color: rgba(245, 158, 11, 0.3);
+            border-color: rgba(245,158,11,0.3);
         }
         .badge-rate {
-            background: rgba(236, 72, 153, 0.15);
+            background: rgba(236,72,153,0.15);
             color: #ec4899;
-            border-color: rgba(236, 72, 153, 0.3);
+            border-color: rgba(236,72,153,0.3);
         }
-        /* TOAST */
+
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -912,7 +949,7 @@
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 300;
             font-weight: 600;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -928,15 +965,13 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255,255,255,0.1);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
         .friend-saves-section {
             margin-top: 1.5rem;
@@ -1023,7 +1058,7 @@
         .post-message {
             color: var(--text-muted);
             font-size: 0.9rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             flex: 1;
             word-break: break-word;
         }
@@ -1046,30 +1081,54 @@
             font-weight: 700;
         }
         .tag-lfg {
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(59,130,246,0.2);
             color: var(--info);
         }
         .tag-player {
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(16,185,129,0.2);
             color: var(--success);
         }
         .tag-tip {
-            background: rgba(245, 158, 11, 0.2);
+            background: rgba(245,158,11,0.2);
             color: var(--warning);
         }
         .tag-help {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239,68,68,0.2);
             color: var(--danger);
         }
         .tag-rate {
-            background: rgba(236, 72, 153, 0.2);
+            background: rgba(236,72,153,0.2);
             color: #ec4899;
         }
-        /* ===== CHAT (simplified, like screenshot) ===== */
-        .post-chat {
-            margin-top: 1rem;
-            padding-top: 1rem;
+
+        /* ===== CHAT (collapsible) ===== */
+        .post-chat-toggle {
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 0.3rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .post-chat-toggle:hover {
+            color: var(--text);
+        }
+        .post-chat-toggle .arrow {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .post-chat-toggle .arrow.open {
+            transform: rotate(180deg);
+        }
+        .post-chat-container {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
             border-top: 1px solid #1e1e2e;
+            display: none;
+        }
+        .post-chat-container.open {
+            display: block;
         }
         .post-chat-title {
             font-size: 0.85rem;
@@ -1132,7 +1191,7 @@
             flex: 1;
         }
 
-        /* CONTEXT MENU */
+        /* Context Menu */
         .context-menu {
             position: fixed;
             background: var(--surface);
@@ -1158,10 +1217,10 @@
             color: var(--danger);
         }
         .context-menu-item.danger:hover {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239,68,68,0.2);
         }
 
-        /* SETTINGS */
+        /* Settings */
         .settings-section {
             background: var(--surface);
             border-radius: 0.875rem;
@@ -1186,7 +1245,7 @@
             min-width: 150px;
         }
 
-        /* GAME COMBOBOX */
+        /* Game Combobox */
         .game-combobox {
             position: relative;
         }
@@ -1221,7 +1280,6 @@
             background: var(--primary);
         }
 
-        /* RESPONSIVE */
         @media (max-width: 640px) {
             .games-grid {
                 grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -1324,21 +1382,27 @@
         <div class="setup-step">
             <h3>6. Set Firestore Rules</h3>
             <div class="code-block">rules_version = '2';
-                service cloud.firestore {
-                match /databases/{database}/documents {
-                match /users/{uid} { allow read: if request.auth != null; allow write: if request.auth != null && request.auth.uid == uid; }
-                match /users/{uid}/{document=**} { allow read: if request.auth != null; allow write: if request.auth != null && request.auth.uid == uid; }
-                match /posts/{postId} {
-                allow read: if request.auth != null;
-                allow create: if request.auth != null;
-                allow update: if request.auth != null && (
-                request.auth.uid == resource.data.userId ||
-                request.resource.data.diff(resource.data).affectedKeys.hasOnly(['chatMessages', 'chatCount'])
-                );
-                allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
-                }
-                }}
-            </div>
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /users/{uid}/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.userId ||
+        request.resource.data.diff(resource.data).affectedKeys.hasOnly(['chatMessages', 'chatCount'])
+      );
+      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}</div>
         </div>
     </div>
 
@@ -1379,10 +1443,17 @@
                 <button class="btn-secondary" onclick="showGames()">Games</button>
                 <button class="btn-secondary" onclick="showFriends()">Friends</button>
                 <button class="btn-secondary" onclick="showPosts()">Posts</button>
-                <button onclick="showProfile()">Profile</button>
-                <div class="user-chip" onclick="logout()" title="Logout">
-                    <div class="user-avatar" id="headerAvatar">?</div>
-                    <span class="user-name" id="headerName">...</span>
+                <!-- User dropdown -->
+                <div class="user-dropdown">
+                    <div class="user-dropdown-btn" id="userDropdownBtn">
+                        <div class="user-avatar" id="headerAvatar">?</div>
+                        <span class="user-name" id="headerName">...</span>
+                        <span style="margin-left:0.2rem;font-size:0.7rem;">▼</span>
+                    </div>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <a onclick="showProfile(); closeUserDropdown();">👤 Profile</a>
+                        <a class="danger" onclick="logout(); closeUserDropdown();">🚪 Logout</a>
+                    </div>
                 </div>
             </div>
         </header>
@@ -1391,7 +1462,6 @@
             <div class="stat"><span class="stat-icon">🎮</span><div><div class="stat-value">100</div><div>Total Games</div></div></div>
             <div class="stat success"><span class="stat-icon">🏆</span><div><div class="stat-value" id="completedCount">0</div><div>Completed</div></div></div>
             <div class="stat playing"><span class="stat-icon">▶</span><div><div class="stat-value" id="playingCount">0</div><div>Playing</div></div></div>
-            <!-- removed "Progress" stat -->
             <div class="stat warning"><span class="stat-icon">💾</span><div><div class="stat-value" id="savesCount">0</div><div>Save Files</div></div></div>
             <div class="stat"><span class="stat-icon">👥</span><div><div class="stat-value" id="friendsCount">0</div><div>Friends</div></div></div>
         </div>
@@ -1426,7 +1496,7 @@
             <div class="posts-grid" id="postsGrid"></div>
         </div>
 
-        <!-- PROFILE VIEW (progress ring removed) -->
+        <!-- PROFILE VIEW -->
         <div class="profile-view" id="profileView">
             <div class="profile-header">
                 <div class="avatar" id="profileAvatar">?</div>
@@ -1440,10 +1510,8 @@
                         <div class="profile-stat"><span class="profile-stat-value" id="profileFriends">0</span><span class="profile-stat-label">Friends</span></div>
                     </div>
                 </div>
-                <!-- removed progress ring -->
             </div>
 
-            <!-- Settings -->
             <div class="settings-section">
                 <h3 style="margin-bottom:1rem;">⚙️ Profile Settings</h3>
                 <div class="settings-row">
@@ -1501,7 +1569,7 @@
         </div>
     </div>
 
-    <!-- GAME MODAL (completed hidden for multiplayer) -->
+    <!-- GAME MODAL -->
     <div class="modal-overlay" id="gameModal" onclick="closeGameModal(event)">
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -1514,7 +1582,6 @@
                     <div style="flex:1;min-width:200px;">
                         <p id="modalDesc" style="color:var(--text-muted);line-height:1.7;font-size:0.95rem;margin-bottom:1rem;"></p>
                         <div class="status-buttons" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                            <!-- Completed checkbox: hidden for multiplayer -->
                             <label class="checkbox-label" id="completeLabel" style="display:none;">
                                 <input type="checkbox" id="completeCheckbox" onchange="toggleComplete()">
                                 <span>✅ Completed</span>
@@ -1542,7 +1609,7 @@
         </div>
     </div>
 
-    <!-- POST MODAL (Create/Edit) -->
+    <!-- POST MODAL -->
     <div class="modal-overlay" id="postModal" onclick="closePostModal(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:500px;">
             <div class="modal-header">
@@ -1607,7 +1674,6 @@
                             <div class="profile-stat"><span class="profile-stat-value" id="friendSavesCount">0</span><span class="profile-stat-label">Saves</span></div>
                         </div>
                     </div>
-                    <!-- removed progress ring -->
                 </div>
                 <div id="friendPostsSection" style="margin-bottom:1.5rem;padding:1rem;background:#1e1e2e;border-radius:0.75rem;border:1px solid #2d2d44;">
                     <h4 style="margin-bottom:0.5rem;">📝 Their Posts</h4>
@@ -1623,7 +1689,7 @@
         </div>
     </div>
 
-    <!-- CONTEXT MENU for chat messages -->
+    <!-- CONTEXT MENU -->
     <div class="context-menu" id="contextMenu">
         <div class="context-menu-item" id="ctxEdit">✏️ Edit</div>
         <div class="context-menu-item danger" id="ctxDelete">🗑 Delete</div>
@@ -1708,7 +1774,7 @@
         const savedCfg = localStorage.getItem("gameVault_firebaseConfig");
         if (savedCfg) { try { Object.assign(firebaseConfig, JSON.parse(savedCfg)); } catch (e) { console.error(e); } }
 
-        // ===================== GAME DATA (with multiplayer flag) =====================
+        // ===================== GAME DATA =====================
         const games = [
             { id: 1, title: "The Witcher 3", genre: "RPG", year: 2015, desc: "Open-world fantasy RPG.", steamId: 292030,
                 multiplayer: false },
@@ -1960,12 +2026,26 @@
                     loadPosts();
                     renderGames();
                     setupGameCombobox();
+                    // User dropdown toggle
+                    document.getElementById("userDropdownBtn").addEventListener("click", toggleUserDropdown);
                 } else {
                     document.getElementById("authModal").style.display = "flex";
                     document.getElementById("appContainer").style.display = "none";
                 }
             });
         }
+
+        // ===== User dropdown =====
+        function toggleUserDropdown(e) {
+            e.stopPropagation();
+            const menu = document.getElementById("userDropdownMenu");
+            menu.classList.toggle("show");
+        }
+
+        function closeUserDropdown() {
+            document.getElementById("userDropdownMenu").classList.remove("show");
+        }
+        document.addEventListener("click", closeUserDropdown);
 
         // ===================== AUTH =====================
         function switchAuthTab(tab) {
@@ -2009,8 +2089,10 @@
                 errorEl.style.display = "block"; }
         }
 
-        async function logout() { await auth.signOut();
-            location.reload(); }
+        async function logout() {
+            await auth.signOut();
+            location.reload();
+        }
 
         function showSetupFromAuth() { document.getElementById("authModal").style.display = "none";
             document.getElementById("setupWizard").style.display = "block"; }
@@ -2150,18 +2232,14 @@
                 cover.style.color = color;
                 cover.style.background = `linear-gradient(135deg, ${color}18 0%, ${color}35 100%)`;
             }
-            // Show/hide completed based on multiplayer
             const completeLabel = document.getElementById("completeLabel");
             if (game.multiplayer) {
                 completeLabel.style.display = "none";
-                // uncheck if checked
                 document.getElementById("completeCheckbox").checked = false;
             } else {
                 completeLabel.style.display = "flex";
             }
-            // LFG only for multiplayer
             document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
-            // Set checkboxes
             document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
             document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
             document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
@@ -2191,7 +2269,6 @@
 
         async function toggleComplete() {
             if (!currentGame) return;
-            // Prevent marking multiplayer as completed
             if (currentGame.multiplayer) {
                 showToast("Cannot mark online/multiplayer games as completed", true);
                 document.getElementById("completeCheckbox").checked = false;
@@ -2411,8 +2488,10 @@
                 const isAuthor = post.userId === currentUser.uid;
                 const tagLabel = getTagLabel(post.tag);
                 const tagClass = getTagClass(post.tag);
+                const chatCount = post.chatCount || 0;
+                const isChatOpen = post._chatOpen || false;
                 return `
-                <div class="post-card">
+                <div class="post-card" data-postid="${post.id}">
                     <div class="post-header">
                         <div class="post-avatar" style="background:${post.user.avatarColor || '#8b5cf6'};${post.user.photoData ? `background-image:url(${post.user.photoData});background-size:cover;` : ''}">${post.user.photoData ? '' : getInitials(post.user.displayName)}</div>
                         <div>
@@ -2427,9 +2506,12 @@
                         ${isAuthor ? `<button class="btn-warning btn-small" onclick="editPost('${post.id}')">✏️ Edit</button>` : ''}
                         ${isAuthor ? `<button class="btn-danger btn-small" onclick="deletePost('${post.id}')">🗑 Delete</button>` : ''}
                         ${!isAuthor ? `<button class="btn-success btn-small" onclick="addFriendFromPost('${post.userId}')">➕ Add Friend</button>` : ''}
-                        <span style="font-size:0.7rem;color:var(--text-muted);margin-left:auto;">💬 ${post.chatCount || 0}</span>
+                        <span class="post-chat-toggle" onclick="toggleChat('${post.id}')">
+                            💬 <span id="chatCount_${post.id}">${chatCount}</span>
+                            <span class="arrow ${isChatOpen ? 'open' : ''}" id="chatArrow_${post.id}">▼</span>
+                        </span>
                     </div>
-                    <div class="post-chat">
+                    <div class="post-chat-container ${isChatOpen ? 'open' : ''}" id="chatContainer_${post.id}">
                         <div class="post-chat-title">💬 Chat</div>
                         <div id="chatMessages_${post.id}">
                             ${post.chatMessages ? post.chatMessages.map(m => `
@@ -2482,6 +2564,19 @@
                 "rate": "tag-rate"
             };
             return map[tag] || "";
+        }
+
+        // ===== Toggle chat visibility =====
+        function toggleChat(postId) {
+            const container = document.getElementById(`chatContainer_${postId}`);
+            const arrow = document.getElementById(`chatArrow_${postId}`);
+            if (container) {
+                container.classList.toggle('open');
+                if (arrow) arrow.classList.toggle('open');
+                // Update local state
+                const post = posts.find(p => p.id === postId);
+                if (post) post._chatOpen = container.classList.contains('open');
+            }
         }
 
         // ===== Post Combobox =====
@@ -2543,66 +2638,62 @@
             }
         }
 
-       async function submitPost() {
-    const gameId = parseInt(document.getElementById("postGameId").value);
-    const message = document.getElementById("postMessage").value.trim();
-    const tag = document.getElementById("postTagSelect").value;
-    const editId = document.getElementById("postEditId").value;
+        async function submitPost() {
+            const gameId = parseInt(document.getElementById("postGameId").value);
+            const message = document.getElementById("postMessage").value.trim();
+            const tag = document.getElementById("postTagSelect").value;
+            const editId = document.getElementById("postEditId").value;
+            if (!gameId) { showToast("Please select a game", true); return; }
+            const game = games.find(g => g.id === gameId);
+            if (!game) { showToast("Game not found", true); return; }
 
-    if (!gameId) { showToast("Please select a game", true); return; }
-    const game = games.find(g => g.id === gameId);
-    if (!game) { showToast("Game not found", true); return; }
-
-    try {
-        if (editId) {
-            await db.collection("posts").doc(editId).update({
-                gameId: gameId,
-                gameTitle: game.title,
-                message: message || "",
-                tag: tag,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            showToast("Post updated successfully!");
-            closePostModal();
-            loadPosts();
-        } else {
-            await db.collection("posts").add({
-                userId: currentUser.uid,
-                gameId: gameId,
-                gameTitle: game.title,
-                message: message || "",
-                tag: tag,
-                chatMessages: [],
-                chatCount: 0,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            showToast("Post created!");
-            closePostModal();
-            loadPosts();
+            try {
+                if (editId) {
+                    await db.collection("posts").doc(editId).update({
+                        gameId: gameId,
+                        gameTitle: game.title,
+                        message: message || "",
+                        tag: tag,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showToast("Post updated successfully!");
+                    closePostModal();
+                    loadPosts();
+                } else {
+                    await db.collection("posts").add({
+                        userId: currentUser.uid,
+                        gameId: gameId,
+                        gameTitle: game.title,
+                        message: message || "",
+                        tag: tag,
+                        chatMessages: [],
+                        chatCount: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showToast("Post created!");
+                    closePostModal();
+                    loadPosts();
+                }
+            } catch (err) {
+                console.error("Submit post error:", err);
+                showToast("Error: " + err.message, true);
+            }
         }
-    } catch (err) {
-        console.error("Submit post error:", err);
-        showToast("Error: " + err.message, true);
-    }
-}
 
         function editPost(postId) {
-    const post = posts.find(p => p.id === postId);
-    if (!post) { 
-        showToast("Post not found", true); 
-        return; 
-    }
-    editingPostId = postId;
-    document.getElementById("postModalTitle").textContent = "Edit Post";
-    document.getElementById("postSubmitBtn").textContent = "Update Post";
-    document.getElementById("postEditId").value = postId;
-    document.getElementById("postMessage").value = post.message || "";
-    document.getElementById("postGameSearch").value = post.gameTitle;
-    document.getElementById("postGameId").value = post.gameId;
-    document.getElementById("postTagSelect").value = post.tag || "lfg";
-    document.getElementById("gameDropdown").classList.remove("show");
-    document.getElementById("postModal").classList.add("active");
-}
+            const post = posts.find(p => p.id === postId);
+            if (!post) { showToast("Post not found", true); return; }
+            editingPostId = postId;
+            document.getElementById("postModalTitle").textContent = "Edit Post";
+            document.getElementById("postSubmitBtn").textContent = "Update Post";
+            document.getElementById("postEditId").value = postId;
+            document.getElementById("postMessage").value = post.message || "";
+            document.getElementById("postGameSearch").value = post.gameTitle;
+            document.getElementById("postGameId").value = post.gameId;
+            document.getElementById("postTagSelect").value = post.tag || "lfg";
+            document.getElementById("gameDropdown").classList.remove("show");
+            document.getElementById("postModal").classList.add("active");
+        }
 
         async function deletePost(postId) {
             if (!confirm("Delete this post?")) return;
@@ -2613,7 +2704,6 @@
             } catch (err) { showToast("Error: " + err.message, true); }
         }
 
-        // Auto-create post when LFG is toggled in game modal
         async function createPostForGame(gameId, tag) {
             const game = games.find(g => g.id === gameId);
             if (!game) return;
@@ -2663,7 +2753,7 @@
                     avatarColor: userProfile.avatarColor || "#8b5cf6",
                     photoData: userProfile.photoData || "",
                     message: msg,
-                    timestamp: Date.now() // ✅ FIXED: simple number
+                    timestamp: Date.now()
                 };
                 messages.push(newMsg);
                 await postRef.update({
@@ -2677,11 +2767,17 @@
                     post.chatCount = messages.length;
                     renderPosts(document.getElementById("postSearchInput").value, document.getElementById(
                         "postTagFilter").value);
+                    // Keep chat open after sending
+                    const container = document.getElementById(`chatContainer_${postId}`);
+                    if (container) container.classList.add('open');
+                    const arrow = document.getElementById(`chatArrow_${postId}`);
+                    if (arrow) arrow.classList.add('open');
+                    if (post) post._chatOpen = true;
                 }
             } catch (err) { showToast("Error sending message: " + err.message, true); }
         }
 
-        // ===== Context Menu for Chat =====
+        // ===== Context Menu =====
         let contextTarget = null;
 
         function showContextMenu(e) {
@@ -2704,7 +2800,6 @@
             menu.style.top = e.pageY + "px";
             menu.style.display = "block";
 
-            // Set actions
             editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId);
                 hideContextMenu(); };
             deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId);
@@ -2728,7 +2823,6 @@
                 if (idx === -1) { showToast("Message not found", true); return; }
                 messages[idx].message = newMsg.trim();
                 await postRef.update({ chatMessages: messages });
-                // Update local
                 const post = posts.find(p => p.id === postId);
                 if (post) {
                     const m = post.chatMessages.find(m => m.id === msgId);
@@ -2799,7 +2893,7 @@
             document.getElementById("friendsCount").textContent = friendsList.length;
         }
 
-        // ===================== NAVIGATION (other views) =====================
+        // ===================== NAVIGATION =====================
         function showGames() {
             document.getElementById("gamesView").style.display = "block";
             document.getElementById("profileView").classList.remove("active");
@@ -2813,6 +2907,7 @@
             document.getElementById("friendsView").classList.remove("active");
             document.getElementById("postsView").style.display = "none";
             renderProfile();
+            closeUserDropdown();
         }
 
         function showFriends() {
@@ -2839,7 +2934,6 @@
             document.getElementById("profileSaves").textContent = totalSaves;
             document.getElementById("profileFriends").textContent = friendsList.length;
 
-            // Completed
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
             if (!myCompletions.length) { grid.innerHTML =
@@ -2864,7 +2958,6 @@
                 });
             }
 
-            // Playing
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
             if (!myPlaying.length) { playingGrid.innerHTML =
@@ -2889,7 +2982,6 @@
                 });
             }
 
-            // Saves
             const savesList = document.getElementById("profileSavesList");
             const allSaves = [];
             Object.keys(mySaves).forEach(gameId => {
@@ -3184,12 +3276,10 @@
                 friendSaves[gid].push(data);
                 totalFriendSaves++; });
 
-            // Load friend's posts
             const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
             friendPosts = [];
             postSnap.docs.forEach(d => { friendPosts.push({ id: d.id, ...d.data() }); });
 
-            // Avatar
             const avatar = document.getElementById("friendProfileAvatar");
             if (profile.photoData) {
                 avatar.style.backgroundImage = `url(${profile.photoData})`;
@@ -3207,9 +3297,7 @@
             document.getElementById("friendCompleted").textContent = friendCompletions.length;
             document.getElementById("friendPlaying").textContent = friendPlaying.length;
             document.getElementById("friendSavesCount").textContent = totalFriendSaves;
-            // No progress ring
 
-            // Social links
             const socialDiv = document.getElementById("friendSocialLinks");
             socialDiv.innerHTML = "";
             if (profile.discord) socialDiv.innerHTML +=
@@ -3219,7 +3307,6 @@
             if (!profile.discord && !profile.reddit) socialDiv.innerHTML =
                 '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
 
-            // Friend's Posts
             const postsSection = document.getElementById("friendPostsSection");
             const postsList = document.getElementById("friendPostsList");
             if (friendPosts.length) {
@@ -3238,7 +3325,6 @@
                 postsSection.style.display = "none";
             }
 
-            // Completed
             const grid = document.getElementById("friendCompletedGrid");
             grid.innerHTML = "";
             if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else {
@@ -3262,7 +3348,6 @@
                 });
             }
 
-            // Playing
             const playingGrid = document.getElementById("friendPlayingGrid");
             playingGrid.innerHTML = "";
             if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else {
@@ -3286,7 +3371,6 @@
                 });
             }
 
-            // Saves
             const savesContainer = document.getElementById("friendSavesContainer");
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => {
