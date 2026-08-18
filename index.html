@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Game Vault Social</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
+    </script>
     <style>
         /* ========== RESET & VARIABLES ========== */
         :root {
@@ -23,7 +26,11 @@
             --warning: #f59e0b;
             --info: #3b82f6;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
@@ -55,8 +62,16 @@
             margin-bottom: 1rem;
             border-left: 3px solid var(--primary);
         }
-        .setup-step h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
-        .setup-step p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem; }
+        .setup-step h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .setup-step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
         .code-block {
             background: #0a0a0f;
             padding: 1rem;
@@ -80,9 +95,12 @@
             font-size: 0.85rem;
             margin-top: 0.5rem;
         }
-        .config-input:focus { outline: none; border-color: var(--primary); }
+        .config-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
-        /* ========== HEADER ========== */
+        /* ========== HEADER & NAV ========== */
         header {
             background: rgba(19, 19, 31, 0.95);
             backdrop-filter: blur(10px);
@@ -105,10 +123,117 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .nav-buttons { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        /* Unified button style for nav */
+        .nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.625rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        .nav-btn:active {
+            transform: translateY(0);
+        }
 
-        /* ===== User dropdown ===== */
-        .user-dropdown { position: relative; display: inline-block; }
+        /* General button styles */
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.625rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #1e1e2e;
+            border: 1px solid #2d2d44;
+        }
+        .btn-secondary:hover {
+            background: #2d2d44;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+        .btn-success:hover {
+            background: #34d399;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+        .btn-danger:hover {
+            background: #f87171;
+        }
+        .btn-small {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        .btn-warning {
+            background: var(--warning);
+        }
+        .btn-warning:hover {
+            background: #fbbf24;
+        }
+
+        /* File Input Styling (Green & Animated) */
+        .btn-file {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.625rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        .btn-file:hover {
+            background: #34d399;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
         .user-dropdown-btn {
             display: flex;
             align-items: center;
@@ -124,415 +249,1135 @@
             font-size: 0.9rem;
             font-weight: 600;
         }
-        .user-dropdown-btn:hover { border-color: var(--primary); }
-        .user-dropdown-btn .user-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 0.85rem; color: white;
-            background-size: cover !important; background-position: center !important;
+        .user-dropdown-btn:hover {
+            border-color: var(--primary);
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: white;
+            background-size: cover !important;
+            background-position: center !important;
             flex-shrink: 0;
         }
         .user-dropdown-menu {
-            display: none; position: absolute; right: 0; top: calc(100% + 8px);
-            background: var(--surface); border: 1px solid #2d2d44;
-            border-radius: 0.75rem; min-width: 160px; padding: 0.4rem 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 200;
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            border-radius: 0.75rem;
+            min-width: 160px;
+            padding: 0.4rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 200;
         }
-        .user-dropdown-menu.show { display: block; }
+        .user-dropdown-menu.show {
+            display: block;
+        }
         .user-dropdown-menu a {
-            display: block; padding: 0.6rem 1.2rem; color: var(--text);
-            text-decoration: none; transition: background 0.15s; cursor: pointer; font-size: 0.9rem;
+            display: block;
+            padding: 0.6rem 1.2rem;
+            color: var(--text);
+            text-decoration: none;
+            transition: background 0.15s;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
-        .user-dropdown-menu a:hover { background: #2d2d44; }
-        .user-dropdown-menu a.danger { color: var(--danger); }
-        .user-dropdown-menu a.danger:hover { background: rgba(239, 68, 68, 0.15); }
-
-        /* ========== BUTTONS ========== */
-        button {
-            background: var(--primary); color: white; border: none;
-            padding: 0.6rem 1.25rem; border-radius: 0.625rem; cursor: pointer;
-            font-size: 0.9rem; font-weight: 600; transition: all 0.2s; font-family: inherit;
+        .user-dropdown-menu a:hover {
+            background: #2d2d44;
         }
-        button:hover {
-            background: var(--primary-hover); transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        .user-dropdown-menu a.danger {
+            color: var(--danger);
         }
-        button:active { transform: translateY(0); }
-        .btn-secondary { background: #1e1e2e; border: 1px solid #2d2d44; }
-        .btn-secondary:hover { background: #2d2d44; box-shadow: none; }
-        .btn-success { background: var(--success); }
-        .btn-success:hover { background: #34d399; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
-        .btn-danger { background: var(--danger); }
-        .btn-danger:hover { background: #f87171; }
-        .btn-small { padding: 0.35rem 0.75rem; font-size: 0.75rem; }
-        .btn-warning { background: var(--warning); }
-        .btn-warning:hover { background: #fbbf24; }
+        .user-dropdown-menu a.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
 
         /* Stats Bar */
         .stats-bar {
             background: linear-gradient(90deg, rgba(19, 19, 31, 0.8), rgba(30, 30, 47, 0.8));
-            padding: 1.25rem 2rem; display: flex; gap: 2.5rem;
-            border-bottom: 1px solid #1e1e2e; flex-wrap: wrap;
+            padding: 1.25rem 2rem;
+            display: flex;
+            gap: 2.5rem;
+            border-bottom: 1px solid #1e1e2e;
+            flex-wrap: wrap;
         }
-        .stat { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--text-muted); }
-        .stat-icon { font-size: 1.25rem; }
-        .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--text); }
-        .stat.success .stat-value { color: var(--success); }
-        .stat.accent .stat-value { color: var(--accent); }
-        .stat.warning .stat-value { color: var(--warning); }
-        .stat.playing .stat-value { color: var(--info); }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .stat-icon {
+            font-size: 1.25rem;
+        }
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .stat.success .stat-value {
+            color: var(--success);
+        }
+        .stat.accent .stat-value {
+            color: var(--accent);
+        }
+        .stat.warning .stat-value {
+            color: var(--warning);
+        }
+        .stat.playing .stat-value {
+            color: var(--info);
+        }
 
         /* Search */
-        .search-container { padding: 1.5rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-        .search-container input[type="text"] { flex: 1; min-width: 200px; }
-        input[type="text"], input[type="email"], input[type="password"], input[type="color"], textarea, select {
-            background: var(--surface); border: 1px solid #2d2d44; color: var(--text);
-            padding: 0.75rem 1rem; border-radius: 0.625rem; width: 100%;
-            font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s;
+        .search-container {
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        input:focus, textarea:focus, select:focus {
-            outline: none; border-color: var(--primary);
+        .search-container input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="color"],
+        textarea,
+        select {
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            border-radius: 0.625rem;
+            width: 100%;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
 
         /* Games Grid */
         .games-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 1.25rem; padding: 0 2rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 1.25rem;
+            padding: 0 2rem 2rem;
         }
         .game-card {
-            background: var(--surface); border-radius: 0.875rem; overflow: hidden;
-            cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent; position: relative;
+            background: var(--surface);
+            border-radius: 0.875rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
         }
-        .game-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15); }
-        .game-card.completed { border-color: var(--success); }
-        .game-card.playing { border-color: var(--info); }
-        .game-card.lfg { border-color: var(--warning); }
+        .game-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+        }
+        .game-card.completed {
+            border-color: var(--success);
+        }
+        .game-card.playing {
+            border-color: var(--info);
+        }
+        .game-card.lfg {
+            border-color: var(--warning);
+        }
         .game-card.completed::after {
-            content: '✓'; position: absolute; top: 10px; right: 10px;
-            background: var(--success); width: 28px; height: 28px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 14px;
-            font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5;
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--success);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
         }
         .game-card.playing::after {
-            content: '▶'; position: absolute; top: 10px; right: 10px;
-            background: var(--info); width: 28px; height: 28px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 14px;
-            font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5;
+            content: '▶';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--info);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
         }
         .game-card.lfg::after {
-            content: '👥'; position: absolute; top: 10px; right: 10px;
-            background: var(--warning); width: 28px; height: 28px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 14px;
-            font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5;
+            content: '👥';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--warning);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
         }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
         .cover {
-            width: 100%; aspect-ratio: 3/4; display: flex; align-items: center;
-            justify-content: center; font-size: 2.75rem; font-weight: 900;
-            position: relative; overflow: hidden;
+            width: 100%;
+            aspect-ratio: 3/4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.75rem;
+            font-weight: 900;
+            position: relative;
+            overflow: hidden;
         }
-        .cover::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%); }
-        .cover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); }
-        .game-info { padding: 0.875rem; position: relative; z-index: 1; }
-        .game-title { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .game-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 500; }
-        .game-status-badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 700; margin-top: 0.25rem; }
+        .cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.03) 100%);
+        }
+        .cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+        }
+        .game-info {
+            padding: 0.875rem;
+            position: relative;
+            z-index: 1;
+        }
+        .game-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .game-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+        .game-status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
 
         /* Modals */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-            display: none; align-items: center; justify-content: center; z-index: 200;
-            padding: 2rem; opacity: 0; transition: opacity 0.3s ease;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
         .modal {
-            background: var(--surface); border-radius: 1rem; max-width: 700px; width: 100%;
-            max-height: 90vh; overflow-y: auto; border: 1px solid #2d2d44;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: scale(0.95);
+            background: var(--surface);
+            border-radius: 1rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #2d2d44;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
         .modal-header {
-            padding: 1.25rem 1.5rem; border-bottom: 1px solid #1e1e2e;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; background: var(--surface); z-index: 10;
-            border-radius: 1rem 1rem 0 0; flex-wrap: wrap; gap: 0.5rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #1e1e2e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 10;
+            border-radius: 1rem 1rem 0 0;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
-        .modal-body { padding: 1.5rem; }
+        .modal-body {
+            padding: 1.5rem;
+        }
         .close-btn {
-            background: none; border: none; color: var(--text-muted); font-size: 1.75rem;
-            cursor: pointer; padding: 0; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 0.5rem; transition: all 0.2s; line-height: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.75rem;
+            cursor: pointer;
+            padding: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            line-height: 1;
         }
-        .close-btn:hover { background: #2d2d44; color: var(--text); }
+        .close-btn:hover {
+            background: #2d2d44;
+            color: var(--text);
+        }
 
         /* Auth */
-        .auth-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .auth-tab {
-            flex: 1; padding: 0.75rem; background: #1e1e2e; border: 1px solid #2d2d44;
-            color: var(--text-muted); border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s;
+        .auth-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
-        .auth-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .auth-form { display: flex; flex-direction: column; gap: 1rem; }
-        .auth-form button { margin-top: 0.5rem; }
-        .auth-error { color: var(--danger); font-size: 0.85rem; display: none; }
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: #1e1e2e;
+            border: 1px solid #2d2d44;
+            color: var(--text-muted);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .auth-form button {
+            margin-top: 0.5rem;
+        }
+        .auth-error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            display: none;
+        }
 
         /* Checkbox Labels */
         .checkbox-label {
-            display: flex; align-items: center; gap: 0.625rem; cursor: pointer;
-            padding: 0.75rem 1.25rem; background: #1e1e2e; border-radius: 0.625rem;
-            user-select: none; border: 2px solid transparent; transition: all 0.2s;
-            font-weight: 600; font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            cursor: pointer;
+            padding: 0.75rem 1.25rem;
+            background: #1e1e2e;
+            border-radius: 0.625rem;
+            user-select: none;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
-        .checkbox-label:hover { background: #2d2d44; }
-        .checkbox-label input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
-        .checkbox-label.checked { background: rgba(16,185,129,0.1); border-color: var(--success); color: var(--success); }
-        .checkbox-label.playing-checked { background: rgba(59,130,246,0.1); border-color: var(--info); color: var(--info); }
-        .checkbox-label.lfg-checked { background: rgba(245,158,11,0.1); border-color: var(--warning); color: var(--warning); }
+        .checkbox-label:hover {
+            background: #2d2d44;
+        }
+        .checkbox-label input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+        .checkbox-label.checked {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+        .checkbox-label.playing-checked {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--info);
+            color: var(--info);
+        }
+        .checkbox-label.lfg-checked {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
 
         /* Upload */
         .upload-area {
-            border: 2px dashed #2d2d44; border-radius: 0.75rem; padding: 2rem;
-            text-align: center; margin-top: 1rem; transition: all 0.2s; cursor: pointer;
+            border: 2px dashed #2d2d44;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        .upload-area:hover { border-color: var(--primary); background: rgba(139,92,246,0.03); }
-        .upload-area.dragover { border-color: var(--primary); background: rgba(139,92,246,0.08); transform: scale(1.01); }
-        .upload-area p { color: var(--text-muted); margin-bottom: 0.75rem; }
-        .upload-area strong { color: var(--text); }
-        .saves-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.03);
+        }
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.08);
+            transform: scale(1.01);
+        }
+        .upload-area p {
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        .upload-area strong {
+            color: var(--text);
+        }
+        .saves-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
         .save-item {
-            background: #1e1e2e; padding: 0.875rem; border-radius: 0.625rem;
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #2d2d44; transition: all 0.2s;
+            background: #1e1e2e;
+            padding: 0.875rem;
+            border-radius: 0.625rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #2d2d44;
+            transition: all 0.2s;
         }
-        .save-item:hover { border-color: var(--primary); background: #252540; }
-        .save-name { font-weight: 700; font-size: 0.9rem; }
-        .save-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .save-item:hover {
+            border-color: var(--primary);
+            background: #252540;
+        }
+        .save-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .save-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
 
         /* Profile */
-        .profile-view { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
-        .profile-view.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .profile-view {
+            display: none;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .profile-view.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         .profile-header {
-            display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem;
-            padding: 1.5rem; background: var(--surface); border-radius: 1rem;
-            border: 1px solid #1e1e2e; flex-wrap: wrap;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: var(--surface);
+            border-radius: 1rem;
+            border: 1px solid #1e1e2e;
+            flex-wrap: wrap;
         }
         .avatar {
-            width: 90px; height: 90px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 2.25rem;
-            font-weight: 900; color: white; flex-shrink: 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            background-size: cover !important; background-position: center !important;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.25rem;
+            font-weight: 900;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background-size: cover !important;
+            background-position: center !important;
         }
-        .profile-info h2 { font-size: 1.75rem; margin-bottom: 0.25rem; }
-        .profile-info p { color: var(--text-muted); font-size: 0.95rem; }
-        .profile-stats { display: flex; gap: 2rem; margin-top: 0.75rem; flex-wrap: wrap; }
-        .profile-stat { text-align: center; }
-        .profile-stat-value { font-size: 1.5rem; font-weight: 800; color: var(--accent); display: block; }
-        .profile-stat-label { font-size: 0.8rem; color: var(--text-muted); }
-        .section-title { font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-        .profile-games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+        .profile-info h2 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+        }
+        .profile-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .profile-stat {
+            text-align: center;
+        }
+        .profile-stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            display: block;
+        }
+        .profile-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .profile-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
         .empty-state {
-            color: var(--text-muted); padding: 2rem; text-align: center;
-            background: var(--surface); border-radius: 0.75rem; border: 1px dashed #2d2d44; grid-column: 1 / -1;
+            color: var(--text-muted);
+            padding: 2rem;
+            text-align: center;
+            background: var(--surface);
+            border-radius: 0.75rem;
+            border: 1px dashed #2d2d44;
+            grid-column: 1 / -1;
         }
 
         /* Friends */
-        .friends-view { display: none; padding: 2rem; max-width: 1000px; margin: 0 auto; }
-        .friends-view.active { display: block; animation: fadeIn 0.4s ease; }
-        .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .friends-view {
+            display: none;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .friends-view.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        .friends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
         .friend-card {
-            background: var(--surface); border-radius: 0.875rem; padding: 1.25rem;
-            border: 1px solid #1e1e2e; display: flex; align-items: center; gap: 1rem;
-            cursor: pointer; transition: all 0.2s;
+            background: var(--surface);
+            border-radius: 0.875rem;
+            padding: 1.25rem;
+            border: 1px solid #1e1e2e;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .friend-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .friend-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
         .friend-avatar {
-            width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; color: white; font-size: 1.1rem;
-            background-size: cover !important; background-position: center !important;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 1.1rem;
+            background-size: cover !important;
+            background-position: center !important;
         }
-        .friend-info { flex: 1; }
-        .friend-name { font-weight: 700; font-size: 1rem; }
-        .friend-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
-        .request-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-        .search-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .friend-info {
+            flex: 1;
+        }
+        .friend-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .friend-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .request-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .search-results {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
         .user-result {
-            background: #1e1e2e; padding: 1rem; border-radius: 0.625rem;
-            display: flex; align-items: center; gap: 1rem; border: 1px solid #2d2d44;
+            background: #1e1e2e;
+            padding: 1rem;
+            border-radius: 0.625rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #2d2d44;
         }
         .user-result-avatar {
-            width: 44px; height: 44px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; color: white; font-size: 1rem; flex-shrink: 0;
-            background-size: cover !important; background-position: center !important;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+            background-size: cover !important;
+            background-position: center !important;
         }
-        .user-result-info { flex: 1; }
-        .user-result-name { font-weight: 700; }
-        .user-result-email { font-size: 0.8rem; color: var(--text-muted); }
+        .user-result-info {
+            flex: 1;
+        }
+        .user-result-name {
+            font-weight: 700;
+        }
+        .user-result-email {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
 
         .tabs {
-            display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid #1e1e2e;
-            padding-bottom: 0.5rem; flex-wrap: wrap;
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #1e1e2e;
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
         }
         .tab {
-            padding: 0.5rem 1rem; background: none; border: none; color: var(--text-muted);
-            font-weight: 600; cursor: pointer; border-radius: 0.5rem; transition: all 0.2s;
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
         }
-        .tab:hover { color: var(--text); background: #1e1e2e; }
-        .tab.active { color: var(--primary); background: rgba(139,92,246,0.1); }
+        .tab:hover {
+            color: var(--text);
+            background: #1e1e2e;
+        }
+        .tab.active {
+            color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
         .badge {
-            display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px;
-            font-size: 0.75rem; font-weight: 700; background: rgba(139,92,246,0.15);
-            color: var(--primary); border: 1px solid rgba(139,92,246,0.3);
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(139, 92, 246, 0.3);
         }
-        .badge-success { background: rgba(16,185,129,0.15); color: var(--success); border-color: rgba(16,185,129,0.3); }
-        .badge-warning { background: rgba(245,158,11,0.15); color: var(--warning); border-color: rgba(245,158,11,0.3); }
-        .badge-info { background: rgba(59,130,246,0.15); color: var(--info); border-color: rgba(59,130,246,0.3); }
-        .badge-tip { background: rgba(16,185,129,0.15); color: var(--success); border-color: rgba(16,185,129,0.3); }
-        .badge-help { background: rgba(245,158,11,0.15); color: var(--warning); border-color: rgba(245,158,11,0.3); }
-        .badge-rate { background: rgba(236,72,153,0.15); color: #ec4899; border-color: rgba(236,72,153,0.3); }
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .badge-info {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .badge-tip {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .badge-help {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .badge-rate {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+            border-color: rgba(236, 72, 153, 0.3);
+        }
 
         .toast {
-            position: fixed; bottom: 2rem; right: 2rem; background: var(--surface);
-            border: 1px solid var(--success); color: var(--success); padding: 1rem 1.5rem;
-            border-radius: 0.75rem; transform: translateX(150%);
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            transform: translateX(150%);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 300; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: flex; align-items: center; gap: 0.5rem;
+            z-index: 300;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .toast.show { transform: translateX(0); }
-        .toast.error { border-color: var(--danger); color: var(--danger); }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.error {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
         .loading {
-            display: inline-block; width: 20px; height: 20px;
-            border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--primary);
-            border-radius: 50%; animation: spin 0.8s linear infinite;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .friend-saves-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #1e1e2e; }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .friend-saves-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e1e2e;
+        }
         .friend-save-row {
-            background: #1e1e2e; padding: 0.75rem 1rem; border-radius: 0.5rem;
-            display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #2d2d44;
+            background: #1e1e2e;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #2d2d44;
         }
         .friend-save-avatar {
-            width: 28px; height: 28px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 0.7rem;
-            font-weight: 800; color: white; flex-shrink: 0;
-            background-size: cover !important; background-position: center !important;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            background-size: cover !important;
+            background-position: center !important;
         }
 
         /* ===== POSTS ===== */
-        .posts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; margin-top: 1rem; }
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
         .post-card {
-            background: var(--surface); border-radius: 0.875rem; padding: 1.25rem;
-            border: 1px solid #1e1e2e; transition: all 0.2s; display: flex; flex-direction: column;
+            background: var(--surface);
+            border-radius: 0.875rem;
+            padding: 1.25rem;
+            border: 1px solid #1e1e2e;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
         }
-        .post-card:hover { border-color: var(--primary); }
-        .post-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .post-card:hover {
+            border-color: var(--primary);
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
         .post-avatar {
-            width: 40px; height: 40px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-weight: 800;
-            color: white; font-size: 0.85rem; flex-shrink: 0;
-            background-size: cover !important; background-position: center !important;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            background-size: cover !important;
+            background-position: center !important;
         }
-        .post-user { font-weight: 700; font-size: 0.95rem; }
-        .post-game { color: var(--accent); font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-        .post-message { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem; flex: 1; word-break: break-word; }
-        .post-meta { font-size: 0.75rem; color: var(--text-muted); }
-        .post-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; align-items: center; }
-        .post-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 700; }
-        .tag-lfg { background: rgba(59,130,246,0.2); color: var(--info); }
-        .tag-player { background: rgba(16,185,129,0.2); color: var(--success); }
-        .tag-tip { background: rgba(245,158,11,0.2); color: var(--warning); }
-        .tag-help { background: rgba(239,68,68,0.2); color: var(--danger); }
-        .tag-rate { background: rgba(236,72,153,0.2); color: #ec4899; }
+        .post-user {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        /* Title above game */
+        .post-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+        .post-game {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 1.2rem;
+            /* Bigger game title */
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .post-message {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+            word-break: break-word;
+        }
+        .post-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .post-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .post-tag {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .tag-lfg {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+        }
+        .tag-player {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        .tag-tip {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+        .tag-help {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        .tag-rate {
+            background: rgba(236, 72, 153, 0.2);
+            color: #ec4899;
+        }
 
-        /* ===== CHAT (collapsible) ===== */
+        /* ===== CHAT ===== */
         .post-chat-toggle {
-            cursor: pointer; display: inline-block; margin-top: 0.3rem;
-            color: var(--text-muted); font-size: 0.8rem; font-weight: 600; transition: color 0.2s;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 0.3rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: color 0.2s;
         }
-        .post-chat-toggle:hover { color: var(--text); }
-        .post-chat-toggle .arrow { display: inline-block; transition: transform 0.2s; }
-        .post-chat-toggle .arrow.open { transform: rotate(180deg); }
+        .post-chat-toggle:hover {
+            color: var(--text);
+        }
+        .post-chat-toggle .arrow {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .post-chat-toggle .arrow.open {
+            transform: rotate(180deg);
+        }
         .post-chat-container {
-            margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #1e1e2e; display: none;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #1e1e2e;
+            display: none;
         }
-        .post-chat-container.open { display: block; }
-        .post-chat-title { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .post-chat-container.open {
+            display: block;
+        }
+        .post-chat-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
         .chat-message {
-            display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.4rem 0.2rem;
-            border-bottom: 1px solid #1a1a2e; cursor: context-menu;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.4rem 0.2rem;
+            border-bottom: 1px solid #1a1a2e;
+            cursor: context-menu;
         }
-        .chat-message:last-child { border-bottom: none; }
+        .chat-message:last-child {
+            border-bottom: none;
+        }
         .chat-msg-avatar {
-            width: 28px; height: 28px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-weight: 800;
-            color: white; font-size: 0.6rem; flex-shrink: 0;
-            background-size: cover !important; background-position: center !important;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 0.6rem;
+            flex-shrink: 0;
+            background-size: cover !important;
+            background-position: center !important;
         }
-        .chat-msg-body { flex: 1; min-width: 0; }
-        .chat-msg-user { font-weight: 600; font-size: 0.8rem; display: inline; margin-right: 0.4rem; }
-        .chat-msg-time { font-size: 0.6rem; color: #475569; display: inline; }
-        .chat-msg-text { font-size: 0.85rem; color: var(--text-muted); word-break: break-word; margin-top: 0.1rem; }
-        .chat-input-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-        .chat-input-row input { flex: 1; }
+        .chat-msg-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-msg-user {
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline;
+            margin-right: 0.4rem;
+        }
+        .chat-msg-time {
+            font-size: 0.6rem;
+            color: #475569;
+            display: inline;
+        }
+        .chat-msg-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            word-break: break-word;
+            margin-top: 0.1rem;
+        }
+        .chat-input-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .chat-input-row input {
+            flex: 1;
+        }
 
         /* Context Menu */
         .context-menu {
-            position: fixed; background: var(--surface); border: 1px solid #2d2d44;
-            border-radius: 0.5rem; padding: 0.3rem 0; min-width: 140px; z-index: 500;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none;
+            position: fixed;
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0;
+            min-width: 140px;
+            z-index: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
         }
-        .context-menu-item { padding: 0.4rem 1rem; cursor: pointer; transition: background 0.15s; font-size: 0.85rem; color: var(--text); }
-        .context-menu-item:hover { background: #2d2d44; }
-        .context-menu-item.danger { color: var(--danger); }
-        .context-menu-item.danger:hover { background: rgba(239,68,68,0.2); }
+        .context-menu-item {
+            padding: 0.4rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        .context-menu-item:hover {
+            background: #2d2d44;
+        }
+        .context-menu-item.danger {
+            color: var(--danger);
+        }
+        .context-menu-item.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
 
         /* Settings */
         .settings-section {
-            background: var(--surface); border-radius: 0.875rem; padding: 1.5rem;
-            border: 1px solid #1e1e2e; margin-bottom: 2rem;
+            background: var(--surface);
+            border-radius: 0.875rem;
+            padding: 1.5rem;
+            border: 1px solid #1e1e2e;
+            margin-bottom: 2rem;
         }
-        .settings-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
-        .settings-row label { min-width: 120px; color: var(--text-muted); }
-        .settings-row input, .settings-row select { flex: 1; min-width: 150px; }
+        .settings-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .settings-row label {
+            min-width: 120px;
+            color: var(--text-muted);
+        }
+        .settings-row input,
+        .settings-row select {
+            flex: 1;
+            min-width: 150px;
+        }
 
         /* Game Combobox */
-        .game-combobox { position: relative; }
-        .game-combobox input { width: 100%; }
-        .game-combobox .dropdown-list {
-            position: absolute; top: 100%; left: 0; right: 0; background: var(--surface);
-            border: 1px solid #2d2d44; border-radius: 0 0 0.625rem 0.625rem;
-            max-height: 200px; overflow-y: auto; z-index: 50; display: none;
+        .game-combobox {
+            position: relative;
         }
-        .game-combobox .dropdown-list.show { display: block; }
-        .game-combobox .dropdown-item { padding: 0.6rem 1rem; cursor: pointer; transition: background 0.15s; }
-        .game-combobox .dropdown-item:hover { background: #2d2d44; }
-        .game-combobox .dropdown-item.selected { background: var(--primary); }
+        .game-combobox input {
+            width: 100%;
+        }
+        .game-combobox .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            border-radius: 0 0 0.625rem 0.625rem;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+        }
+        .game-combobox .dropdown-list.show {
+            display: block;
+        }
+        .game-combobox .dropdown-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .game-combobox .dropdown-item:hover {
+            background: #2d2d44;
+        }
+        .game-combobox .dropdown-item.selected {
+            background: var(--primary);
+        }
 
         @media (max-width: 640px) {
-            .games-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); padding: 0 1rem 1rem; }
-            .stats-bar { padding: 1rem; gap: 1.25rem; }
-            .search-container { padding: 1rem; }
-            header { padding: 1rem; }
-            .profile-header { flex-direction: column; text-align: center; }
-            .friends-grid { grid-template-columns: 1fr; }
-            .posts-grid { grid-template-columns: 1fr; }
-            .modal { max-width: 100%; margin: 1rem; }
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                padding: 0 1rem 1rem;
+            }
+            .stats-bar {
+                padding: 1rem;
+                gap: 1.25rem;
+            }
+            .search-container {
+                padding: 1rem;
+            }
+            header {
+                padding: 1rem;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .friends-grid {
+                grid-template-columns: 1fr;
+            }
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal {
+                max-width: 100%;
+                margin: 1rem;
+            }
         }
     </style>
-  <meta property="og:image" content="https://bolt.new/static/og_default.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
 </head>
 <body>
 
@@ -556,13 +1401,13 @@
         </div>
         <div class="setup-step">
             <h3>4. Create Firestore Database</h3>
-            <p>Firestore Database -> Create database -> Start in production mode -> Enable</p>
+            <p>Firestore Database -> Create database -> Start in test mode -> Enable</p>
         </div>
         <div class="setup-step">
             <h3>5. Paste Your Firebase Config</h3>
             <p><strong>Easy way:</strong> Copy the entire config block from Firebase and paste it here.</p>
             <textarea id="configPaste" class="config-input" rows="10" placeholder="Paste the entire firebaseConfig object here..."></textarea>
-            <button onclick="autoParseConfig()" style="width:100%;margin-bottom:1.5rem;">Auto-Fill</button>
+            <button onclick="autoParseConfig()" style="width:100%;margin-bottom:1.5rem;">🪄 Auto-Fill</button>
             <div style="display:flex;flex-direction:column;gap:0.6rem;">
                 <div style="display:flex;gap:0.5rem;align-items:center;">
                     <label style="width:140px;font-size:0.85rem;color:var(--text-muted);flex-shrink:0;">apiKey:</label>
@@ -602,41 +1447,31 @@
             <button onclick="resetConfig()" class="btn-secondary" style="width:100%;margin-top:0.5rem;">Clear Saved Config</button>
         </div>
         <div class="setup-step">
-            <h3>6. Set Firestore Rules (IMPORTANT)</h3>
-            <p>Go to Firebase Console -> Firestore Database -> Rules tab, then paste these rules and click <strong>Publish</strong>:</p>
-            <div class="code-block">rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // Users: anyone signed in can read profiles; only the owner can write their own
-    match /users/{uid} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
-    }
-
-    // Subcollections under each user (completions, gameStatus, saveFiles, friends, requests)
-    // - Owner can read + write their own
-    // - Signed-in users can READ another user's subcollections (to view profiles, saves, status)
-    match /users/{uid}/{document=**} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
-    }
-
-    // Posts: anyone signed in can read; anyone signed in can create;
-    // updates allowed for chat messages by any signed-in user, other fields only by author
-    match /posts/{postId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && (
-        request.auth.uid == resource.data.userId ||
-        request.resource.data.diff(resource.data).affectedKeys.hasOnly(['chatMessages', 'chatCount'])
-      );
-      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
-    }
-  }
-}</div>
-            <p style="margin-top:0.75rem;color:var(--warning);font-size:0.85rem;">
-                Without these rules, you'll get "Missing or insufficient permissions" errors when sending messages from other devices.
+            <h3>6. Set Firestore Rules</h3>
+            <p>Copy and paste these rules into Firebase Console -> Firestore -> Rules:</p>
+            <div class="code-block">
+                rules_version = '2';
+                service cloud.firestore {
+                match /databases/{database}/documents {
+                match /users/{uid} {
+                allow read: if request.auth != null;
+                allow write: if request.auth != null && request.auth.uid == uid;
+                }
+                match /users/{uid}/{document=**} {
+                allow read: if request.auth != null;
+                allow write: if request.auth != null && request.auth.uid == uid;
+                }
+                match /posts/{postId} {
+                allow read: if request.auth != null;
+                allow create: if request.auth != null;
+                allow update: if request.auth != null && request.auth.uid == resource.data.userId;
+                allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+                }
+                }
+                }
+            </div>
+            <p style="color:var(--warning);margin-top:0.75rem;font-weight:600;">
+                IMPORTANT: Click PUBLISH after pasting the rules.
             </p>
         </div>
     </div>
@@ -645,10 +1480,10 @@ service cloud.firestore {
     <div id="authModal" class="modal-overlay" style="display:flex;opacity:1;z-index:300;">
         <div class="modal" style="max-width:420px;" onclick="event.stopPropagation()">
             <div class="modal-header" style="justify-content:center;">
-                <h2 style="font-size:1.25rem;">Game Vault</h2>
+                <h2 style="font-size:1.25rem;">🎮 Game Vault</h2>
             </div>
             <div class="modal-body">
-                <button onclick="showSetupFromAuth()" class="btn-secondary" style="width:100%;margin-bottom:1rem;">Setup Firebase Config</button>
+                <button onclick="showSetupFromAuth()" class="btn-secondary" style="width:100%;margin-bottom:1rem;">⚙️ Setup Firebase Config</button>
                 <div class="auth-tabs">
                     <button class="auth-tab active" onclick="switchAuthTab('login')" id="tabLogin">Login</button>
                     <button class="auth-tab" onclick="switchAuthTab('register')" id="tabRegister">Create Account</button>
@@ -673,31 +1508,33 @@ service cloud.firestore {
     <!-- MAIN APP -->
     <div id="appContainer" style="display:none;">
         <header>
-            <div class="logo">Game Vault</div>
+            <div class="logo">🎮 Game Vault</div>
             <div class="nav-buttons">
-                <button class="btn-secondary" onclick="showGames()">Games</button>
-                <button class="btn-secondary" onclick="showFriends()">Friends</button>
-                <button class="btn-secondary" onclick="showPosts()">Posts</button>
+                <!-- Unified button styles -->
+                <button class="nav-btn" onclick="showGames()">Games</button>
+                <button class="nav-btn" onclick="showFriends()">Friends</button>
+                <button class="nav-btn" onclick="showPosts()">Posts</button>
+                <button class="nav-btn" onclick="showProfile()">Profile</button>
                 <div class="user-dropdown">
                     <div class="user-dropdown-btn" id="userDropdownBtn">
                         <div class="user-avatar" id="headerAvatar">?</div>
                         <span class="user-name" id="headerName">...</span>
-                        <span style="margin-left:0.2rem;font-size:0.7rem;">v</span>
+                        <span style="margin-left:0.2rem;font-size:0.7rem;">▼</span>
                     </div>
                     <div class="user-dropdown-menu" id="userDropdownMenu">
-                        <a onclick="showProfile(); closeUserDropdown();">Profile</a>
-                        <a class="danger" onclick="logout(); closeUserDropdown();">Logout</a>
+                        <a onclick="showProfile(); closeUserDropdown();">👤 Profile</a>
+                        <a class="danger" onclick="logout(); closeUserDropdown();">🚪 Logout</a>
                     </div>
                 </div>
             </div>
         </header>
 
         <div class="stats-bar">
-            <div class="stat"><span class="stat-icon">Game</span><div><div class="stat-value">100</div><div>Total Games</div></div></div>
-            <div class="stat success"><span class="stat-icon">Trophy</span><div><div class="stat-value" id="completedCount">0</div><div>Completed</div></div></div>
-            <div class="stat playing"><span class="stat-icon">Play</span><div><div class="stat-value" id="playingCount">0</div><div>Playing</div></div></div>
-            <div class="stat warning"><span class="stat-icon">Save</span><div><div class="stat-value" id="savesCount">0</div><div>Save Files</div></div></div>
-            <div class="stat"><span class="stat-icon">Users</span><div><div class="stat-value" id="friendsCount">0</div><div>Friends</div></div></div>
+            <div class="stat"><span class="stat-icon">🎮</span><div><div class="stat-value">100</div><div>Total Games</div></div></div>
+            <div class="stat success"><span class="stat-icon">🏆</span><div><div class="stat-value" id="completedCount">0</div><div>Completed</div></div></div>
+            <div class="stat playing"><span class="stat-icon">▶</span><div><div class="stat-value" id="playingCount">0</div><div>Playing</div></div></div>
+            <div class="stat warning"><span class="stat-icon">💾</span><div><div class="stat-value" id="savesCount">0</div><div>Save Files</div></div></div>
+            <div class="stat"><span class="stat-icon">👥</span><div><div class="stat-value" id="friendsCount">0</div><div>Friends</div></div></div>
         </div>
 
         <!-- GAMES VIEW -->
@@ -713,18 +1550,18 @@ service cloud.firestore {
         <!-- POSTS VIEW -->
         <div id="postsView" style="display:none;padding:2rem;max-width:1200px;margin:0 auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-                <h2 style="font-size:1.5rem;">Community Posts</h2>
+                <h2 style="font-size:1.5rem;">📝 Community Posts</h2>
                 <button onclick="openPostModal()">+ Create Post</button>
             </div>
             <div class="search-container" style="padding:0 0 1rem 0;">
                 <input type="text" id="postSearchInput" placeholder="Search posts by game or user..." oninput="filterPosts()">
                 <select id="postTagFilter" onchange="filterPosts()" style="width:auto;min-width:140px;">
                     <option value="all">All Tags</option>
-                    <option value="lfg">Looking for Group</option>
-                    <option value="player">Looking for Player</option>
-                    <option value="tip">Tip</option>
-                    <option value="help">Help</option>
-                    <option value="rate">Rate</option>
+                    <option value="lfg">👥 Looking for Group</option>
+                    <option value="player">🔍 Looking for Player</option>
+                    <option value="tip">💡 Tip</option>
+                    <option value="help">🆘 Help</option>
+                    <option value="rate">⭐ Rate</option>
                 </select>
             </div>
             <div class="posts-grid" id="postsGrid"></div>
@@ -747,7 +1584,7 @@ service cloud.firestore {
             </div>
 
             <div class="settings-section">
-                <h3 style="margin-bottom:1rem;">Profile Settings</h3>
+                <h3 style="margin-bottom:1rem;">⚙️ Profile Settings</h3>
                 <div class="settings-row">
                     <label>Display Name</label>
                     <input type="text" id="settingsName" placeholder="Enter new name" maxlength="20">
@@ -765,7 +1602,8 @@ service cloud.firestore {
                 </div>
                 <div class="settings-row">
                     <label>Profile Photo</label>
-                    <input type="file" id="settingsPhotoFile" accept="image/*" style="padding:0.3rem;">
+                    <label for="settingsPhotoFile" class="btn-file">📁 Choose Photo</label>
+                    <input type="file" id="settingsPhotoFile" accept="image/*" style="display:none;">
                     <button class="btn-success btn-small" onclick="uploadProfilePhoto()">Upload</button>
                 </div>
                 <div class="settings-row">
@@ -780,18 +1618,18 @@ service cloud.firestore {
                 </div>
             </div>
 
-            <h3 class="section-title">Completed Games</h3>
+            <h3 class="section-title">🏆 Completed Games</h3>
             <div class="profile-games-grid" id="completedGamesGrid"></div>
-            <h3 class="section-title">Games I'm Playing</h3>
+            <h3 class="section-title">▶ Games I'm Playing</h3>
             <div class="profile-games-grid" id="playingGamesGrid"></div>
-            <h3 class="section-title">My Save Files</h3>
+            <h3 class="section-title">💾 My Save Files</h3>
             <div id="profileSavesList"></div>
         </div>
 
         <!-- FRIENDS VIEW -->
         <div class="friends-view" id="friendsView">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-                <h2 style="font-size:1.5rem;">Friends</h2>
+                <h2 style="font-size:1.5rem;">👥 Friends</h2>
                 <button onclick="openSearchModal()">Find Players</button>
             </div>
             <div class="tabs">
@@ -808,7 +1646,7 @@ service cloud.firestore {
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div><h2 id="modalTitle" style="font-size:1.25rem;">Game</h2><span class="badge" id="modalBadge" style="margin-top:0.25rem;">RPG</span></div>
-                <button class="close-btn" onclick="closeGameModal()">x</button>
+                <button class="close-btn" onclick="closeGameModal()">×</button>
             </div>
             <div class="modal-body">
                 <div style="display:flex;gap:1.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
@@ -818,17 +1656,17 @@ service cloud.firestore {
                         <div class="status-buttons" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
                             <label class="checkbox-label" id="completeLabel" style="display:none;">
                                 <input type="checkbox" id="completeCheckbox" onchange="toggleComplete()">
-                                <span>Completed</span>
+                                <span>✅ Completed</span>
                             </label>
-                            <label class="checkbox-label" id="playingLabel"><input type="checkbox" id="playingCheckbox" onchange="togglePlaying()"><span>Playing</span></label>
-                            <label class="checkbox-label" id="lfgLabel"><input type="checkbox" id="lfgCheckbox" onchange="toggleLFG()"><span>Looking for Group</span></label>
+                            <label class="checkbox-label" id="playingLabel"><input type="checkbox" id="playingCheckbox" onchange="togglePlaying()"><span>▶ Playing</span></label>
+                            <label class="checkbox-label" id="lfgLabel"><input type="checkbox" id="lfgCheckbox" onchange="toggleLFG()"><span>👥 Looking for Group</span></label>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <h4 style="margin-bottom:0.5rem;">My Save Files</h4>
+                    <h4 style="margin-bottom:0.5rem;">💾 My Save Files</h4>
                     <div class="upload-area" id="uploadArea" ondrop="dropSave(event)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" onclick="document.getElementById('fileInput').click()">
-                        <p style="font-size:2rem;margin-bottom:0.5rem;">Folder</p>
+                        <p style="font-size:2rem;margin-bottom:0.5rem;">📁</p>
                         <p><strong>Drop save file here</strong> or click to browse</p>
                         <p style="font-size:0.8rem;margin-top:0.5rem;opacity:0.7;">Max 500KB (stored in Firestore)</p>
                         <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(event)">
@@ -845,12 +1683,17 @@ service cloud.firestore {
 
     <!-- POST MODAL -->
     <div class="modal-overlay" id="postModal" onclick="closePostModal(event)">
-        <div class="modal" onclick="event.stopPropagation()" style="max-width:500px;">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width:550px;">
             <div class="modal-header">
                 <h2 style="font-size:1.25rem;" id="postModalTitle">Create Post</h2>
-                <button class="close-btn" onclick="closePostModal()">x</button>
+                <button class="close-btn" onclick="closePostModal()">×</button>
             </div>
             <div class="modal-body">
+                <!-- Title Field -->
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;margin-bottom:0.5rem;color:var(--text-muted);">Title</label>
+                    <input type="text" id="postTitle" placeholder="e.g., Looking for a squad for ranked..." maxlength="100">
+                </div>
                 <div style="margin-bottom:1rem;">
                     <label style="display:block;margin-bottom:0.5rem;color:var(--text-muted);">Game</label>
                     <div class="game-combobox" id="gameCombobox">
@@ -862,16 +1705,16 @@ service cloud.firestore {
                 <div style="margin-bottom:1rem;">
                     <label style="display:block;margin-bottom:0.5rem;color:var(--text-muted);">Tag</label>
                     <select id="postTagSelect" style="width:100%;background:var(--surface);border:1px solid #2d2d44;color:var(--text);padding:0.75rem;border-radius:0.625rem;">
-                        <option value="lfg">Looking for Group</option>
-                        <option value="player">Looking for Player</option>
-                        <option value="tip">Tip</option>
-                        <option value="help">Help</option>
-                        <option value="rate">Rate</option>
+                        <option value="lfg">👥 Looking for Group</option>
+                        <option value="player">🔍 Looking for Player</option>
+                        <option value="tip">💡 Tip</option>
+                        <option value="help">🆘 Help</option>
+                        <option value="rate">⭐ Rate</option>
                     </select>
                 </div>
                 <div style="margin-bottom:1rem;">
                     <label style="display:block;margin-bottom:0.5rem;color:var(--text-muted);">Message</label>
-                    <textarea id="postMessage" rows="3" style="width:100%;background:var(--surface);border:1px solid #2d2d44;color:var(--text);padding:0.75rem;border-radius:0.625rem;font-family:inherit;resize:vertical;" placeholder="What's on your mind?"></textarea>
+                    <textarea id="postMessage" rows="3" style="width:100%;background:var(--surface);border:1px solid #2d2d44;color:var(--text);padding:0.75rem;border-radius:0.625rem;font-family:inherit;resize:vertical;" placeholder="Any extra details..."></textarea>
                 </div>
                 <input type="hidden" id="postEditId" value="">
                 <button onclick="submitPost()" style="width:100%;" id="postSubmitBtn">Create Post</button>
@@ -882,7 +1725,7 @@ service cloud.firestore {
     <!-- SEARCH MODAL -->
     <div class="modal-overlay" id="searchModal" onclick="closeSearchModal(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:500px;">
-            <div class="modal-header"><h2 style="font-size:1.25rem;">Find Players</h2><button class="close-btn" onclick="closeSearchModal()">x</button></div>
+            <div class="modal-header"><h2 style="font-size:1.25rem;">Find Players</h2><button class="close-btn" onclick="closeSearchModal()">×</button></div>
             <div class="modal-body">
                 <input type="text" id="userSearchInput" placeholder="Search by name or email..." oninput="searchUsers()" style="margin-bottom:1rem;">
                 <div id="searchLoading" style="display:none;text-align:center;padding:1rem;"><div class="loading"></div></div>
@@ -894,7 +1737,7 @@ service cloud.firestore {
     <!-- FRIEND PROFILE MODAL -->
     <div class="modal-overlay" id="friendProfileModal" onclick="closeFriendProfile(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:700px;">
-            <div class="modal-header"><h2 style="font-size:1.25rem;">Friend Profile</h2><button class="close-btn" onclick="closeFriendProfile()">x</button></div>
+            <div class="modal-header"><h2 style="font-size:1.25rem;">Friend Profile</h2><button class="close-btn" onclick="closeFriendProfile()">×</button></div>
             <div class="modal-body">
                 <div class="profile-header" style="margin-bottom:1.5rem;">
                     <div class="avatar" id="friendProfileAvatar" style="width:70px;height:70px;font-size:1.75rem;">?</div>
@@ -910,14 +1753,14 @@ service cloud.firestore {
                     </div>
                 </div>
                 <div id="friendPostsSection" style="margin-bottom:1.5rem;padding:1rem;background:#1e1e2e;border-radius:0.75rem;border:1px solid #2d2d44;">
-                    <h4 style="margin-bottom:0.5rem;">Their Posts</h4>
+                    <h4 style="margin-bottom:0.5rem;">📝 Their Posts</h4>
                     <div id="friendPostsList"></div>
                 </div>
-                <h3 class="section-title">Completed</h3>
+                <h3 class="section-title">🏆 Completed</h3>
                 <div class="profile-games-grid" id="friendCompletedGrid"></div>
-                <h3 class="section-title">Playing</h3>
+                <h3 class="section-title">▶ Playing</h3>
                 <div class="profile-games-grid" id="friendPlayingGrid"></div>
-                <h3 class="section-title">Saves</h3>
+                <h3 class="section-title">💾 Saves</h3>
                 <div id="friendSavesContainer"></div>
             </div>
         </div>
@@ -925,8 +1768,8 @@ service cloud.firestore {
 
     <!-- CONTEXT MENU -->
     <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" id="ctxEdit">Edit</div>
-        <div class="context-menu-item danger" id="ctxDelete">Delete</div>
+        <div class="context-menu-item" id="ctxEdit">✏️ Edit</div>
+        <div class="context-menu-item danger" id="ctxDelete">🗑 Delete</div>
     </div>
 
     <!-- TOAST -->
@@ -956,10 +1799,8 @@ service cloud.firestore {
             const paste = document.getElementById("configPaste").value;
             const errorEl = document.getElementById("setupError");
             try {
-                const extract = (k) => {
-                    const m = paste.match(new RegExp(k + '\\s*:\\s*["\']([^"\']+)["\']', 'i'));
-                    return m ? m[1].trim() : "";
-                };
+                const extract = (k) => { const m = paste.match(new RegExp(k + '\\s*:\\s*["\']([^"\']+)["\']', 'i')); return m ? m[1]
+                        .trim() : ""; };
                 const apiKey = extract("apiKey"),
                     authDomain = extract("authDomain"),
                     databaseURL = extract("databaseURL"),
@@ -968,10 +1809,9 @@ service cloud.firestore {
                     messagingSenderId = extract("messagingSenderId"),
                     appId = extract("appId"),
                     measurementId = extract("measurementId");
-                if (!apiKey || !authDomain || !projectId) {
-                    errorEl.textContent = "Could not parse config. Make sure you pasted the entire firebaseConfig object.";
-                    errorEl.style.display = "block"; return;
-                }
+                if (!apiKey || !authDomain || !projectId) { errorEl.textContent =
+                    "Could not parse config. Make sure you pasted the entire firebaseConfig object.";
+                    errorEl.style.display = "block"; return; }
                 document.getElementById("cfgApiKey").value = apiKey;
                 document.getElementById("cfgAuthDomain").value = authDomain;
                 document.getElementById("cfgDatabaseURL").value = databaseURL;
@@ -983,10 +1823,8 @@ service cloud.firestore {
                 errorEl.textContent = "All fields auto-filled! Click 'Save & Launch App' below.";
                 errorEl.style.color = "var(--success)";
                 errorEl.style.display = "block";
-            } catch (e) {
-                errorEl.textContent = "Parse error: " + e.message;
-                errorEl.style.display = "block";
-            }
+            } catch (e) { errorEl.textContent = "Parse error: " + e.message;
+                errorEl.style.display = "block"; }
         }
 
         function saveConfig() {
@@ -999,12 +1837,14 @@ service cloud.firestore {
             const appId = document.getElementById("cfgAppId").value.trim();
             const measurementId = document.getElementById("cfgMeasurementId").value.trim();
             const errorEl = document.getElementById("setupError");
-            if (!apiKey || !authDomain || !databaseURL || !projectId || !storageBucket || !messagingSenderId || !appId || !measurementId) {
+            if (!apiKey || !authDomain || !databaseURL || !projectId || !storageBucket || !messagingSenderId || !appId ||
+                !measurementId) {
                 errorEl.textContent = "Please fill in all 8 fields.";
                 errorEl.style.display = "block";
                 return;
             }
-            localStorage.setItem("gameVault_firebaseConfig", JSON.stringify({ apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId }));
+            localStorage.setItem("gameVault_firebaseConfig", JSON.stringify({ apiKey, authDomain, databaseURL, projectId,
+                    storageBucket, messagingSenderId, appId, measurementId }));
             location.reload();
         }
 
@@ -1013,106 +1853,206 @@ service cloud.firestore {
 
         // ===================== GAME DATA =====================
         const games = [
-            { id: 1, title: "The Witcher 3", genre: "RPG", year: 2015, desc: "Open-world fantasy RPG.", steamId: 292030, multiplayer: false },
-            { id: 2, title: "Red Dead Redemption 2", genre: "Action", year: 2018, desc: "Epic western tale.", steamId: 1174180, multiplayer: false },
-            { id: 3, title: "Elden Ring", genre: "RPG", year: 2022, desc: "Dark fantasy action RPG.", steamId: 1245620, multiplayer: true },
-            { id: 4, title: "God of War", genre: "Action", year: 2018, desc: "Norse mythology adventure.", steamId: 1593500, multiplayer: false },
-            { id: 5, title: "The Last of Us", genre: "Adventure", year: 2013, desc: "Post-apocalyptic survival.", steamId: 1888930, multiplayer: false },
-            { id: 6, title: "Cyberpunk 2077", genre: "RPG", year: 2020, desc: "Open-world futuristic RPG.", steamId: 1091500, multiplayer: false },
-            { id: 7, title: "Breath of the Wild", genre: "Adventure", year: 2017, desc: "Open-air adventure.", steamId: null, multiplayer: false },
-            { id: 8, title: "Super Mario Odyssey", genre: "Platformer", year: 2017, desc: "3D platformer journey.", steamId: null, multiplayer: false },
-            { id: 9, title: "Hollow Knight", genre: "Metroidvania", year: 2017, desc: "Hand-drawn action adventure.", steamId: 367520, multiplayer: false },
-            { id: 10, title: "Hades", genre: "Roguelike", year: 2020, desc: "Rogue-like dungeon crawler.", steamId: 1145360, multiplayer: false },
-            { id: 11, title: "Celeste", genre: "Platformer", year: 2018, desc: "Precision platformer.", steamId: 504230, multiplayer: false },
-            { id: 12, title: "Dark Souls 3", genre: "RPG", year: 2016, desc: "Dark fantasy action RPG.", steamId: 374320, multiplayer: true },
-            { id: 13, title: "Sekiro", genre: "Action", year: 2019, desc: "Samurai combat.", steamId: 814380, multiplayer: false },
-            { id: 14, title: "Bloodborne", genre: "RPG", year: 2015, desc: "Gothic horror action RPG.", steamId: null, multiplayer: true },
-            { id: 15, title: "Horizon Zero Dawn", genre: "RPG", year: 2017, desc: "Open-world with robotic creatures.", steamId: 1151640, multiplayer: false },
-            { id: 16, title: "Ghost of Tsushima", genre: "Action", year: 2020, desc: "Samurai open-world adventure.", steamId: 2215430, multiplayer: false },
-            { id: 17, title: "Spider-Man", genre: "Action", year: 2018, desc: "Swing through Manhattan.", steamId: 1817070, multiplayer: false },
-            { id: 18, title: "Uncharted 4", genre: "Adventure", year: 2016, desc: "Treasure hunting adventure.", steamId: 1659420, multiplayer: false },
-            { id: 19, title: "Metal Gear Solid V", genre: "Stealth", year: 2015, desc: "Tactical espionage.", steamId: 287700, multiplayer: true },
-            { id: 20, title: "Skyrim", genre: "RPG", year: 2011, desc: "Epic fantasy open-world.", steamId: 489830, multiplayer: false },
-            { id: 21, title: "Fallout 4", genre: "RPG", year: 2015, desc: "Post-apocalyptic exploration.", steamId: 377160, multiplayer: false },
-            { id: 22, title: "Mass Effect 2", genre: "RPG", year: 2010, desc: "Space opera adventure.", steamId: null, multiplayer: false },
-            { id: 23, title: "Dragon Age: Inquisition", genre: "RPG", year: 2014, desc: "Fantasy RPG.", steamId: null, multiplayer: false },
-            { id: 24, title: "Baldur's Gate 3", genre: "RPG", year: 2023, desc: "D&D based epic RPG.", steamId: 1086940, multiplayer: true },
-            { id: 25, title: "Divinity: Original Sin 2", genre: "RPG", year: 2017, desc: "Tactical RPG.", steamId: 435150, multiplayer: true },
-            { id: 26, title: "Stardew Valley", genre: "Simulation", year: 2016, desc: "Farm life sim.", steamId: 413150, multiplayer: true },
-            { id: 27, title: "Terraria", genre: "Adventure", year: 2011, desc: "2D sandbox adventure.", steamId: 105600, multiplayer: true },
-            { id: 28, title: "Minecraft", genre: "Sandbox", year: 2011, desc: "Build and explore.", steamId: null, multiplayer: true },
-            { id: 29, title: "Portal 2", genre: "Puzzle", year: 2011, desc: "Mind-bending puzzle game.", steamId: 620, multiplayer: true },
-            { id: 30, title: "Half-Life 2", genre: "Shooter", year: 2004, desc: "Revolutionary FPS.", steamId: 220, multiplayer: false },
-            { id: 31, title: "Doom Eternal", genre: "Shooter", year: 2020, desc: "Fast-paced demon slaying.", steamId: 782330, multiplayer: true },
-            { id: 32, title: "Wolfenstein II", genre: "Shooter", year: 2017, desc: "Alternate history shooter.", steamId: 612880, multiplayer: false },
-            { id: 33, title: "BioShock Infinite", genre: "Shooter", year: 2013, desc: "Steampunk shooter.", steamId: 8870, multiplayer: false },
-            { id: 34, title: "Borderlands 3", genre: "Shooter", year: 2019, desc: "Loot-driven co-op shooter.", steamId: 397540, multiplayer: true },
-            { id: 35, title: "Destiny 2", genre: "Shooter", year: 2017, desc: "Online FPS with MMO elements.", steamId: 1085660, multiplayer: true },
-            { id: 36, title: "Halo Infinite", genre: "Shooter", year: 2021, desc: "Master Chief's latest adventure.", steamId: 1240440, multiplayer: true },
-            { id: 37, title: "Gears 5", genre: "Shooter", year: 2019, desc: "Third-person cover shooter.", steamId: 1097840, multiplayer: true },
-            { id: 38, title: "Forza Horizon 5", genre: "Racing", year: 2021, desc: "Open-world racing festival.", steamId: 1551360, multiplayer: true },
-            { id: 39, title: "Gran Turismo 7", genre: "Racing", year: 2022, desc: "Realistic driving simulator.", steamId: null, multiplayer: true },
-            { id: 40, title: "FIFA 23", genre: "Sports", year: 2022, desc: "Football simulation.", steamId: null, multiplayer: true },
-            { id: 41, title: "NBA 2K23", genre: "Sports", year: 2022, desc: "Basketball simulation.", steamId: null, multiplayer: true },
-            { id: 42, title: "Madden NFL 23", genre: "Sports", year: 2022, desc: "American football simulation.", steamId: null, multiplayer: true },
-            { id: 43, title: "Rocket League", genre: "Sports", year: 2015, desc: "Soccer with rocket-powered cars.", steamId: 252950, multiplayer: true },
-            { id: 44, title: "Fortnite", genre: "Battle Royale", year: 2017, desc: "Build and battle in 100-player matches.", steamId: null, multiplayer: true },
-            { id: 45, title: "Apex Legends", genre: "Battle Royale", year: 2019, desc: "Squad-based hero shooter.", steamId: 1172470, multiplayer: true },
-            { id: 46, title: "Valorant", genre: "Shooter", year: 2020, desc: "Tactical 5v5 hero shooter.", steamId: null, multiplayer: true },
-            { id: 47, title: "Counter-Strike 2", genre: "Shooter", year: 2023, desc: "Competitive tactical FPS.", steamId: 730, multiplayer: true },
-            { id: 48, title: "Overwatch 2", genre: "Shooter", year: 2022, desc: "Team-based hero shooter.", steamId: null, multiplayer: true },
-            { id: 49, title: "League of Legends", genre: "MOBA", year: 2009, desc: "5v5 multiplayer online battle arena.", steamId: null, multiplayer: true },
-            { id: 50, title: "Dota 2", genre: "MOBA", year: 2013, desc: "Complex MOBA.", steamId: 570, multiplayer: true },
-            { id: 51, title: "World of Warcraft", genre: "MMORPG", year: 2004, desc: "Massively multiplayer online RPG.", steamId: null, multiplayer: true },
-            { id: 52, title: "Final Fantasy XIV", genre: "MMORPG", year: 2013, desc: "Story-driven MMORPG.", steamId: 39210, multiplayer: true },
-            { id: 53, title: "Genshin Impact", genre: "RPG", year: 2020, desc: "Anime open-world action RPG.", steamId: null, multiplayer: true },
-            { id: 54, title: "Honkai: Star Rail", genre: "RPG", year: 2023, desc: "Turn-based space fantasy RPG.", steamId: null, multiplayer: false },
-            { id: 55, title: "Persona 5", genre: "RPG", year: 2016, desc: "Stylish JRPG.", steamId: 1687950, multiplayer: false },
-            { id: 56, title: "Final Fantasy VII Remake", genre: "RPG", year: 2020, desc: "Reimagined classic JRPG.", steamId: 1462040, multiplayer: false },
-            { id: 57, title: "Resident Evil 4", genre: "Horror", year: 2023, desc: "Survival horror remake.", steamId: 2050650, multiplayer: false },
-            { id: 58, title: "Dead Space", genre: "Horror", year: 2023, desc: "Sci-fi horror remake.", steamId: 1693980, multiplayer: false },
-            { id: 59, title: "Alan Wake 2", genre: "Horror", year: 2023, desc: "Psychological survival horror.", steamId: 1903340, multiplayer: false },
-            { id: 60, title: "Control", genre: "Action", year: 2019, desc: "Supernatural thriller.", steamId: 870780, multiplayer: false },
-            { id: 61, title: "Dishonored 2", genre: "Stealth", year: 2016, desc: "Stealth action.", steamId: 403640, multiplayer: false },
-            { id: 62, title: "Prey", genre: "FPS", year: 2017, desc: "Sci-fi horror.", steamId: 480490, multiplayer: false },
-            { id: 63, title: "Deus Ex: Mankind Divided", genre: "RPG", year: 2016, desc: "Cyberpunk stealth action RPG.", steamId: 337000, multiplayer: false },
-            { id: 64, title: "Hitman 3", genre: "Stealth", year: 2021, desc: "World of assassination conclusion.", steamId: 1659040, multiplayer: false },
-            { id: 65, title: "Assassin's Creed Valhalla", genre: "Action", year: 2020, desc: "Viking saga.", steamId: null, multiplayer: false },
-            { id: 66, title: "Far Cry 6", genre: "Shooter", year: 2021, desc: "Open-world revolution.", steamId: null, multiplayer: true },
-            { id: 67, title: "Watch Dogs: Legion", genre: "Action", year: 2020, desc: "Hacktivist resistance.", steamId: null, multiplayer: false },
-            { id: 68, title: "Rainbow Six Siege", genre: "Shooter", year: 2015, desc: "Tactical 5v5 attack and defense.", steamId: 359550, multiplayer: true },
-            { id: 69, title: "The Division 2", genre: "Shooter", year: 2019, desc: "Post-apocalyptic looter shooter.", steamId: null, multiplayer: true },
-            { id: 70, title: "Ghost Recon Breakpoint", genre: "Shooter", year: 2019, desc: "Tactical shooter.", steamId: null, multiplayer: true },
-            { id: 71, title: "Monster Hunter: World", genre: "Action", year: 2018, desc: "Hunt massive monsters.", steamId: 582010, multiplayer: true },
-            { id: 72, title: "NieR: Automata", genre: "Action", year: 2017, desc: "Androids fight for humanity.", steamId: 524220, multiplayer: false },
-            { id: 73, title: "Bayonetta 3", genre: "Action", year: 2022, desc: "Stylish witch action combat.", steamId: null, multiplayer: false },
-            { id: 74, title: "Devil May Cry 5", genre: "Action", year: 2019, desc: "Stylish demon hunting action.", steamId: 601150, multiplayer: false },
-            { id: 75, title: "Street Fighter 6", genre: "Fighting", year: 2023, desc: "Evolved fighting game.", steamId: 1364780, multiplayer: true },
-            { id: 76, title: "Tekken 8", genre: "Fighting", year: 2024, desc: "Next-gen 3D fighting game.", steamId: 1778820, multiplayer: true },
-            { id: 77, title: "Mortal Kombat 1", genre: "Fighting", year: 2023, desc: "Rebooted fighting with Kameo fighters.", steamId: 1971870, multiplayer: true },
-            { id: 78, title: "Guilty Gear Strive", genre: "Fighting", year: 2021, desc: "Anime fighting with stunning visuals.", steamId: 1384160, multiplayer: true },
-            { id: 79, title: "Super Smash Bros. Ultimate", genre: "Fighting", year: 2018, desc: "Ultimate crossover platform fighter.", steamId: null, multiplayer: true },
-            { id: 80, title: "Mario Kart 8 Deluxe", genre: "Racing", year: 2017, desc: "Kart racing with Nintendo all-stars.", steamId: null, multiplayer: true },
-            { id: 81, title: "Splatoon 3", genre: "Shooter", year: 2022, desc: "Ink-based turf war multiplayer.", steamId: null, multiplayer: true },
-            { id: 82, title: "Animal Crossing: New Horizons", genre: "Simulation", year: 2020, desc: "Island life sim.", steamId: null, multiplayer: true },
-            { id: 83, title: "Pokemon Scarlet", genre: "RPG", year: 2022, desc: "Open-world Pokemon adventure.", steamId: null, multiplayer: true },
-            { id: 84, title: "Fire Emblem: Three Houses", genre: "Strategy", year: 2019, desc: "Tactical RPG.", steamId: null, multiplayer: false },
-            { id: 85, title: "Xenoblade Chronicles 3", genre: "RPG", year: 2022, desc: "Epic JRPG.", steamId: null, multiplayer: false },
-            { id: 86, title: "Metroid Dread", genre: "Metroidvania", year: 2021, desc: "2D action adventure.", steamId: null, multiplayer: false },
-            { id: 87, title: "Castlevania: Symphony of the Night", genre: "Metroidvania", year: 1997, desc: "Classic gothic exploration.", steamId: null, multiplayer: false },
-            { id: 88, title: "Shovel Knight", genre: "Platformer", year: 2014, desc: "Retro-inspired platforming.", steamId: 250760, multiplayer: false },
-            { id: 89, title: "Cuphead", genre: "Platformer", year: 2017, desc: "1930s cartoon style run and gun.", steamId: 268910, multiplayer: false },
-            { id: 90, title: "Undertale", genre: "RPG", year: 2015, desc: "Unique RPG where no one has to die.", steamId: 391540, multiplayer: false },
-            { id: 91, title: "Deltarune", genre: "RPG", year: 2018, desc: "Toby Fox's follow-up to Undertale.", steamId: null, multiplayer: false },
-            { id: 92, title: "OMORI", genre: "RPG", year: 2020, desc: "Psychological horror RPG.", steamId: 1150690, multiplayer: false },
-            { id: 93, title: "Disco Elysium", genre: "RPG", year: 2019, desc: "Detective RPG with unique skill system.", steamId: 632470, multiplayer: false },
-            { id: 94, title: "Pentiment", genre: "Adventure", year: 2022, desc: "Medieval mystery adventure.", steamId: 1200450, multiplayer: false },
-            { id: 95, title: "Outer Wilds", genre: "Adventure", year: 2019, desc: "Space exploration mystery.", steamId: 753640, multiplayer: false },
-            { id: 96, title: "Subnautica", genre: "Survival", year: 2018, desc: "Underwater survival on alien ocean world.", steamId: 264710, multiplayer: false },
-            { id: 97, title: "No Man's Sky", genre: "Survival", year: 2016, desc: "Infinite procedural universe.", steamId: 275850, multiplayer: true },
-            { id: 98, title: "Starfield", genre: "RPG", year: 2023, desc: "Bethesda's space exploration RPG.", steamId: 1716740, multiplayer: false },
-            { id: 99, title: "Kerbal Space Program", genre: "Simulation", year: 2015, desc: "Space flight simulation.", steamId: 220200, multiplayer: false },
-            { id: 100, title: "Factorio", genre: "Simulation", year: 2020, desc: "Factory building and automation sim.", steamId: 427520, multiplayer: true }
+            { id: 1, title: "The Witcher 3", genre: "RPG", year: 2015, desc: "Open-world fantasy RPG.", steamId: 292030,
+                multiplayer: false },
+            { id: 2, title: "Red Dead Redemption 2", genre: "Action", year: 2018, desc: "Epic western tale.",
+                steamId: 1174180, multiplayer: false },
+            { id: 3, title: "Elden Ring", genre: "RPG", year: 2022, desc: "Dark fantasy action RPG.", steamId: 1245620,
+                multiplayer: true },
+            { id: 4, title: "God of War", genre: "Action", year: 2018, desc: "Norse mythology adventure.",
+                steamId: 1593500, multiplayer: false },
+            { id: 5, title: "The Last of Us", genre: "Adventure", year: 2013, desc: "Post-apocalyptic survival.",
+                steamId: 1888930, multiplayer: false },
+            { id: 6, title: "Cyberpunk 2077", genre: "RPG", year: 2020, desc: "Open-world futuristic RPG.",
+                steamId: 1091500, multiplayer: false },
+            { id: 7, title: "Breath of the Wild", genre: "Adventure", year: 2017, desc: "Open-air adventure.",
+                steamId: null, multiplayer: false },
+            { id: 8, title: "Super Mario Odyssey", genre: "Platformer", year: 2017, desc: "3D platformer journey.",
+                steamId: null, multiplayer: false },
+            { id: 9, title: "Hollow Knight", genre: "Metroidvania", year: 2017, desc: "Hand-drawn action adventure.",
+                steamId: 367520, multiplayer: false },
+            { id: 10, title: "Hades", genre: "Roguelike", year: 2020, desc: "Rogue-like dungeon crawler.",
+                steamId: 1145360, multiplayer: false },
+            { id: 11, title: "Celeste", genre: "Platformer", year: 2018, desc: "Precision platformer.", steamId: 504230,
+                multiplayer: false },
+            { id: 12, title: "Dark Souls 3", genre: "RPG", year: 2016, desc: "Dark fantasy action RPG.",
+                steamId: 374320, multiplayer: true },
+            { id: 13, title: "Sekiro", genre: "Action", year: 2019, desc: "Samurai combat.", steamId: 814380,
+                multiplayer: false },
+            { id: 14, title: "Bloodborne", genre: "RPG", year: 2015, desc: "Gothic horror action RPG.", steamId: null,
+                multiplayer: true },
+            { id: 15, title: "Horizon Zero Dawn", genre: "RPG", year: 2017, desc: "Open-world with robotic creatures.",
+                steamId: 1151640, multiplayer: false },
+            { id: 16, title: "Ghost of Tsushima", genre: "Action", year: 2020, desc: "Samurai open-world adventure.",
+                steamId: 2215430, multiplayer: false },
+            { id: 17, title: "Spider-Man", genre: "Action", year: 2018, desc: "Swing through Manhattan.",
+                steamId: 1817070, multiplayer: false },
+            { id: 18, title: "Uncharted 4", genre: "Adventure", year: 2016, desc: "Treasure hunting adventure.",
+                steamId: 1659420, multiplayer: false },
+            { id: 19, title: "Metal Gear Solid V", genre: "Stealth", year: 2015, desc: "Tactical espionage.",
+                steamId: 287700, multiplayer: true },
+            { id: 20, title: "Skyrim", genre: "RPG", year: 2011, desc: "Epic fantasy open-world.", steamId: 489830,
+                multiplayer: false },
+            { id: 21, title: "Fallout 4", genre: "RPG", year: 2015, desc: "Post-apocalyptic exploration.",
+                steamId: 377160, multiplayer: false },
+            { id: 22, title: "Mass Effect 2", genre: "RPG", year: 2010, desc: "Space opera adventure.", steamId: null,
+                multiplayer: false },
+            { id: 23, title: "Dragon Age: Inquisition", genre: "RPG", year: 2014, desc: "Fantasy RPG.", steamId: null,
+                multiplayer: false },
+            { id: 24, title: "Baldur's Gate 3", genre: "RPG", year: 2023, desc: "D&D based epic RPG.", steamId: 1086940,
+                multiplayer: true },
+            { id: 25, title: "Divinity: Original Sin 2", genre: "RPG", year: 2017, desc: "Tactical RPG.",
+                steamId: 435150, multiplayer: true },
+            { id: 26, title: "Stardew Valley", genre: "Simulation", year: 2016, desc: "Farm life sim.", steamId: 413150,
+                multiplayer: true },
+            { id: 27, title: "Terraria", genre: "Adventure", year: 2011, desc: "2D sandbox adventure.", steamId: 105600,
+                multiplayer: true },
+            { id: 28, title: "Minecraft", genre: "Sandbox", year: 2011, desc: "Build and explore.", steamId: null,
+                multiplayer: true },
+            { id: 29, title: "Portal 2", genre: "Puzzle", year: 2011, desc: "Mind-bending puzzle game.", steamId: 620,
+                multiplayer: true },
+            { id: 30, title: "Half-Life 2", genre: "Shooter", year: 2004, desc: "Revolutionary FPS.", steamId: 220,
+                multiplayer: false },
+            { id: 31, title: "Doom Eternal", genre: "Shooter", year: 2020, desc: "Fast-paced demon slaying.",
+                steamId: 782330, multiplayer: true },
+            { id: 32, title: "Wolfenstein II", genre: "Shooter", year: 2017, desc: "Alternate history shooter.",
+                steamId: 612880, multiplayer: false },
+            { id: 33, title: "BioShock Infinite", genre: "Shooter", year: 2013, desc: "Steampunk shooter.",
+                steamId: 8870, multiplayer: false },
+            { id: 34, title: "Borderlands 3", genre: "Shooter", year: 2019, desc: "Loot-driven co-op shooter.",
+                steamId: 397540, multiplayer: true },
+            { id: 35, title: "Destiny 2", genre: "Shooter", year: 2017, desc: "Online FPS with MMO elements.",
+                steamId: 1085660, multiplayer: true },
+            { id: 36, title: "Halo Infinite", genre: "Shooter", year: 2021, desc: "Master Chief's latest adventure.",
+                steamId: 1240440, multiplayer: true },
+            { id: 37, title: "Gears 5", genre: "Shooter", year: 2019, desc: "Third-person cover shooter.",
+                steamId: 1097840, multiplayer: true },
+            { id: 38, title: "Forza Horizon 5", genre: "Racing", year: 2021, desc: "Open-world racing festival.",
+                steamId: 1551360, multiplayer: true },
+            { id: 39, title: "Gran Turismo 7", genre: "Racing", year: 2022, desc: "Realistic driving simulator.",
+                steamId: null, multiplayer: true },
+            { id: 40, title: "FIFA 23", genre: "Sports", year: 2022, desc: "Football simulation.", steamId: null,
+                multiplayer: true },
+            { id: 41, title: "NBA 2K23", genre: "Sports", year: 2022, desc: "Basketball simulation.", steamId: null,
+                multiplayer: true },
+            { id: 42, title: "Madden NFL 23", genre: "Sports", year: 2022, desc: "American football simulation.",
+                steamId: null, multiplayer: true },
+            { id: 43, title: "Rocket League", genre: "Sports", year: 2015, desc: "Soccer with rocket-powered cars.",
+                steamId: 252950, multiplayer: true },
+            { id: 44, title: "Fortnite", genre: "Battle Royale", year: 2017, desc: "Build and battle in 100-player matches.",
+                steamId: null, multiplayer: true },
+            { id: 45, title: "Apex Legends", genre: "Battle Royale", year: 2019, desc: "Squad-based hero shooter.",
+                steamId: 1172470, multiplayer: true },
+            { id: 46, title: "Valorant", genre: "Shooter", year: 2020, desc: "Tactical 5v5 hero shooter.", steamId: null,
+                multiplayer: true },
+            { id: 47, title: "Counter-Strike 2", genre: "Shooter", year: 2023, desc: "Competitive tactical FPS.",
+                steamId: 730, multiplayer: true },
+            { id: 48, title: "Overwatch 2", genre: "Shooter", year: 2022, desc: "Team-based hero shooter.",
+                steamId: null, multiplayer: true },
+            { id: 49, title: "League of Legends", genre: "MOBA", year: 2009, desc: "5v5 multiplayer online battle arena.",
+                steamId: null, multiplayer: true },
+            { id: 50, title: "Dota 2", genre: "MOBA", year: 2013, desc: "Complex MOBA.", steamId: 570,
+                multiplayer: true },
+            { id: 51, title: "World of Warcraft", genre: "MMORPG", year: 2004, desc: "Massively multiplayer online RPG.",
+                steamId: null, multiplayer: true },
+            { id: 52, title: "Final Fantasy XIV", genre: "MMORPG", year: 2013, desc: "Story-driven MMORPG.",
+                steamId: 39210, multiplayer: true },
+            { id: 53, title: "Genshin Impact", genre: "RPG", year: 2020, desc: "Anime open-world action RPG.",
+                steamId: null, multiplayer: true },
+            { id: 54, title: "Honkai: Star Rail", genre: "RPG", year: 2023, desc: "Turn-based space fantasy RPG.",
+                steamId: null, multiplayer: false },
+            { id: 55, title: "Persona 5", genre: "RPG", year: 2016, desc: "Stylish JRPG.", steamId: 1687950,
+                multiplayer: false },
+            { id: 56, title: "Final Fantasy VII Remake", genre: "RPG", year: 2020, desc: "Reimagined classic JRPG.",
+                steamId: 1462040, multiplayer: false },
+            { id: 57, title: "Resident Evil 4", genre: "Horror", year: 2023, desc: "Survival horror remake.",
+                steamId: 2050650, multiplayer: false },
+            { id: 58, title: "Dead Space", genre: "Horror", year: 2023, desc: "Sci-fi horror remake.", steamId: 1693980,
+                multiplayer: false },
+            { id: 59, title: "Alan Wake 2", genre: "Horror", year: 2023, desc: "Psychological survival horror.",
+                steamId: 1903340, multiplayer: false },
+            { id: 60, title: "Control", genre: "Action", year: 2019, desc: "Supernatural thriller.", steamId: 870780,
+                multiplayer: false },
+            { id: 61, title: "Dishonored 2", genre: "Stealth", year: 2016, desc: "Stealth action.", steamId: 403640,
+                multiplayer: false },
+            { id: 62, title: "Prey", genre: "FPS", year: 2017, desc: "Sci-fi horror.", steamId: 480490,
+                multiplayer: false },
+            { id: 63, title: "Deus Ex: Mankind Divided", genre: "RPG", year: 2016, desc: "Cyberpunk stealth action RPG.",
+                steamId: 337000, multiplayer: false },
+            { id: 64, title: "Hitman 3", genre: "Stealth", year: 2021, desc: "World of assassination conclusion.",
+                steamId: 1659040, multiplayer: false },
+            { id: 65, title: "Assassin's Creed Valhalla", genre: "Action", year: 2020, desc: "Viking saga.",
+                steamId: null, multiplayer: false },
+            { id: 66, title: "Far Cry 6", genre: "Shooter", year: 2021, desc: "Open-world revolution.", steamId: null,
+                multiplayer: true },
+            { id: 67, title: "Watch Dogs: Legion", genre: "Action", year: 2020, desc: "Hacktivist resistance.",
+                steamId: null, multiplayer: false },
+            { id: 68, title: "Rainbow Six Siege", genre: "Shooter", year: 2015, desc: "Tactical 5v5 attack and defense.",
+                steamId: 359550, multiplayer: true },
+            { id: 69, title: "The Division 2", genre: "Shooter", year: 2019, desc: "Post-apocalyptic looter shooter.",
+                steamId: null, multiplayer: true },
+            { id: 70, title: "Ghost Recon Breakpoint", genre: "Shooter", year: 2019, desc: "Tactical shooter.",
+                steamId: null, multiplayer: true },
+            { id: 71, title: "Monster Hunter: World", genre: "Action", year: 2018, desc: "Hunt massive monsters.",
+                steamId: 582010, multiplayer: true },
+            { id: 72, title: "NieR: Automata", genre: "Action", year: 2017, desc: "Androids fight for humanity.",
+                steamId: 524220, multiplayer: false },
+            { id: 73, title: "Bayonetta 3", genre: "Action", year: 2022, desc: "Stylish witch action combat.",
+                steamId: null, multiplayer: false },
+            { id: 74, title: "Devil May Cry 5", genre: "Action", year: 2019, desc: "Stylish demon hunting action.",
+                steamId: 601150, multiplayer: false },
+            { id: 75, title: "Street Fighter 6", genre: "Fighting", year: 2023, desc: "Evolved fighting game.",
+                steamId: 1364780, multiplayer: true },
+            { id: 76, title: "Tekken 8", genre: "Fighting", year: 2024, desc: "Next-gen 3D fighting game.",
+                steamId: 1778820, multiplayer: true },
+            { id: 77, title: "Mortal Kombat 1", genre: "Fighting", year: 2023, desc: "Rebooted fighting with Kameo fighters.",
+                steamId: 1971870, multiplayer: true },
+            { id: 78, title: "Guilty Gear Strive", genre: "Fighting", year: 2021, desc: "Anime fighting with stunning visuals.",
+                steamId: 1384160, multiplayer: true },
+            { id: 79, title: "Super Smash Bros. Ultimate", genre: "Fighting", year: 2018, desc: "Ultimate crossover platform fighter.",
+                steamId: null, multiplayer: true },
+            { id: 80, title: "Mario Kart 8 Deluxe", genre: "Racing", year: 2017, desc: "Kart racing with Nintendo all-stars.",
+                steamId: null, multiplayer: true },
+            { id: 81, title: "Splatoon 3", genre: "Shooter", year: 2022, desc: "Ink-based turf war multiplayer.",
+                steamId: null, multiplayer: true },
+            { id: 82, title: "Animal Crossing: New Horizons", genre: "Simulation", year: 2020, desc: "Island life sim.",
+                steamId: null, multiplayer: true },
+            { id: 83, title: "Pokemon Scarlet", genre: "RPG", year: 2022, desc: "Open-world Pokemon adventure.",
+                steamId: null, multiplayer: true },
+            { id: 84, title: "Fire Emblem: Three Houses", genre: "Strategy", year: 2019, desc: "Tactical RPG.",
+                steamId: null, multiplayer: false },
+            { id: 85, title: "Xenoblade Chronicles 3", genre: "RPG", year: 2022, desc: "Epic JRPG.", steamId: null,
+                multiplayer: false },
+            { id: 86, title: "Metroid Dread", genre: "Metroidvania", year: 2021, desc: "2D action adventure.",
+                steamId: null, multiplayer: false },
+            { id: 87, title: "Castlevania: Symphony of the Night", genre: "Metroidvania", year: 1997,
+                desc: "Classic gothic exploration.", steamId: null, multiplayer: false },
+            { id: 88, title: "Shovel Knight", genre: "Platformer", year: 2014, desc: "Retro-inspired platforming.",
+                steamId: 250760, multiplayer: false },
+            { id: 89, title: "Cuphead", genre: "Platformer", year: 2017, desc: "1930s cartoon style run and gun.",
+                steamId: 268910, multiplayer: false },
+            { id: 90, title: "Undertale", genre: "RPG", year: 2015, desc: "Unique RPG where no one has to die.",
+                steamId: 391540, multiplayer: false },
+            { id: 91, title: "Deltarune", genre: "RPG", year: 2018, desc: "Toby Fox's follow-up to Undertale.",
+                steamId: null, multiplayer: false },
+            { id: 92, title: "OMORI", genre: "RPG", year: 2020, desc: "Psychological horror RPG.", steamId: 1150690,
+                multiplayer: false },
+            { id: 93, title: "Disco Elysium", genre: "RPG", year: 2019, desc: "Detective RPG with unique skill system.",
+                steamId: 632470, multiplayer: false },
+            { id: 94, title: "Pentiment", genre: "Adventure", year: 2022, desc: "Medieval mystery adventure.",
+                steamId: 1200450, multiplayer: false },
+            { id: 95, title: "Outer Wilds", genre: "Adventure", year: 2019, desc: "Space exploration mystery.",
+                steamId: 753640, multiplayer: false },
+            { id: 96, title: "Subnautica", genre: "Survival", year: 2018, desc: "Underwater survival on alien ocean world.",
+                steamId: 264710, multiplayer: false },
+            { id: 97, title: "No Man's Sky", genre: "Survival", year: 2016, desc: "Infinite procedural universe.",
+                steamId: 275850, multiplayer: true },
+            { id: 98, title: "Starfield", genre: "RPG", year: 2023, desc: "Bethesda's space exploration RPG.",
+                steamId: 1716740, multiplayer: false },
+            { id: 99, title: "Kerbal Space Program", genre: "Simulation", year: 2015, desc: "Space flight simulation.",
+                steamId: 220200, multiplayer: false },
+            { id: 100, title: "Factorio", genre: "Simulation", year: 2020, desc: "Factory building and automation sim.",
+                steamId: 427520, multiplayer: true }
         ];
 
         // ===================== STATE =====================
@@ -1138,11 +2078,10 @@ service cloud.firestore {
                 document.getElementById("appContainer").style.display = "none";
                 return;
             }
-            try {
-                firebase.initializeApp(firebaseConfig);
-            } catch (err) {
+            try { firebase.initializeApp(firebaseConfig); } catch (err) {
                 console.error("Firebase init failed:", err);
-                alert("Firebase config is invalid. Error: " + err.message + "\n\nClick 'Setup Firebase Config' to re-enter your credentials.");
+                alert("Firebase config is invalid. Error: " + err.message +
+                    "\n\nClick 'Setup Firebase Config' to re-enter your credentials.");
                 localStorage.removeItem("gameVault_firebaseConfig");
                 document.getElementById("setupWizard").style.display = "block";
                 document.getElementById("authModal").style.display = "none";
@@ -1172,11 +2111,12 @@ service cloud.firestore {
             });
         }
 
-        // ===== User dropdown =====
         function toggleUserDropdown(e) {
             e.stopPropagation();
-            document.getElementById("userDropdownMenu").classList.toggle("show");
+            const menu = document.getElementById("userDropdownMenu");
+            menu.classList.toggle("show");
         }
+
         function closeUserDropdown() {
             document.getElementById("userDropdownMenu").classList.remove("show");
         }
@@ -1195,12 +2135,9 @@ service cloud.firestore {
             const email = document.getElementById("loginEmail").value,
                 password = document.getElementById("loginPassword").value,
                 errorEl = document.getElementById("loginError");
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-            } catch (err) {
-                errorEl.textContent = err.message;
-                errorEl.style.display = "block";
-            }
+            try { await auth.signInWithEmailAndPassword(email, password); } catch (err) { errorEl.textContent = err
+                    .message;
+                errorEl.style.display = "block"; }
         }
 
         async function handleRegister(e) {
@@ -1223,26 +2160,18 @@ service cloud.firestore {
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 await cred.user.updateProfile({ displayName: name });
-            } catch (err) {
-                errorEl.textContent = err.message;
-                errorEl.style.display = "block";
-            }
+            } catch (err) { errorEl.textContent = err.message;
+                errorEl.style.display = "block"; }
         }
 
-        async function logout() {
-            await auth.signOut();
-            location.reload();
-        }
+        async function logout() { await auth.signOut();
+            location.reload(); }
 
-        function showSetupFromAuth() {
-            document.getElementById("authModal").style.display = "none";
-            document.getElementById("setupWizard").style.display = "block";
-        }
+        function showSetupFromAuth() { document.getElementById("authModal").style.display = "none";
+            document.getElementById("setupWizard").style.display = "block"; }
 
-        function resetConfig() {
-            localStorage.removeItem("gameVault_firebaseConfig");
-            location.reload();
-        }
+        function resetConfig() { localStorage.removeItem("gameVault_firebaseConfig");
+            location.reload(); }
 
         // ===================== USER DATA =====================
         async function loadUserProfile() {
@@ -1278,22 +2207,20 @@ service cloud.firestore {
             try {
                 const compSnap = await db.collection("users").doc(currentUser.uid).collection("completions").get();
                 myCompletions = compSnap.docs.map(d => parseInt(d.id));
-                const playingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "playing").get();
+                const playingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where(
+                    "status", "==", "playing").get();
                 myPlaying = playingSnap.docs.map(d => parseInt(d.id));
-                const lfgSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "lfg").get();
+                const lfgSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status",
+                    "==", "lfg").get();
                 myLFG = lfgSnap.docs.map(d => parseInt(d.id));
                 mySaves = {};
                 const savesSnap = await db.collection("users").doc(currentUser.uid).collection("saveFiles").get();
-                savesSnap.docs.forEach(d => {
-                    const data = d.data(), gid = data.gameId;
-                    if (!mySaves[gid]) mySaves[gid] = [];
-                    mySaves[gid].push({ id: d.id, ...data });
-                });
+                savesSnap.docs.forEach(d => { const data = d.data(),
+                        gid = data.gameId; if (!mySaves[gid]) mySaves[gid] = [];
+                    mySaves[gid].push({ id: d.id, ...data }); });
                 updateStats();
-            } catch (err) {
-                console.error("loadMyData error:", err);
-                showToast("Failed to load your data: " + err.message, true);
-            }
+            } catch (err) { console.error("loadMyData error:", err);
+                showToast("Failed to load your data: " + err.message, true); }
         }
 
         // ===================== GAME HELPERS =====================
@@ -1304,7 +2231,9 @@ service cloud.firestore {
         }
 
         function getColor(id) {
-            const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
+            const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6",
+                "#f97316", "#84cc16"
+            ];
             return colors[(id - 1) % colors.length];
         }
 
@@ -1313,7 +2242,8 @@ service cloud.firestore {
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
             const filtered = games.filter(g => g.title.toLowerCase().includes(filter.toLowerCase()));
-            document.getElementById("resultsCount").textContent = filter ? `Found ${filtered.length} games` : "Showing all 100 games";
+            document.getElementById("resultsCount").textContent = filter ? `Found ${filtered.length} games` :
+                "Showing all 100 games";
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
                 const isPlaying = myPlaying.includes(game.id);
@@ -1325,17 +2255,22 @@ service cloud.firestore {
                 if (isLFG) cls += " lfg";
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
-                const color = getColor(game.id), initials = getInitials(game.title);
+                const color = getColor(game.id),
+                    initials = getInitials(game.title);
                 let coverHtml;
                 if (game.steamId) {
-                    coverHtml = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2.75rem;font-weight:900;color:${color};>${initials}</span>';}">`;
+                    coverHtml =
+                        `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2.75rem;font-weight:900;color:${color};>${initials}</span>';}">`;
                 } else {
                     coverHtml = `<span style="font-size:2.75rem;font-weight:900;color:${color};">${initials}</span>`;
                 }
                 let badge = "";
-                if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
-                else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
-                else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">LFG</span>`;
+                if (isCompleted) badge =
+                    `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">✅ Completed</span>`;
+                else if (isPlaying) badge =
+                    `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">▶ Playing</span>`;
+                else if (isLFG) badge =
+                    `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">👥 LFG</span>`;
                 card.innerHTML = `
                     <div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%);">
                         ${coverHtml}
@@ -1362,7 +2297,8 @@ service cloud.firestore {
                 color = getColor(game.id),
                 initials = getInitials(game.title);
             if (game.steamId) {
-                cover.innerHTML = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;" onerror="this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.style.background='linear-gradient(135deg, ${color}18 0%, ${color}35 100%)';this.parentElement.innerHTML='<span style=font-size:4rem;font-weight:900;color:${color};>${initials}</span>';}">`;
+                cover.innerHTML =
+                    `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;" onerror="this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.style.background='linear-gradient(135deg, ${color}18 0%, ${color}35 100%)';this.parentElement.innerHTML='<span style=font-size:4rem;font-weight:900;color:${color};>${initials}</span>';}">`;
                 cover.style.background = "none";
             } else {
                 cover.textContent = initials;
@@ -1396,9 +2332,12 @@ service cloud.firestore {
         }
 
         function updateStatusLabels() {
-            document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox").checked);
-            document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
-            document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
+            document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox")
+                .checked);
+            document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById(
+                "playingCheckbox").checked);
+            document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox")
+                .checked);
         }
 
         async function toggleComplete() {
@@ -1412,21 +2351,16 @@ service cloud.firestore {
                 gameId = currentGame.id.toString(),
                 ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId);
             try {
-                if (cb.checked) {
-                    await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id);
-                } else {
-                    await ref.delete();
-                    myCompletions = myCompletions.filter(id => id !== currentGame.id);
-                }
+                if (cb.checked) { await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id); } else { await ref
+                        .delete();
+                    myCompletions = myCompletions.filter(id => id !== currentGame.id); }
                 updateStatusLabels();
                 renderGames(document.getElementById("searchInput").value);
                 updateStats();
                 showToast(cb.checked ? "Game marked as completed!" : "Unmarked");
-            } catch (err) {
-                showToast("Error: " + err.message, true);
-                cb.checked = !cb.checked;
-            }
+            } catch (err) { showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked; }
         }
 
         async function togglePlaying() {
@@ -1439,31 +2373,27 @@ service cloud.firestore {
                     await ref.set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
                     if (!myPlaying.includes(currentGame.id)) myPlaying.push(currentGame.id);
                     if (myLFG.includes(currentGame.id)) {
-                        await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                        await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({
+                            status: "playing",
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
                         myLFG = myLFG.filter(id => id !== currentGame.id);
                         document.getElementById("lfgCheckbox").checked = false;
                     }
-                } else {
-                    await ref.delete();
-                    myPlaying = myPlaying.filter(id => id !== currentGame.id);
-                }
+                } else { await ref.delete();
+                    myPlaying = myPlaying.filter(id => id !== currentGame.id); }
                 updateStatusLabels();
                 renderGames(document.getElementById("searchInput").value);
                 updateStats();
                 showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
-            } catch (err) {
-                showToast("Error: " + err.message, true);
-                cb.checked = !cb.checked;
-            }
+            } catch (err) { showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked; }
         }
 
         async function toggleLFG() {
             if (!currentGame) return;
-            if (!currentGame.multiplayer) {
-                showToast("This game doesn't support multiplayer!", true);
-                document.getElementById("lfgCheckbox").checked = false;
-                return;
-            }
+            if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true);
+                document.getElementById("lfgCheckbox").checked = false; return; }
             const cb = document.getElementById("lfgCheckbox"),
                 gameId = currentGame.id.toString(),
                 ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
@@ -1472,7 +2402,10 @@ service cloud.firestore {
                     await ref.set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
                     if (!myLFG.includes(currentGame.id)) myLFG.push(currentGame.id);
                     if (myPlaying.includes(currentGame.id)) {
-                        await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                        await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({
+                            status: "lfg",
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
                         myPlaying = myPlaying.filter(id => id !== currentGame.id);
                         document.getElementById("playingCheckbox").checked = false;
                     }
@@ -1486,16 +2419,20 @@ service cloud.firestore {
                 renderGames(document.getElementById("searchInput").value);
                 updateStats();
                 showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
-            } catch (err) {
-                showToast("Error: " + err.message, true);
-                cb.checked = !cb.checked;
-            }
+            } catch (err) { showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked; }
         }
 
         // ===================== SAVES =====================
-        function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
+        function allowDrop(e) { e.preventDefault();
+            document.getElementById("uploadArea").classList.add("dragover"); }
+
         function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
-        function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
+
+        function dropSave(e) { e.preventDefault();
+            document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(
+                e.dataTransfer.files[0]); }
+
         function handleFileSelect(e) { if (e.target.files.length) processFile(e.target.files[0]); }
 
         async function processFile(file) {
@@ -1507,12 +2444,13 @@ service cloud.firestore {
                 try {
                     showToast("Uploading save...");
                     const base64 = e.target.result.split(",")[1];
-                    const fileDoc = await db.collection("users").doc(currentUser.uid).collection("saveFiles").add({
-                        gameId, name: file.name, data: base64, size: formatSize(file.size),
-                        uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    const fileDoc = await db.collection("users").doc(currentUser.uid)
+                        .collection("saveFiles").add({ gameId, name: file.name, data: base64,
+                            size: formatSize(file.size),
+                            uploadedAt: firebase.firestore.FieldValue.serverTimestamp() });
                     if (!mySaves[gameId]) mySaves[gameId] = [];
-                    mySaves[gameId].push({ id: fileDoc.id, gameId, name: file.name, data: base64, size: formatSize(file.size) });
+                    mySaves[gameId].push({ id: fileDoc.id, gameId, name: file.name, data: base64,
+                        size: formatSize(file.size) });
                     renderModalSaves();
                     updateStats();
                     showToast("Save uploaded!");
@@ -1530,12 +2468,12 @@ service cloud.firestore {
         function renderModalSaves() {
             const container = document.getElementById("modalSaves");
             const saves = mySaves[currentGame?.id] || [];
-            if (!saves.length) {
-                container.innerHTML = '<p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.9rem;">No save files uploaded yet</p>';
-                return;
-            }
+            if (!saves.length) { container.innerHTML =
+                '<p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.9rem;">No save files uploaded yet</p>';
+                return; }
             container.innerHTML = saves.map(save =>
-                `<div class="save-item">
+                `
+                <div class="save-item">
                     <div><div class="save-name">${save.name}</div><div class="save-meta">${save.size}</div></div>
                     <button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button>
                 </div>`
@@ -1544,23 +2482,33 @@ service cloud.firestore {
 
         function downloadSaveFromData(base64Data, name) {
             try {
-                const byteString = atob(base64Data), ab = new ArrayBuffer(byteString.length), ia = new Uint8Array(ab);
+                const byteString = atob(base64Data),
+                    ab = new ArrayBuffer(byteString.length),
+                    ia = new Uint8Array(ab);
                 for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-                const blob = new Blob([ab]), url = URL.createObjectURL(blob), a = document.createElement("a");
-                a.href = url; a.download = name;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                const blob = new Blob([ab]),
+                    url = URL.createObjectURL(blob),
+                    a = document.createElement("a");
+                a.href = url;
+                a.download = name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 showToast("Download started!");
             } catch (err) { showToast("Error downloading: " + err.message, true); }
         }
 
         async function loadFriendSavesForGame(gameId) {
-            const section = document.getElementById("friendSavesSection"), list = document.getElementById("friendSavesList");
+            const section = document.getElementById("friendSavesSection"),
+                list = document.getElementById("friendSavesList");
             if (!friendsList.length) { section.style.display = "none"; return; }
-            let has = false, html = "";
+            let has = false,
+                html = "";
             for (const friend of friendsList) {
                 try {
-                    const snap = await db.collection("users").doc(friend.uid).collection("saveFiles").where("gameId", "==", gameId).get();
+                    const snap = await db.collection("users").doc(friend.uid).collection("saveFiles").where("gameId",
+                        "==", gameId).get();
                     if (!snap.empty) {
                         has = true;
                         snap.docs.forEach(d => {
@@ -1576,7 +2524,8 @@ service cloud.firestore {
                     }
                 } catch (err) { console.error(err); }
             }
-            if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
+            if (has) { section.style.display = "block";
+                list.innerHTML = html; } else section.style.display = "none";
         }
 
         // ===================== POSTS SYSTEM =====================
@@ -1592,12 +2541,7 @@ service cloud.firestore {
                     }
                 }
                 renderPosts();
-            } catch (err) {
-                console.error("loadPosts error:", err);
-                if (err.code === "permission-denied") {
-                    showToast("Could not load posts. Check your Firestore rules in the Firebase console.", true);
-                }
-            }
+            } catch (err) { console.error("loadPosts error:", err); }
         }
 
         function renderPosts(filter = "", tagFilter = "all") {
@@ -1629,19 +2573,21 @@ service cloud.firestore {
                         </div>
                         <span class="post-tag ${tagClass}" style="margin-left:auto;">${tagLabel}</span>
                     </div>
-                    <div class="post-game">${post.gameTitle}</div>
+                    <!-- Title above game -->
+                    <div class="post-title">${post.title || 'Looking for players'}</div>
+                    <div class="post-game">🎮 ${post.gameTitle}</div>
                     <div class="post-message">${post.message || ""}</div>
                     <div class="post-actions">
-                        ${isAuthor ? `<button class="btn-warning btn-small" onclick="editPost('${post.id}')">Edit</button>` : ''}
-                        ${isAuthor ? `<button class="btn-danger btn-small" onclick="deletePost('${post.id}')">Delete</button>` : ''}
-                        ${!isAuthor ? `<button class="btn-success btn-small" onclick="addFriendFromPost('${post.userId}')">Add Friend</button>` : ''}
+                        ${isAuthor ? `<button class="btn-warning btn-small" onclick="editPost('${post.id}')">✏️ Edit</button>` : ''}
+                        ${isAuthor ? `<button class="btn-danger btn-small" onclick="deletePost('${post.id}')">🗑 Delete</button>` : ''}
+                        ${!isAuthor ? `<button class="btn-success btn-small" onclick="addFriendFromPost('${post.userId}')">➕ Add Friend</button>` : ''}
                         <span class="post-chat-toggle" onclick="toggleChat('${post.id}')">
-                            Chat <span id="chatCount_${post.id}">${chatCount}</span>
-                            <span class="arrow ${isChatOpen ? 'open' : ''}" id="chatArrow_${post.id}">v</span>
+                            💬 <span id="chatCount_${post.id}">${chatCount}</span>
+                            <span class="arrow ${isChatOpen ? 'open' : ''}" id="chatArrow_${post.id}">▼</span>
                         </span>
                     </div>
                     <div class="post-chat-container ${isChatOpen ? 'open' : ''}" id="chatContainer_${post.id}">
-                        <div class="post-chat-title">Chat</div>
+                        <div class="post-chat-title">💬 Chat</div>
                         <div id="chatMessages_${post.id}">
                             ${post.chatMessages ? post.chatMessages.map(m => `
                                 <div class="chat-message" data-msgid="${m.id}" data-postid="${post.id}" data-userid="${m.userId}">
@@ -1673,16 +2619,27 @@ service cloud.firestore {
         }
 
         function getTagLabel(tag) {
-            const map = { "lfg": "Looking for Group", "player": "Looking for Player", "tip": "Tip", "help": "Help", "rate": "Rate" };
+            const map = {
+                "lfg": "👥 Looking for Group",
+                "player": "🔍 Looking for Player",
+                "tip": "💡 Tip",
+                "help": "🆘 Help",
+                "rate": "⭐ Rate"
+            };
             return map[tag] || tag;
         }
 
         function getTagClass(tag) {
-            const map = { "lfg": "tag-lfg", "player": "tag-player", "tip": "tag-tip", "help": "tag-help", "rate": "tag-rate" };
+            const map = {
+                "lfg": "tag-lfg",
+                "player": "tag-player",
+                "tip": "tag-tip",
+                "help": "tag-help",
+                "rate": "tag-rate"
+            };
             return map[tag] || "";
         }
 
-        // ===== Toggle chat visibility =====
         function toggleChat(postId) {
             const container = document.getElementById(`chatContainer_${postId}`);
             const arrow = document.getElementById(`chatArrow_${postId}`);
@@ -1714,7 +2671,9 @@ service cloud.firestore {
             filterGameOptions();
         }
 
-        function showGameDropdown() { document.getElementById("gameDropdown").classList.add("show"); }
+        function showGameDropdown() {
+            document.getElementById("gameDropdown").classList.add("show");
+        }
 
         function filterGameOptions() {
             const input = document.getElementById("postGameSearch");
@@ -1724,7 +2683,9 @@ service cloud.firestore {
             if (!filtered.length) {
                 dropdown.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);cursor:default;">No games found</div>';
             } else {
-                dropdown.innerHTML = filtered.map(g => `<div class="dropdown-item" data-id="${g.id}">${g.title}</div>`).join("");
+                dropdown.innerHTML = filtered.map(g =>
+                    `<div class="dropdown-item" data-id="${g.id}">${g.title}</div>`
+                ).join("");
             }
             dropdown.classList.add("show");
         }
@@ -1735,6 +2696,7 @@ service cloud.firestore {
             document.getElementById("postModalTitle").textContent = "Create Post";
             document.getElementById("postSubmitBtn").textContent = "Create Post";
             document.getElementById("postEditId").value = "";
+            document.getElementById("postTitle").value = "";
             document.getElementById("postMessage").value = "";
             document.getElementById("postGameSearch").value = "";
             document.getElementById("postGameId").value = "";
@@ -1750,10 +2712,13 @@ service cloud.firestore {
         }
 
         async function submitPost() {
+            const title = document.getElementById("postTitle").value.trim();
             const gameId = parseInt(document.getElementById("postGameId").value);
             const message = document.getElementById("postMessage").value.trim();
             const tag = document.getElementById("postTagSelect").value;
             const editId = document.getElementById("postEditId").value;
+
+            if (!title) { showToast("Please enter a title", true); return; }
             if (!gameId) { showToast("Please select a game", true); return; }
             const game = games.find(g => g.id === gameId);
             if (!game) { showToast("Game not found", true); return; }
@@ -1761,6 +2726,7 @@ service cloud.firestore {
             try {
                 if (editId) {
                     await db.collection("posts").doc(editId).update({
+                        title: title,
                         gameId: gameId,
                         gameTitle: game.title,
                         message: message || "",
@@ -1773,6 +2739,7 @@ service cloud.firestore {
                 } else {
                     await db.collection("posts").add({
                         userId: currentUser.uid,
+                        title: title,
                         gameId: gameId,
                         gameTitle: game.title,
                         message: message || "",
@@ -1787,11 +2754,7 @@ service cloud.firestore {
                 }
             } catch (err) {
                 console.error("Submit post error:", err);
-                if (err.code === "permission-denied") {
-                    showToast("Permission denied. Update your Firestore rules (see setup wizard step 6).", true);
-                } else {
-                    showToast("Error: " + err.message, true);
-                }
+                showToast("Error: " + err.message, true);
             }
         }
 
@@ -1802,6 +2765,7 @@ service cloud.firestore {
             document.getElementById("postModalTitle").textContent = "Edit Post";
             document.getElementById("postSubmitBtn").textContent = "Update Post";
             document.getElementById("postEditId").value = postId;
+            document.getElementById("postTitle").value = post.title || "";
             document.getElementById("postMessage").value = post.message || "";
             document.getElementById("postGameSearch").value = post.gameTitle;
             document.getElementById("postGameId").value = post.gameId;
@@ -1823,11 +2787,13 @@ service cloud.firestore {
             const game = games.find(g => g.id === gameId);
             if (!game) return;
             try {
-                const existing = await db.collection("posts").where("userId", "==", currentUser.uid).where("gameId", "==", gameId).get();
+                const existing = await db.collection("posts").where("userId", "==", currentUser.uid).where("gameId",
+                    "==", gameId).get();
                 if (!existing.empty) return;
                 await db.collection("posts").add({
                     userId: currentUser.uid,
-                    gameId,
+                    title: `Looking for players - ${game.title}`,
+                    gameId: gameId,
                     gameTitle: game.title,
                     message: `Looking for players to play ${game.title}!`,
                     tag: tag || "lfg",
@@ -1841,13 +2807,14 @@ service cloud.firestore {
 
         async function removePostForGame(gameId) {
             try {
-                const snap = await db.collection("posts").where("userId", "==", currentUser.uid).where("gameId", "==", gameId).get();
+                const snap = await db.collection("posts").where("userId", "==", currentUser.uid).where("gameId", "==",
+                    gameId).get();
                 for (const doc of snap.docs) await doc.ref.delete();
                 loadPosts();
             } catch (err) { console.error("Remove post error:", err); }
         }
 
-        // ===== Post Chat (uses arrayUnion for atomic, permission-safe updates) =====
+        // ===== Post Chat =====
         async function sendChatMessage(postId) {
             const input = document.getElementById(`chatInput_${postId}`);
             const msg = input.value.trim();
@@ -1855,8 +2822,11 @@ service cloud.firestore {
             input.value = "";
             try {
                 const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                const data = postDoc.data();
+                const messages = data.chatMessages || [];
                 const newMsg = {
-                    id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+                    id: Date.now().toString(),
                     userId: currentUser.uid,
                     displayName: userProfile.displayName,
                     nameColor: userProfile.nameColor || "#f1f5f9",
@@ -1865,32 +2835,25 @@ service cloud.firestore {
                     message: msg,
                     timestamp: Date.now()
                 };
-                // Atomic update: append message + increment count. Only touches chatMessages/chatCount,
-                // which the Firestore rules allow any signed-in user to update.
+                messages.push(newMsg);
                 await postRef.update({
-                    chatMessages: firebase.firestore.FieldValue.arrayUnion(newMsg),
-                    chatCount: firebase.firestore.FieldValue.increment(1)
+                    chatMessages: messages,
+                    chatCount: messages.length
                 });
                 const post = posts.find(p => p.id === postId);
                 if (post) {
                     if (!post.chatMessages) post.chatMessages = [];
                     post.chatMessages.push(newMsg);
-                    post.chatCount = (post.chatCount || 0) + 1;
-                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById("postTagFilter").value);
+                    post.chatCount = messages.length;
+                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById(
+                        "postTagFilter").value);
                     const container = document.getElementById(`chatContainer_${postId}`);
                     if (container) container.classList.add('open');
                     const arrow = document.getElementById(`chatArrow_${postId}`);
                     if (arrow) arrow.classList.add('open');
                     if (post) post._chatOpen = true;
                 }
-            } catch (err) {
-                console.error("sendChatMessage error:", err);
-                if (err.code === "permission-denied") {
-                    showToast("Permission denied sending message. Update your Firestore rules (setup step 6).", true);
-                } else {
-                    showToast("Error sending message: " + err.message, true);
-                }
-            }
+            } catch (err) { showToast("Error sending message: " + err.message, true); }
         }
 
         // ===== Context Menu =====
@@ -1910,17 +2873,21 @@ service cloud.firestore {
             const deleteItem = document.getElementById("ctxDelete");
 
             editItem.style.display = isOwn ? "block" : "none";
-            deleteItem.style.display = isOwn ? "block" : "none";
+            deleteItem.style.display = isOwn ? "block" : "block";
 
             menu.style.left = e.pageX + "px";
             menu.style.top = e.pageY + "px";
             menu.style.display = "block";
 
-            editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
-            deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
+            editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId);
+                hideContextMenu(); };
+            deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId);
+                hideContextMenu(); };
         }
 
-        function hideContextMenu() { document.getElementById("contextMenu").style.display = "none"; }
+        function hideContextMenu() {
+            document.getElementById("contextMenu").style.display = "none";
+        }
         document.addEventListener("click", hideContextMenu);
 
         async function editChatMessage(postId, msgId) {
@@ -1939,7 +2906,8 @@ service cloud.firestore {
                 if (post) {
                     const m = post.chatMessages.find(m => m.id === msgId);
                     if (m) m.message = newMsg.trim();
-                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById("postTagFilter").value);
+                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById(
+                        "postTagFilter").value);
                 }
                 showToast("Message updated");
             } catch (err) { showToast("Error: " + err.message, true); }
@@ -1958,7 +2926,8 @@ service cloud.firestore {
                 if (post) {
                     post.chatMessages = messages;
                     post.chatCount = messages.length;
-                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById("postTagFilter").value);
+                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById(
+                        "postTagFilter").value);
                 }
                 showToast("Message deleted");
             } catch (err) { showToast("Error: " + err.message, true); }
@@ -1968,9 +2937,11 @@ service cloud.firestore {
         async function addFriendFromPost(userId) {
             if (userId === currentUser.uid) { showToast("That's you!", true); return; }
             try {
-                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(userId).get();
+                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(userId)
+                    .get();
                 if (friendDoc.exists) { showToast("Already friends!", true); return; }
-                const reqSnap = await db.collection("users").doc(userId).collection("requests").where("from", "==", currentUser.uid).get();
+                const reqSnap = await db.collection("users").doc(userId).collection("requests").where("from", "==",
+                    currentUser.uid).get();
                 if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
                 await db.collection("users").doc(userId).collection("requests").add({
                     from: currentUser.uid,
@@ -2044,20 +3015,21 @@ service cloud.firestore {
 
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
-            if (!myCompletions.length) {
-                grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>';
-            } else {
+            if (!myCompletions.length) { grid.innerHTML =
+                '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else {
                 myCompletions.forEach(id => {
                     const game = games.find(g => g.id === id);
                     if (!game) return;
                     const div = document.createElement("div");
                     div.className = "game-card completed";
                     div.style.cursor = "default";
-                    const color = getColor(game.id), initials = getInitials(game.title);
+                    const color = getColor(game.id),
+                        initials = getInitials(game.title);
                     const coverHtml = game.steamId ?
                         `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};>${initials}</span>';">` :
                         `<span style="font-size:2rem;font-weight:900;color:${color};">${initials}</span>`;
-                    div.innerHTML = `
+                    div.innerHTML =
+                        `
                     <div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div>
                     <div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>
                     `;
@@ -2067,20 +3039,21 @@ service cloud.firestore {
 
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
-            if (!myPlaying.length) {
-                playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>';
-            } else {
+            if (!myPlaying.length) { playingGrid.innerHTML =
+            '<div class="empty-state">Not playing any games right now</div>'; } else {
                 myPlaying.forEach(id => {
                     const game = games.find(g => g.id === id);
                     if (!game) return;
                     const div = document.createElement("div");
                     div.className = "game-card playing";
                     div.style.cursor = "default";
-                    const color = getColor(game.id), initials = getInitials(game.title);
+                    const color = getColor(game.id),
+                        initials = getInitials(game.title);
                     const coverHtml = game.steamId ?
                         `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};>${initials}</span>';">` :
                         `<span style="font-size:2rem;font-weight:900;color:${color};">${initials}</span>`;
-                    div.innerHTML = `
+                    div.innerHTML =
+                        `
                     <div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div>
                     <div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>
                     `;
@@ -2094,14 +3067,14 @@ service cloud.firestore {
                 const game = games.find(g => g.id == gameId);
                 if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); }
             });
-            if (!allSaves.length) {
-                savesList.innerHTML = '<div class="empty-state">No save files uploaded yet. Upload saves from game details!</div>';
-            } else {
+            if (!allSaves.length) { savesList.innerHTML =
+                '<div class="empty-state">No save files uploaded yet. Upload saves from game details!</div>'; } else {
                 savesList.innerHTML = allSaves.map(save =>
-                    `<div class="save-item" style="margin-bottom:0.5rem;">
-                        <div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} &bull; ${save.size}</div></div>
-                        <button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button>
-                    </div>`
+                    `
+                <div class="save-item" style="margin-bottom:0.5rem;">
+                    <div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} &bull; ${save.size}</div></div>
+                    <button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button>
+                </div>`
                 ).join("");
             }
         }
@@ -2111,7 +3084,8 @@ service cloud.firestore {
             const name = document.getElementById("settingsName").value.trim();
             if (!name) { showToast("Please enter a name", true); return; }
             try {
-                await db.collection("users").doc(currentUser.uid).update({ displayName: name, searchName: name.toLowerCase() });
+                await db.collection("users").doc(currentUser.uid).update({ displayName: name, searchName: name
+                    .toLowerCase() });
                 userProfile.displayName = name;
                 document.getElementById("headerName").textContent = name;
                 document.getElementById("profileName").textContent = name;
@@ -2209,21 +3183,22 @@ service cloud.firestore {
                     if (data.status === "pending") {
                         try {
                             const userDoc = await db.collection("users").doc(data.from).get();
-                            if (userDoc.exists) friendRequests.push({ id: doc.id, from: data.from, ...userDoc.data() });
+                            if (userDoc.exists) friendRequests.push({ id: doc.id, from: data.from, ...userDoc
+                                .data() });
                         } catch (e) { console.error(e); }
                     }
                 }
                 const badge = document.getElementById("requestBadge");
-                if (friendRequests.length) { badge.textContent = friendRequests.length; badge.style.display = "inline-flex"; } else badge.style.display = "none";
+                if (friendRequests.length) { badge.textContent = friendRequests.length;
+                    badge.style.display = "inline-flex"; } else badge.style.display = "none";
             } catch (err) { console.error("loadRequests error:", err); }
         }
 
         function renderFriends() {
             const grid = document.getElementById("friendsGrid");
-            if (!friendsList.length) {
-                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No friends yet. Click "Find Players" to add friends!</div>';
-                return;
-            }
+            if (!friendsList.length) { grid.innerHTML =
+                    '<div class="empty-state" style="grid-column:1/-1;">No friends yet. Click "Find Players" to add friends!</div>';
+                return; }
             grid.innerHTML = friendsList.map(f => `
                 <div class="friend-card" onclick="openFriendProfile('${f.uid}')">
                     <div class="friend-avatar" style="background:${f.avatarColor};${f.photoData ? `background-image:url(${f.photoData});background-size:cover;` : ''}">${f.photoData ? '' : getInitials(f.displayName)}</div>
@@ -2245,7 +3220,8 @@ service cloud.firestore {
 
         function renderRequests() {
             const list = document.getElementById("requestsList");
-            if (!friendRequests.length) { list.innerHTML = '<div class="empty-state">No pending friend requests</div>'; return; }
+            if (!friendRequests.length) { list.innerHTML = '<div class="empty-state">No pending friend requests</div>';
+                return; }
             list.innerHTML = friendRequests.map(req => `
                 <div class="user-result">
                     <div class="user-result-avatar" style="background:${req.avatarColor};${req.photoData ? `background-image:url(${req.photoData});background-size:cover;` : ''}">${req.photoData ? '' : getInitials(req.displayName)}</div>
@@ -2263,9 +3239,11 @@ service cloud.firestore {
 
         async function sendFriendRequest(targetUid) {
             try {
-                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(targetUid).get();
+                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(targetUid)
+                    .get();
                 if (friendDoc.exists) { showToast("Already friends!", true); return; }
-                const reqSnap = await db.collection("users").doc(targetUid).collection("requests").where("from", "==", currentUser.uid).get();
+                const reqSnap = await db.collection("users").doc(targetUid).collection("requests").where("from", "==",
+                    currentUser.uid).get();
                 if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
                 await db.collection("users").doc(targetUid).collection("requests").add({
                     from: currentUser.uid,
@@ -2279,8 +3257,10 @@ service cloud.firestore {
         async function acceptRequest(requestId, fromUid) {
             try {
                 const batch = db.batch();
-                batch.set(db.collection("users").doc(currentUser.uid).collection("friends").doc(fromUid), { since: firebase.firestore.FieldValue.serverTimestamp() });
-                batch.set(db.collection("users").doc(fromUid).collection("friends").doc(currentUser.uid), { since: firebase.firestore.FieldValue.serverTimestamp() });
+                batch.set(db.collection("users").doc(currentUser.uid).collection("friends").doc(fromUid), { since: firebase
+                        .firestore.FieldValue.serverTimestamp() });
+                batch.set(db.collection("users").doc(fromUid).collection("friends").doc(currentUser.uid), { since: firebase
+                        .firestore.FieldValue.serverTimestamp() });
                 batch.delete(db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId));
                 await batch.commit();
                 await loadFriends();
@@ -2304,7 +3284,8 @@ service cloud.firestore {
         function openSearchModal() {
             document.getElementById("searchModal").classList.add("active");
             document.getElementById("userSearchInput").value = "";
-            document.getElementById("searchResults").innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
+            document.getElementById("searchResults").innerHTML =
+                '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
             document.getElementById("userSearchInput").focus();
         }
 
@@ -2318,24 +3299,27 @@ service cloud.firestore {
 
         async function searchUsers() {
             const term = document.getElementById("userSearchInput").value.trim().toLowerCase();
-            const resultsEl = document.getElementById("searchResults"), loadingEl = document.getElementById("searchLoading");
-            if (term.length < 2) {
-                resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
-                return;
-            }
+            const resultsEl = document.getElementById("searchResults"),
+                loadingEl = document.getElementById("searchLoading");
+            if (term.length < 2) { resultsEl.innerHTML =
+                    '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
+                return; }
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(async () => {
                 loadingEl.style.display = "block";
                 resultsEl.innerHTML = "";
                 try {
-                    const nameSnap = await db.collection("users").where("searchName", ">=", term).where("searchName", "<=", term + "\uf8ff").limit(20).get();
+                    const nameSnap = await db.collection("users").where("searchName", ">=", term).where("searchName",
+                        "<=", term + "\uf8ff").limit(20).get();
                     let users = [];
-                    nameSnap.docs.forEach(d => { if (d.id !== currentUser.uid) users.push({ uid: d.id, ...d.data() }); });
-                    const emailSnap = await db.collection("users").where("email", ">=", term).where("email", "<=", term + "\uf8ff").limit(20).get();
-                    emailSnap.docs.forEach(d => { if (d.id !== currentUser.uid && !users.find(u => u.uid === d.id)) users.push({ uid: d.id, ...d.data() }); });
-                    if (!users.length) {
-                        resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No players found</p>';
-                    } else {
+                    nameSnap.docs.forEach(d => { if (d.id !== currentUser.uid) users.push({ uid: d.id, ...d
+                            .data() }); });
+                    const emailSnap = await db.collection("users").where("email", ">=", term).where("email", "<=",
+                        term + "\uf8ff").limit(20).get();
+                    emailSnap.docs.forEach(d => { if (d.id !== currentUser.uid && !users.find(u => u.uid === d
+                            .id)) users.push({ uid: d.id, ...d.data() }); });
+                    if (!users.length) { resultsEl.innerHTML =
+                            '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No players found</p>'; } else {
                         resultsEl.innerHTML = users.map(u => `
                             <div class="user-result">
                                 <div class="user-result-avatar" style="background:${u.avatarColor};${u.photoData ? `background-image:url(${u.photoData});background-size:cover;` : ''}">${u.photoData ? '' : getInitials(u.displayName)}</div>
@@ -2347,9 +3331,8 @@ service cloud.firestore {
                             </div>
                         `).join("");
                     }
-                } catch (err) {
-                    resultsEl.innerHTML = `<p style="color:var(--danger);text-align:center;padding:2rem;">Error: ${err.message}</p>`;
-                }
+                } catch (err) { resultsEl.innerHTML =
+                        `<p style="color:var(--danger);text-align:center;padding:2rem;">Error: ${err.message}</p>`; }
                 loadingEl.style.display = "none";
             }, 300);
         }
@@ -2361,12 +3344,16 @@ service cloud.firestore {
             const profile = userDoc.data();
             const compSnap = await db.collection("users").doc(friendUid).collection("completions").get();
             const friendCompletions = compSnap.docs.map(d => parseInt(d.id));
-            const playingSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "playing").get();
+            const playingSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status",
+                "==", "playing").get();
             const friendPlaying = playingSnap.docs.map(d => parseInt(d.id));
             const savesSnap = await db.collection("users").doc(friendUid).collection("saveFiles").get();
             const friendSaves = {};
             let totalFriendSaves = 0;
-            savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = []; friendSaves[gid].push(data); totalFriendSaves++; });
+            savesSnap.docs.forEach(d => { const data = d.data(),
+                    gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = [];
+                friendSaves[gid].push(data);
+                totalFriendSaves++; });
 
             const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
             friendPosts = [];
@@ -2392,9 +3379,12 @@ service cloud.firestore {
 
             const socialDiv = document.getElementById("friendSocialLinks");
             socialDiv.innerHTML = "";
-            if (profile.discord) socialDiv.innerHTML += `<span class="badge badge-info">Discord: ${profile.discord}</span>`;
-            if (profile.reddit) socialDiv.innerHTML += `<span class="badge badge-warning">Reddit: ${profile.reddit}</span>`;
-            if (!profile.discord && !profile.reddit) socialDiv.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
+            if (profile.discord) socialDiv.innerHTML +=
+                `<span class="badge badge-info">💬 Discord: ${profile.discord}</span>`;
+            if (profile.reddit) socialDiv.innerHTML +=
+                `<span class="badge badge-warning">🔴 Reddit: ${profile.reddit}</span>`;
+            if (!profile.discord && !profile.reddit) socialDiv.innerHTML =
+                '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
 
             const postsSection = document.getElementById("friendPostsSection");
             const postsList = document.getElementById("friendPostsList");
@@ -2423,11 +3413,13 @@ service cloud.firestore {
                     const div = document.createElement("div");
                     div.className = "game-card completed";
                     div.style.cursor = "default";
-                    const color = getColor(game.id), initials = getInitials(game.title);
+                    const color = getColor(game.id),
+                        initials = getInitials(game.title);
                     const coverHtml = game.steamId ?
                         `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};>${initials}</span>';">` :
                         `<span style="font-size:2rem;font-weight:900;color:${color};">${initials}</span>`;
-                    div.innerHTML = `
+                    div.innerHTML =
+                        `
                     <div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div>
                     <div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>
                     `;
@@ -2444,11 +3436,13 @@ service cloud.firestore {
                     const div = document.createElement("div");
                     div.className = "game-card playing";
                     div.style.cursor = "default";
-                    const color = getColor(game.id), initials = getInitials(game.title);
+                    const color = getColor(game.id),
+                        initials = getInitials(game.title);
                     const coverHtml = game.steamId ?
                         `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};>${initials}</span>';">` :
                         `<span style="font-size:2rem;font-weight:900;color:${color};">${initials}</span>`;
-                    div.innerHTML = `
+                    div.innerHTML =
+                        `
                     <div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div>
                     <div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>
                     `;
@@ -2460,16 +3454,17 @@ service cloud.firestore {
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => {
                 const game = games.find(g => g.id == gameId);
-                if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); }
+                if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game
+                        .title }); }); }
             });
-            if (!allSaves.length) {
-                savesContainer.innerHTML = '<div class="empty-state">No save files shared yet</div>';
-            } else {
+            if (!allSaves.length) { savesContainer.innerHTML =
+                '<div class="empty-state">No save files shared yet</div>'; } else {
                 savesContainer.innerHTML = allSaves.map(save =>
-                    `<div class="save-item" style="margin-bottom:0.5rem;">
-                        <div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} &bull; ${save.size}</div></div>
-                        <button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button>
-                    </div>`
+                    `
+                <div class="save-item" style="margin-bottom:0.5rem;">
+                    <div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} &bull; ${save.size}</div></div>
+                    <button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button>
+                </div>`
                 ).join("");
             }
             document.getElementById("friendProfileModal").classList.add("active");
@@ -2491,7 +3486,10 @@ service cloud.firestore {
         }
 
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") { closeGameModal(); closeSearchModal(); closeFriendProfile(); closePostModal(); }
+            if (e.key === "Escape") { closeGameModal();
+                closeSearchModal();
+                closeFriendProfile();
+                closePostModal(); }
         });
 
         init();
