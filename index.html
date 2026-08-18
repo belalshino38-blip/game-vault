@@ -39,7 +39,7 @@
             line-height: 1.5;
         }
 
-        /* Setup Wizard */
+        /* Setup Wizard (unchanged) */
         .setup-wizard {
             max-width: 700px;
             margin: 3rem auto;
@@ -129,7 +129,6 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        /* Unified button style for nav */
         .nav-btn {
             background: var(--primary);
             color: white;
@@ -150,8 +149,6 @@
         .nav-btn:active {
             transform: translateY(0);
         }
-
-        /* General button styles */
         button {
             background: var(--primary);
             color: white;
@@ -172,7 +169,6 @@
         button:active {
             transform: translateY(0);
         }
-
         .btn-secondary {
             background: #1e1e2e;
             border: 1px solid #2d2d44;
@@ -182,7 +178,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
-
         .btn-success {
             background: var(--success);
         }
@@ -191,7 +186,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
         }
-
         .btn-danger {
             background: var(--danger);
         }
@@ -208,8 +202,6 @@
         .btn-warning:hover {
             background: #fbbf24;
         }
-
-        /* File Input Styling (Green & Animated) */
         .btn-file {
             display: inline-block;
             background: var(--success);
@@ -1105,7 +1097,6 @@
             font-weight: 700;
             font-size: 0.95rem;
         }
-        /* Title above game */
         .post-title {
             font-size: 1rem;
             font-weight: 700;
@@ -1116,7 +1107,6 @@
             color: var(--accent);
             font-weight: 600;
             font-size: 1.2rem;
-            /* Bigger game title */
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
@@ -1448,31 +1438,28 @@
         </div>
         <div class="setup-step">
             <h3>6. Set Firestore Rules</h3>
-            <p>Copy and paste these rules into Firebase Console -> Firestore -> Rules:</p>
-            <div class="code-block">
-                rules_version = '2';
-                service cloud.firestore {
-                match /databases/{database}/documents {
-                match /users/{uid} {
-                allow read: if request.auth != null;
-                allow write: if request.auth != null && request.auth.uid == uid;
-                }
-                match /users/{uid}/{document=**} {
-                allow read: if request.auth != null;
-                allow write: if request.auth != null && request.auth.uid == uid;
-                }
-                match /posts/{postId} {
-                allow read: if request.auth != null;
-                allow create: if request.auth != null;
-                allow update: if request.auth != null && request.auth.uid == resource.data.userId;
-                allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
-                }
-                }
-                }
-            </div>
-            <p style="color:var(--warning);margin-top:0.75rem;font-weight:600;">
-                IMPORTANT: Click PUBLISH after pasting the rules.
-            </p>
+            <div class="code-block">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /users/{uid}/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.userId ||
+        request.resource.data.diff(resource.data).affectedKeys.hasOnly(['chatMessages', 'chatCount'])
+      );
+      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}</div>
         </div>
     </div>
 
@@ -1510,7 +1497,6 @@
         <header>
             <div class="logo">🎮 Game Vault</div>
             <div class="nav-buttons">
-                <!-- Unified button styles -->
                 <button class="nav-btn" onclick="showGames()">Games</button>
                 <button class="nav-btn" onclick="showFriends()">Friends</button>
                 <button class="nav-btn" onclick="showPosts()">Posts</button>
@@ -1689,7 +1675,6 @@
                 <button class="close-btn" onclick="closePostModal()">×</button>
             </div>
             <div class="modal-body">
-                <!-- Title Field -->
                 <div style="margin-bottom:1rem;">
                     <label style="display:block;margin-bottom:0.5rem;color:var(--text-muted);">Title</label>
                     <input type="text" id="postTitle" placeholder="e.g., Looking for a squad for ranked..." maxlength="100">
@@ -2532,23 +2517,34 @@
         async function loadPosts() {
             try {
                 const snap = await db.collection("posts").orderBy("createdAt", "desc").get();
-                posts = [];
+                const newPosts = [];
                 for (const doc of snap.docs) {
                     const data = doc.data();
                     const userDoc = await db.collection("users").doc(data.userId).get();
                     if (userDoc.exists) {
-                        posts.push({ id: doc.id, ...data, user: userDoc.data() });
+                        newPosts.push({ id: doc.id, ...data, user: userDoc.data() });
                     }
                 }
+                // Deduplicate by id
+                const seen = new Set();
+                posts = newPosts.filter(post => {
+                    if (seen.has(post.id)) return false;
+                    seen.add(post.id);
+                    return true;
+                });
                 renderPosts();
             } catch (err) { console.error("loadPosts error:", err); }
         }
 
         function renderPosts(filter = "", tagFilter = "all") {
-           // At the top of renderPosts()
-filtered = filtered.filter((post, index, self) => 
-  index === self.findIndex(p => p.id === post.id)
-);
+            // Deduplicate posts (in case duplicates slipped through)
+            const seen = new Set();
+            posts = posts.filter(post => {
+                if (seen.has(post.id)) return false;
+                seen.add(post.id);
+                return true;
+            });
+
             const grid = document.getElementById("postsGrid");
             let filtered = posts.filter(p =>
                 p.gameTitle.toLowerCase().includes(filter.toLowerCase()) ||
@@ -2577,7 +2573,6 @@ filtered = filtered.filter((post, index, self) =>
                         </div>
                         <span class="post-tag ${tagClass}" style="margin-left:auto;">${tagLabel}</span>
                     </div>
-                    <!-- Title above game -->
                     <div class="post-title">${post.title || 'Looking for players'}</div>
                     <div class="post-game">🎮 ${post.gameTitle}</div>
                     <div class="post-message">${post.message || ""}</div>
