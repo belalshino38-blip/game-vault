@@ -2543,58 +2543,66 @@
             }
         }
 
-        async function submitPost() {
-            const gameId = parseInt(document.getElementById("postGameId").value);
-            const message = document.getElementById("postMessage").value.trim();
-            const tag = document.getElementById("postTagSelect").value;
-            const editId = document.getElementById("postEditId").value;
-            if (!gameId) { showToast("Please select a game", true); return; }
-            const game = games.find(g => g.id === gameId);
-            if (!game) { showToast("Game not found", true); return; }
+       async function submitPost() {
+    const gameId = parseInt(document.getElementById("postGameId").value);
+    const message = document.getElementById("postMessage").value.trim();
+    const tag = document.getElementById("postTagSelect").value;
+    const editId = document.getElementById("postEditId").value;
 
-            try {
-                if (editId) {
-                    // Update existing post
-                    await db.collection("posts").doc(editId).update({
-                        gameId,
-                        gameTitle: game.title,
-                        message: message || "",
-                        tag,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    showToast("Post updated!");
-                } else {
-                    await db.collection("posts").add({
-                        userId: currentUser.uid,
-                        gameId,
-                        gameTitle: game.title,
-                        message: message || "",
-                        tag,
-                        chatMessages: [],
-                        chatCount: 0,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    showToast("Post created!");
-                }
-                closePostModal();
-                loadPosts();
-            } catch (err) { showToast("Error: " + err.message, true); }
+    if (!gameId) { showToast("Please select a game", true); return; }
+    const game = games.find(g => g.id === gameId);
+    if (!game) { showToast("Game not found", true); return; }
+
+    try {
+        if (editId) {
+            await db.collection("posts").doc(editId).update({
+                gameId: gameId,
+                gameTitle: game.title,
+                message: message || "",
+                tag: tag,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast("Post updated successfully!");
+            closePostModal();
+            loadPosts();
+        } else {
+            await db.collection("posts").add({
+                userId: currentUser.uid,
+                gameId: gameId,
+                gameTitle: game.title,
+                message: message || "",
+                tag: tag,
+                chatMessages: [],
+                chatCount: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast("Post created!");
+            closePostModal();
+            loadPosts();
         }
+    } catch (err) {
+        console.error("Submit post error:", err);
+        showToast("Error: " + err.message, true);
+    }
+}
 
         function editPost(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (!post) { showToast("Post not found", true); return; }
-            editingPostId = postId;
-            document.getElementById("postModalTitle").textContent = "Edit Post";
-            document.getElementById("postSubmitBtn").textContent = "Update Post";
-            document.getElementById("postEditId").value = postId;
-            document.getElementById("postMessage").value = post.message || "";
-            document.getElementById("postGameSearch").value = post.gameTitle;
-            document.getElementById("postGameId").value = post.gameId;
-            document.getElementById("postTagSelect").value = post.tag || "lfg";
-            document.getElementById("gameDropdown").classList.remove("show");
-            document.getElementById("postModal").classList.add("active");
-        }
+    const post = posts.find(p => p.id === postId);
+    if (!post) { 
+        showToast("Post not found", true); 
+        return; 
+    }
+    editingPostId = postId;
+    document.getElementById("postModalTitle").textContent = "Edit Post";
+    document.getElementById("postSubmitBtn").textContent = "Update Post";
+    document.getElementById("postEditId").value = postId;
+    document.getElementById("postMessage").value = post.message || "";
+    document.getElementById("postGameSearch").value = post.gameTitle;
+    document.getElementById("postGameId").value = post.gameId;
+    document.getElementById("postTagSelect").value = post.tag || "lfg";
+    document.getElementById("gameDropdown").classList.remove("show");
+    document.getElementById("postModal").classList.add("active");
+}
 
         async function deletePost(postId) {
             if (!confirm("Delete this post?")) return;
