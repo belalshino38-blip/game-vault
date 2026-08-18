@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,14 +8,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-            input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--surface) inset !important;
-    -webkit-text-fill-color: var(--text) !important;
-    transition: background-color 5000s ease-in-out 0s;
-}
         :root { --bg: #0a0a0f; --surface: #13131f; --surface-hover: #1c1c2e; --primary: #8b5cf6; --primary-hover: #a78bfa; --accent: #06b6d4; --text: #f1f5f9; --text-muted: #94a3b8; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #3b82f6; --vote-up: #ff8a60; --vote-down: #7193ff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
@@ -73,6 +64,8 @@ input:-webkit-autofill:active {
         .search-container input[type="text"] { flex: 1; min-width: 200px; }
         input[type="text"], input[type="email"], input[type="password"], input[type="color"], textarea, select { background: var(--surface); border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem 1rem; border-radius: 0.625rem; width: 100%; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
+        /* Edge Autofill Hack */
+        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active { -webkit-box-shadow: 0 0 0 30px var(--surface) inset !important; -webkit-text-fill-color: var(--text) !important; transition: background-color 5000s ease-in-out 0s; }
         .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1.25rem; padding: 0 2rem 2rem; }
         .game-card { background: var(--surface); border-radius: 0.875rem; overflow: hidden; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative; }
         .game-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15); }
@@ -236,22 +229,10 @@ input:-webkit-autofill:active {
     <div id="setupWizard" class="setup-wizard">
         <h1>Admin Setup</h1>
         <p style="color:var(--text-muted);margin-bottom:1.5rem;">Update Firebase configuration.</p>
-        <div class="setup-step">
-            <h3>1. Create a Firebase Project</h3>
-            <p>Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);">firebase.google.com</a> and create a new project</p>
-        </div>
-        <div class="setup-step">
-            <h3>2. Add a Web App</h3>
-            <p>Click the / icon (Add app) -> Choose "Web" -> Register</p>
-        </div>
-        <div class="setup-step">
-            <h3>3. Enable Authentication</h3>
-            <p>In Firebase Console -> Authentication -> Get Started -> Email/Password -> Enable -> Save</p>
-        </div>
-        <div class="setup-step">
-            <h3>4. Create Firestore Database</h3>
-            <p>Firestore Database -> Create database -> Start in test mode -> Enable</p>
-        </div>
+        <div class="setup-step"><h3>1. Create a Firebase Project</h3><p>Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);">firebase.google.com</a> and create a new project</p></div>
+        <div class="setup-step"><h3>2. Add a Web App</h3><p>Click the / icon (Add app) -> Choose "Web" -> Register</p></div>
+        <div class="setup-step"><h3>3. Enable Authentication</h3><p>In Firebase Console -> Authentication -> Get Started -> Email/Password -> Enable -> Save</p></div>
+        <div class="setup-step"><h3>4. Create Firestore Database</h3><p>Firestore Database -> Create database -> Start in test mode -> Enable</p></div>
         <div class="setup-step">
             <h3>5. Paste Your Firebase Config</h3>
             <p>Easy way: Copy the entire config block from Firebase and paste it here.</p>
@@ -606,7 +587,7 @@ service cloud.firestore {
         }
         const savedCfg = localStorage.getItem("gameVault_firebaseConfig");
         if (savedCfg) { try { Object.assign(firebaseConfig, JSON.parse(savedCfg)); } catch (e) { console.error(e); } }
-                function generateGames() {
+        function generateGames() {
             const known = ["The Witcher 3", "Red Dead Redemption 2", "Elden Ring", "God of War", "The Last of Us", "Cyberpunk 2077", "Breath of the Wild", "Super Mario Odyssey", "Hollow Knight", "Hades", "Dark Souls 3", "Sekiro", "Bloodborne", "Horizon Zero Dawn", "Ghost of Tsushima", "Spider-Man", "Uncharted 4", "Metal Gear Solid V", "Skyrim", "Fallout 4", "Mass Effect 2", "Dragon Age Inquisition", "Baldur's Gate 3", "Divinity Original Sin 2", "Stardew Valley", "Terraria", "Minecraft", "Portal 2", "Half-Life 2", "Doom Eternal", "Wolfenstein II", "BioShock Infinite", "Borderlands 3", "Destiny 2", "Halo Infinite", "Gears 5", "Forza Horizon 5", "Gran Turismo 7", "FIFA 23", "NBA 2K23", "Madden NFL 23", "Rocket League", "Fortnite", "Apex Legends", "Valorant", "Counter-Strike 2", "Overwatch 2", "League of Legends", "Dota 2", "World of Warcraft", "Final Fantasy XIV", "Genshin Impact", "Honkai Star Rail", "Persona 5", "Final Fantasy VII Remake", "Resident Evil 4", "Dead Space", "Alan Wake 2", "Control", "Dishonored 2", "Prey", "Deus Ex Mankind Divided", "Hitman 3", "Assassin's Creed Valhalla", "Far Cry 6", "Watch Dogs Legion", "Rainbow Six Siege", "The Division 2", "Ghost Recon Breakpoint", "Monster Hunter World", "NieR Automata", "Bayonetta 3", "Devil May Cry 5", "Street Fighter 6", "Tekken 8", "Mortal Kombat 1", "Guilty Gear Strive", "Super Smash Bros Ultimate", "Mario Kart 8 Deluxe", "Splatoon 3", "Animal Crossing New Horizons", "Pokemon Scarlet", "Fire Emblem Three Houses", "Xenoblade Chronicles 3", "Metroid Dread", "Castlevania Symphony of the Night", "Shovel Knight", "Cuphead", "Undertale", "Deltarune", "OMORI", "Disco Elysium", "Pentiment", "Outer Wilds", "Subnautica", "No Man's Sky", "Starfield", "Kerbal Space Program", "Factorio", "Satisfactory", "Oxygen Not Included", "RimWorld", "Cities Skylines", "Planet Coaster", "Two Point Hospital", "Frostpunk", "Surviving Mars", "Crusader Kings 3", "Europa Universalis IV", "Total War Warhammer 3", "Civilization VI", "Age of Empires IV", "Company of Heroes 3", "Iron Harvest", "The Riftbreaker", "Dyson Sphere Program", "Slay the Spire", "Monster Train", "Griftlands", "Inscryption", "Wildfrost", "Darkest Dungeon 2", "Gloomhaven", "Dicey Dungeons", "Fights in Tight Spaces", "Dead Cells", "Hades 2", "Curse of the Dead Gods", "Skul", "Vampire Survivors", "Brotato", "20 Minutes Till Dawn", "Soulstone Survivors", "Rogue Legacy 2", "Spelunky 2", "Risk of Rain 2", "Returnal", "Deathloop", "Prey Mooncrash", "Wolfenstein New Order", "The Evil Within 2", "Alien Isolation", "Soma", "Amnesia Rebirth", "Outlast 2", "Resident Evil Village", "The Quarry", "Until Dawn", "Little Nightmares 2", "Inside", "Limbo", "Gris", "Journey", "Florence", "Tell Me Why", "Life is Strange True Colors", "A Plague Tale Requiem", "Hellblade Senua's Sacrifice", "Senua's Saga Hellblade 2", "Stray", "Solar Ash", "Cocoon", "Planet of Lana", "FAR Changing Tides", "Somerville", "Scorn", "Moonscars", "Ender Lilies", "The Hunter Call of the Wild", "Fishing Sim World", "Goat Simulator 3", "Untitled Goose Game", "Moving Out", "Overcooked 2", "Tools Up", "The Sims 4", "SimCity", "Cities Skylines 2", "Parkitect", "Rollercoaster Tycoon", "Planet Zoo", "Jurassic World Evolution 2", "Prehistoric Kingdom", "Anno 1800", "Transport Fever 2", "Railroad Empire", "Train Sim World", "Flight Simulator 2024", "War Thunder", "World of Warships", "World of Tanks", "Warhammer 40k Darktide", "Vermintide 2", "Space Marine 2", "Boltgun", "Warhammer 40k Gladius", "Battlefleet Gothic Armada 2", "Dawn of War 3", "Company of Heroes", "Sudden Strike 4", "Steel Division 2", "Hearts of Iron IV", "Commandos 2", "Shadow Tactics", "Desperados 3", "Mutant Year Zero", "Phoenix Point", "XCOM 2", "Gears Tactics", "Wasteland 3", "Atom RPG", "Encased", "Colony Ship", "Roadwarden", "Citizen Sleeper", "Norco", "Cloudpunk", "Road 96", "As Dusk Falls", "Lake", "Firewatch", "What Remains of Edith Finch", "Gone Home", "Dear Esther", "The Vanishing of Ethan Carter", "Everybody's Gone to the Rapture", "The Unfinished Swan", "The Last Guardian", "Shadow of the Colossus", "Ico", "The Legend of Zelda", "Link's Awakening", "Skyward Sword", "Twilight Princess", "Wind Waker", "Ocarina of Time", "Majora's Mask", "A Link Between Worlds", "A Link to the Past", "The Minish Cap", "Four Swords", "Tri Force Heroes", "Tears of the Kingdom", "Age of Calamity", "Hyrule Warriors", "Cadence of Hyrule", "Mario + Rabbids", "Kingdom Battle", "Sparks of Hope", "Yoshi's Crafted World", "Kirby and the Forgotten Land", "Paper Mario", "Luigi's Mansion 3", "Pikmin 4", "Metroid Prime Remastered", "Metroid Fusion", "Metroid Zero Mission", "Super Metroid", "Metroid Samus Returns", "Advance Wars 1+2 Re-Boot Camp", "Wargroove", "Tiny Metal", "Into the Breach", "Invisible Inc.", "Shadowrun Returns", "Battletech", "MechWarrior 5", "Front Mission 1st", "Front Mission 2", "Front Mission 3", "Front Mission 4", "Steel Battalion", "Zone of the Enders", "Armored Core 6", "Armored Core V", "Chromehounds", "Strike Suit Zero", "Strike Suit Infinity", "House of the Dying Sun", "Star Wars Squadrons", "Star Wars Jedi Fallen Order", "Jedi Survivor", "Star Wars Battlefront 2", "Star Wars Republic Commando", "Star Wars Empire at War", "Lego Star Wars The Skywalker Saga", "Lego DC Super-Villains", "Lego Marvel Super Heroes 2", "Lego City Undercover", "Lego The Hobbit", "Lego The Lord of the Rings", "Lego Jurassic World", "Lego Indiana Jones", "Lego Batman 3", "Lego Worlds", "Scribblenauts Unlimited", "Scribblenauts Unmasked", "Scribblenauts Showdown", "The Adventure Pals", "Mighty Switch Force", "Shantae Half-Genie Hero", "Shantae and the Pirate's Curse", "The Messenger", "Cyber Shadow", "Blasphemous 2", "The Last Faith", "Morbid The Seven Acolytes", "Death's Gambit", "Salt and Sacrifice", "Ender Lillies", "Deedlit in Wonder Labyrinth", "Castlevania Advanced Collection", "Castlevania Anniversary Collection", "Castlevania Requiem", "Bloodstained Ritual of the Night", "Bloodstained Curse of the Moon", "Bloodstained Curse of the Moon 2", "Record of Lodoss War Deedlit", "Touhou Luna Nights", "Momodora Reverie Under the Moonlight", "Momodora Moonlit Farewell", "Gato Roboto", "Islets", "Cave Story", "Knytt Underground", "Dandara", "Axiom Verge 2", "Axiom Verge", "Environmental Station Alpha", "Rabi-Ribi", "Iconoclasts", "The Vagrant", "Chained Echoes", "CrossCode", "Unsighted", "Hyper Light Drifter", "Furi", "The Red Strings Club", "Read Only Memories", "2064 Read Only Memories", "Neo Cab", "Coffee Talk", "VA-11 Hall-A", "Necrobarista", "Jack Move", "Anno Mutationem", "The Last Night", "Dex", "Machi Koro", "Griftlands", "Slay the Spire", "Monster Train", "Vault of the Void", "Tainted Grail", "Across the Obelisk", "Dice Legacy", "Roguebook", "Floppy Knights", "Fights in Tight Spaces", "Shapez", "Dorfromantik", "Townscaper", "Islanders", "Kingdoms and Castles", "Foundation", "Dawn of Man", "Ancient Cities", "Hammerhelm", "Gedonia", "Outward", "ELEX", "Gothic", "Risen", "Two Worlds", "Venetica", "Kingdoms of Amalur", "Fable Anniversary", "Fable 2", "Fable 3", "The Bard's Tale", "Diablo 3", "Diablo 2 Resurrected", "Diablo 4", "Torchlight 2", "Torchlight 3", "Victor Vran", "Wolcen", "Last Epoch", "Warhammer 40k Inquisitor Martyr", "Warhammer 40k Chaos Gate Daemonhunters", "Warhammer 40k Mechanicus", "Warhammer 40k Battlesector", "Warhammer 40k Battlefleet Gothic Armada", "Warhammer 40k Space Marine", "The Outer Worlds", "The Outer Worlds 2", "Avowed", "Fable", "Perfect Dark", "Killer Instinct", "Gears of War", "Halo", "Forza Motorsport", "State of Decay", "Psychonauts", "Psychonauts 2", "Crackdown", "Quantum Break", "Sunset Overdrive", "Ryse Son of Rome", "Dead Rising", "Dead Rising 2", "Dead Rising 3", "Dead Rising 4", "Dragon's Dogma", "Dragon's Dogma 2", "Lost Planet", "Resident Evil", "Resident Evil 0", "Resident Evil 2", "Resident Evil 3", "Resident Evil 4", "Resident Evil 5", "Resident Evil 6", "Resident Evil 7", "Resident Evil Village", "Resident Evil Revelations", "Resident Evil Revelations 2", "Dino Crisis", "Onimusha", "Devil May Cry", "Devil May Cry 2", "Devil May Cry 3", "Devil May Cry 4", "Devil May Cry 5", "DmC Devil May Cry", "Bayonetta", "Bayonetta 2", "Bayonetta 3", "Vanquish", "Metal Gear Rising", "Metal Gear Solid", "Metal Gear Solid 2", "Metal Gear Solid 3", "Metal Gear Solid 4", "Metal Gear Solid V", "Metal Gear Survive", "Zone of the Enders", "Zone of the Enders 2", "Ace Combat", "Ace Combat 7", "Project Wingman", "Tom Clancy's Ghost Recon", "Ghost Recon Wildlands", "Ghost Recon Breakpoint", "Rainbow Six", "Rainbow Six Siege", "Rainbow Six Extraction", "The Division", "The Division 2", "Watch Dogs", "Watch Dogs 2", "Watch Dogs Legion", "Far Cry", "Far Cry 2", "Far Cry 3", "Far Cry 4", "Far Cry 5", "Far Cry 6", "Far Cry Primal", "Far Cry New Dawn", "Assassin's Creed", "Assassin's Creed II", "Assassin's Creed Brotherhood", "Assassin's Creed Revelations", "Assassin's Creed III", "Assassin's Creed IV Black Flag", "Assassin's Creed Rogue", "Assassin's Creed Unity", "Assassin's Creed Syndicate", "Assassin's Creed Origins", "Assassin's Creed Odyssey", "Assassin's Creed Valhalla", "Assassin's Creed Mirage", "Splinter Cell", "Splinter Cell Pandora Tomorrow", "Splinter Cell Chaos Theory", "Splinter Cell Double Agent", "Splinter Cell Conviction", "Splinter Cell Blacklist", "Prince of Persia", "Prince of Persia The Sands of Time", "Prince of Persia Warrior Within", "Prince of Persia The Two Thrones", "Prince of Persia 2008", "The Forgotten Sands", "Beyond Good and Evil", "Beyond Good and Evil 2", "Rayman", "Rayman 2", "Rayman 3", "Rayman Legends", "Rayman Origins", "Baldur's Gate", "Baldur's Gate 2", "Baldur's Gate 3", "Icewind Dale", "Planescape Torment", "Neverwinter Nights", "Neverwinter Nights 2", "Pillars of Eternity", "Pillars of Eternity 2", "Tyranny", "Torment Tides of Numenera", "Wasteland", "Wasteland 2", "Wasteland 3", "Atom RPG", "Encased", "Colony Ship", "UnderRail", "Expeditions Rome", "Expeditions Viking", "Expeditions Conquistador", "GreedFall", "Steelrising", "Thymesia", "Lords of the Fallen", "The Surge", "The Surge 2", "Code Vein", "God Eater", "God Eater 2", "God Eater 3", "Tales of Berseria", "Tales of Zestiria", "Tales of Arise", "Ni no Kuni", "Ni no Kuni 2", "Rise of the Tomb Raider", "Shadow of the Tomb Raider", "Tomb Raider 2013", "Mirror's Edge", "Mirror's Edge Catalyst", "Need for Speed", "Need for Speed Heat", "Need for Speed Unbound", "Need for Speed Most Wanted", "Need for Speed Underground", "Need for Speed Carbon", "Burnout Paradise", "Burnout Revenge", "The Crew", "The Crew 2", "The Crew Motorfest", "Trackmania", "Trackmania Turbo", "Wreckfest", "DiRT Rally", "DiRT Rally 2.0", "DiRT 5", "Project CARS", "Project CARS 2", "Project CARS 3", "Assetto Corsa", "Assetto Corsa Competizione", "iRacing", "RaceRoom", "Automobilista", "F1 2023", "F1 2024", "F1 Manager 2023", "F1 Manager 2024", "Football Manager 2024", "Football Manager 2023", "Guild Wars 2", "Final Fantasy XIV", "Final Fantasy XI", "Elder Scrolls Online", "The Old Republic", "Dungeons & Dragons Online", "Lord of the Rings Online", "EverQuest", "EverQuest 2", "Rift", "TERA", "ArcheAge", "Black Desert", "Albion Online", "Lost Ark", "New World", "Tower of Fantasy", "Zenless Zone Zero", "Wuthering Waves", "Honkai Impact 3rd", "Genshin Impact", "Star Rail", "Honkai Star Rail", "Arknights", "Girls Frontline", "Azur Lane", "Blue Archive", "NIKKE", "Figure Fantasy", "Memento Mori", "CounterSide", "Neural Cloud", "Path to Nowhere", "Limbus Company", "Reverse: 1999", "Revue Starlight", "Shining Nikki", "Love Nikki", "Mr Love Queens Choice", "The Legend of Neverland", "Dragon Raja", "Eternal City", "Sdorica", "Soul Tide", "The Tale of Food", "Food Fantasy", "Alchemy Stars", "Arknights: Endfield", "Snowbreak", "GFL2", "Project Neural Cloud", "Dolls Frontline", "Divine World"];
             const result = [];
             const genres = ["Action", "RPG", "Adventure", "Shooter", "Strategy", "Sports", "Racing", "Simulation", "Puzzle", "Fighting", "MMO", "MOBA", "Battle Royale", "Survival", "Horror"];
@@ -617,7 +598,6 @@ service cloud.firestore {
                 const genre = genres[id % genres.length];
                 const year = years[id % years.length];
                 const multiplayer = id % 3 === 0 || id % 5 === 0;
-                // We set steamId to NULL and let the CSS do the heavy lifting
                 const steamId = null;
                 result.push({ id: id++, title: title, genre: genre, year: year, steamId: steamId, multiplayer: multiplayer });
             }
@@ -625,6 +605,62 @@ service cloud.firestore {
                 result.push({ id: result.length + 1, title: `Game ${result.length + 1}`, genre: genres[result.length % genres.length], year: years[result.length % years.length], steamId: null, multiplayer: result.length % 3 === 0 });
             }
             return result;
+        }
+        const games = generateGames();
+        let auth, db;
+        let currentUser = null;
+        let userProfile = null;
+        let myCompletions = [];
+        let myPlaying = [];
+        let myLooking = [];
+        let myLFG = [];
+        let mySaves = {};
+        let friendsList = [];
+        let friendRequests = [];
+        let currentGame = null;
+        let posts = [];
+        let editingPostId = null;
+        let friendPosts = [];
+        function init() {
+            if (!isConfigValid()) {
+                document.getElementById("setupWizard").classList.add("active");
+                document.getElementById("authModal").style.display = "none";
+                document.getElementById("appContainer").style.display = "none";
+                console.warn("Firebase config is invalid. Please set up config.");
+                return;
+            }
+            try {
+                if (firebase.apps.length) { console.log("Firebase already initialized"); } else { firebase.initializeApp(firebaseConfig); console.log("Firebase initialized successfully"); }
+            } catch (err) {
+                console.error("Firebase init failed:", err);
+                alert("Firebase config is invalid. Error: " + err.message + "\n\nClick the gear icon in your profile to re-enter config.");
+                document.getElementById("setupWizard").classList.add("active");
+                document.getElementById("authModal").style.display = "none";
+                document.getElementById("appContainer").style.display = "none";
+                return;
+            }
+            auth = firebase.auth();
+            db = firebase.firestore();
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById("authModal").style.display = "none";
+                    document.getElementById("appContainer").style.display = "block";
+                    if (user.uid === ADMIN_UID) { document.getElementById("adminGear").style.display = "inline-block"; }
+                    loadUserProfile();
+                    loadMyData();
+                    loadFriends();
+                    loadRequests();
+                    loadPosts();
+                    renderGames();
+                    setupGameCombobox();
+                    document.getElementById("userDropdownBtn").addEventListener("click", toggleUserDropdown);
+                } else {
+                    document.getElementById("authModal").style.display = "flex";
+                    document.getElementById("appContainer").style.display = "none";
+                }
+            });
         }
         function toggleUserDropdown(e) { e.stopPropagation(); document.getElementById("userDropdownMenu").classList.toggle("show"); }
         function closeUserDropdown() { document.getElementById("userDropdownMenu").classList.remove("show"); }
@@ -704,12 +740,11 @@ service cloud.firestore {
             const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
             return colors[(id - 1) % colors.length];
         }
-                function renderGames(filter = "") {
+        function renderGames(filter = "") {
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
             const filtered = games.filter(g => g.title.toLowerCase().includes(filter.toLowerCase()));
             document.getElementById("resultsCount").textContent = filter ? `Found ${filtered.length} games` : "Showing all games";
-            
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
                 const isPlaying = myPlaying.includes(game.id);
@@ -723,26 +758,19 @@ service cloud.firestore {
                 if (isLFG) cls += " lfg";
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
-                
-                // Generate a beautiful, dynamic cover using pure CSS
                 const color = getColor(game.id);
                 const angle1 = Math.floor(Math.random() * 360);
                 const angle2 = (angle1 + 90 + Math.floor(Math.random() * 120)) % 360;
-                const letters = game.title.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
-                
-                let coverHtml = `
-                    <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
+                let coverHtml = `<div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
                         <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
                         <div class="fallback" style="position:absolute; bottom:15px; left:15px; right:15px; font-size:1.4rem; text-align:left; z-index:2; color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); font-weight:800; line-height:1.1;">${game.title}</div>
                         <div style="position:absolute; top:15px; right:15px; font-size:0.8rem; color:rgba(255,255,255,0.3); font-weight:900; z-index:2;">${game.genre.slice(0,3).toUpperCase()}</div>
                     </div>`;
-                
                 let badge = "";
                 if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
                 else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
                 else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
                 else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
-                
                 card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}</div>${badge}</div>`;
                 grid.appendChild(card);
             });
@@ -755,12 +783,7 @@ service cloud.firestore {
             document.getElementById("modalDesc").textContent = game.desc || `${game.title} is a ${game.genre} game released in ${game.year}.`;
             const cover = document.getElementById("modalCover");
             const color = getColor(game.id);
-            if (game.steamId) {
-                cover.innerHTML = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;" onerror="this.style.display='none';this.parentElement.innerHTML='<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:0.75rem;">${game.title}</div>';}">`;
-                cover.style.background = "none";
-            } else {
-                cover.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:0.75rem;">${game.title}</div>`;
-            }
+            cover.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg, ${color}80, ${color});color:#fff;font-weight:900;font-size:1.5rem;text-align:center;padding:1rem;word-break:break-word;border-radius:0.75rem;">${game.title}</div>`;
             const completeLabel = document.getElementById("completeLabel");
             if (game.multiplayer) { completeLabel.style.display = "none"; document.getElementById("completeCheckbox").checked = false; } else { completeLabel.style.display = "flex"; }
             document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
@@ -1227,16 +1250,16 @@ service cloud.firestore {
             document.getElementById("profileFriends").textContent = friendsList.length;
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
-            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
-            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
             const lookingGrid = document.getElementById("lookingGamesGrid");
             lookingGrid.innerHTML = "";
-            if (!myLooking.length) { lookingGrid.innerHTML = '<div class="empty-state">Not looking for players right now</div>'; } else { myLooking.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card looking_for_players"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lookingGrid.appendChild(div); }); }
+            if (!myLooking.length) { lookingGrid.innerHTML = '<div class="empty-state">Not looking for players right now</div>'; } else { myLooking.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card looking_for_players"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lookingGrid.appendChild(div); }); }
             const lfgGrid = document.getElementById("lfgGamesGrid");
             lfgGrid.innerHTML = "";
-            if (!myLFG.length) { lfgGrid.innerHTML = '<div class="empty-state">Not looking for group right now</div>'; } else { myLFG.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card lfg"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lfgGrid.appendChild(div); }); }
+            if (!myLFG.length) { lfgGrid.innerHTML = '<div class="empty-state">Not looking for group right now</div>'; } else { myLFG.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card lfg"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lfgGrid.appendChild(div); }); }
             const savesList = document.getElementById("profileSavesList");
             const allSaves = [];
             Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
@@ -1410,16 +1433,16 @@ service cloud.firestore {
             } else { postsSection.style.display = "none"; }
             const grid = document.getElementById("friendCompletedGrid");
             grid.innerHTML = "";
-            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
             const playingGrid = document.getElementById("friendPlayingGrid");
             playingGrid.innerHTML = "";
-            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
             const lookingGrid = document.getElementById("friendLookingGrid");
             lookingGrid.innerHTML = "";
-            if (!friendLooking.length) { lookingGrid.innerHTML = '<div class="empty-state">Not looking for players</div>'; } else { friendLooking.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card looking_for_players"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lookingGrid.appendChild(div); }); }
+            if (!friendLooking.length) { lookingGrid.innerHTML = '<div class="empty-state">Not looking for players</div>'; } else { friendLooking.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card looking_for_players"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lookingGrid.appendChild(div); }); }
             const lfgGrid = document.getElementById("friendLFGGrid");
             lfgGrid.innerHTML = "";
-            if (!friendLFG.length) { lfgGrid.innerHTML = '<div class="empty-state">Not looking for group</div>'; } else { friendLFG.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card lfg"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>';">` : `<span style="font-size:2rem;font-weight:900;color:${color};">${getInitials(game.title)}</span>`; div.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lfgGrid.appendChild(div); }); }
+            if (!friendLFG.length) { lfgGrid.innerHTML = '<div class="empty-state">Not looking for group</div>'; } else { friendLFG.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card lfg"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; lfgGrid.appendChild(div); }); }
             const savesContainer = document.getElementById("friendSavesContainer");
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
@@ -1429,14 +1452,13 @@ service cloud.firestore {
         function closeFriendProfile(e) {
             if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
         }
-               function showToast(msg, isError) {
+        function showToast(msg, isError) {
             const toast = document.getElementById("toast");
             toast.textContent = msg;
             toast.className = "toast" + (isError ? " error" : "");
             toast.classList.add("show");
             setTimeout(() => toast.classList.remove("show"), 3000);
         }
-
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
                 closeGameModal();
@@ -1445,7 +1467,6 @@ service cloud.firestore {
                 closePostModal();
             }
         });
-
         window.addEventListener('load', init);
     </script>
 </body>
