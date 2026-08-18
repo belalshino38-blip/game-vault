@@ -842,11 +842,12 @@ service cloud.firestore {
         }
 
         // ===================== GAMES =====================
-        function renderGames(filter = "") {
+               function renderGames(filter = "") {
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
             const filtered = games.filter(g => g.title.toLowerCase().includes(filter.toLowerCase()));
             document.getElementById("resultsCount").textContent = filter ? `Found ${filtered.length} games` : "Showing all games";
+            
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
                 const isPlaying = myPlaying.includes(game.id);
@@ -861,17 +862,23 @@ service cloud.firestore {
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
                 const color = getColor(game.id);
+                
                 let coverHtml;
                 if (game.steamId) {
-                    coverHtml = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';this.onerror=function(){this.style.display='none';this.parentElement.innerHTML='<div class="placeholder" style="background:linear-gradient(135deg, ${color}80, ${color});">${game.title}</div>';}">`;
+                    // Clean, reliable image fallback chain
+                    coverHtml = `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" alt="${game.title}" 
+                        onerror="this.onerror=null;this.src='https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg';
+                        this.onerror=function(){this.style.display='none';this.parentElement.innerHTML='<div class=\'placeholder\' style=\'background:linear-gradient(135deg, ${color}80, ${color});\'>${game.title}</div>';}">`;
                 } else {
                     coverHtml = `<div class="placeholder" style="background:linear-gradient(135deg, ${color}80, ${color});">${game.title}</div>`;
                 }
+                
                 let badge = "";
                 if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
                 else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
                 else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
                 else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
+                
                 card.innerHTML = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%);">${coverHtml}</div><div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}</div>${badge}</div>`;
                 grid.appendChild(card);
             });
