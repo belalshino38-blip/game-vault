@@ -104,9 +104,33 @@
         .game-card.completed::after { content: '✓'; position: absolute; top: 10px; right: 10px; background: var(--success); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         .game-card.playing::after { content: '▶'; position: absolute; top: 10px; right: 10px; background: var(--info); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.3) 100%); }
-        .cover .fallback { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: 900; font-size: 1.2rem; text-align: center; padding: 0.5rem; word-break: break-word; color: #fff; }
-        .cover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent); }
+        .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.3) 100%); border-radius: var(--radius) var(--radius) 0 0; }
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .cover .fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            font-weight: 900;
+            font-size: 1.4rem;
+            text-align: center;
+            padding: 1.5rem;
+            word-break: break-word;
+            color: #fff;
+            z-index: 2;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.5);
+        }
+        .cover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent); z-index: 1; pointer-events: none; }
         .game-info { padding: 0.875rem; position: relative; z-index: 1; }
         .game-title { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .game-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
@@ -1134,7 +1158,6 @@ service cloud.firestore {
                 else if (currentFilterStatus === 'playing') statusMatch = myPlaying.includes(g.id);
                 return titleMatch && statusMatch;
             });
-            // Sorting
             switch(sort) {
                 case 'title-asc': filtered.sort((a,b) => a.title.localeCompare(b.title)); break;
                 case 'title-desc': filtered.sort((a,b) => b.title.localeCompare(a.title)); break;
@@ -1145,6 +1168,7 @@ service cloud.firestore {
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
             document.getElementById("resultsCount").textContent = query ? `Found ${filtered.length} games` : "Showing all games";
+            
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
                 const isPlaying = myPlaying.includes(game.id);
@@ -1155,20 +1179,26 @@ service cloud.firestore {
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
                 const color = getColor(game.id);
+                
                 let coverHtml;
                 if (game.steamId) {
-                    const angle = Math.floor(Math.random() * 360);
-                    coverHtml = `<div class="cover" style="background: linear-gradient(${angle}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
-                        <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" onerror="this.style.display='none';">
-                        <div class="fallback" style="position:absolute; bottom:15px; left:15px; right:15px; font-size:1.4rem; text-align:left; z-index:2; color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); font-weight:800; line-height:1.1;">${game.title}</div>
-                    </div>`;
+                    coverHtml = `
+                        <div class="cover" style="background: linear-gradient(135deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
+                            <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" 
+                                 style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" 
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback\' style=\'background:linear-gradient(135deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);\'>${game.title}</div>';">
+                            <div class="fallback">${game.title}</div>
+                        </div>
+                    `;
                 } else {
                     const angle1 = Math.floor(Math.random() * 360);
-                    coverHtml = `<div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
-                        <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
-                        <div class="fallback" style="position:absolute; bottom:15px; left:15px; right:15px; font-size:1.4rem; text-align:left; z-index:2; color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); font-weight:800; line-height:1.1;">${game.title}</div>
-                        <div style="position:absolute; top:15px; right:15px; font-size:0.8rem; color:rgba(255,255,255,0.3); font-weight:900; z-index:2;">${game.genre.slice(0,3).toUpperCase()}</div>
-                    </div>`;
+                    coverHtml = `
+                        <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
+                            <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 60%); z-index:1; pointer-events:none;"></div>
+                            <div class="fallback" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;text-align:center;padding:1.5rem;color:#fff;text-shadow:0 4px 15px rgba(0,0,0,0.8);">${game.title}</div>
+                            <div style="position:absolute; top:15px; right:15px; font-size:0.8rem; color:rgba(255,255,255,0.3); font-weight:900; z-index:2;">${game.genre.slice(0,3).toUpperCase()}</div>
+                        </div>
+                    `;
                 }
                 let badge = "";
                 if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
@@ -1787,6 +1817,8 @@ service cloud.firestore {
             document.getElementById("friendProfileEmail").textContent = profile.email;
             document.getElementById("friendCompleted").textContent = friendCompletions.length;
             document.getElementById("friendPlaying").textContent = friendPlaying.length;
+            document.getElementById("friendLooking").textContent = friendLooking.length;
+            document.getElementById("friendLFG").textContent = friendLFG.length;
             document.getElementById("friendSavesCount").textContent = totalFriendSaves;
             const socialDiv = document.getElementById("friendSocialLinks");
             socialDiv.innerHTML = "";
