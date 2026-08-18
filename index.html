@@ -39,7 +39,7 @@
             line-height: 1.5;
         }
 
-        /* Setup Wizard (unchanged) */
+        /* Setup Wizard – hidden by default */
         .setup-wizard {
             max-width: 700px;
             margin: 3rem auto;
@@ -47,6 +47,10 @@
             background: var(--surface);
             border-radius: 1rem;
             border: 1px solid #2d2d44;
+            display: none;
+        }
+        .setup-wizard.active {
+            display: block;
         }
         .setup-wizard h1 {
             font-size: 1.75rem;
@@ -291,6 +295,17 @@
         }
         .user-dropdown-menu a.danger:hover {
             background: rgba(239, 68, 68, 0.15);
+        }
+        /* Admin gear */
+        .admin-gear {
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .admin-gear:hover {
+            opacity: 1;
         }
 
         /* Stats Bar */
@@ -1371,11 +1386,11 @@
 </head>
 <body>
 
-    <!-- SETUP WIZARD -->
-    <div id="setupWizard" class="setup-wizard" style="display:none;">
-        <h1>Game Vault Setup</h1>
+    <!-- SETUP WIZARD – hidden by default, only admin can open -->
+    <div id="setupWizard" class="setup-wizard">
+        <h1>⚙️ Admin Setup</h1>
         <p style="color:var(--text-muted);margin-bottom:1.5rem;">
-            Firebase is already configured! This setup is only needed if you want to use a different Firebase project.
+            Update Firebase configuration. Only visible to admin.
         </p>
         <div class="setup-step">
             <h3>1. Create a Firebase Project</h3>
@@ -1433,7 +1448,7 @@
                 </div>
             </div>
             <p class="auth-error" id="setupError" style="margin-top:0.75rem;"></p>
-            <button onclick="saveConfig()" style="margin-top:0.75rem;width:100%;">Save & Launch App</button>
+            <button onclick="saveConfig()" style="margin-top:0.75rem;width:100%;">Save &amp; Restart</button>
             <button onclick="resetConfig()" class="btn-secondary" style="width:100%;margin-top:0.5rem;">Clear Saved Config</button>
         </div>
         <div class="setup-step">
@@ -1454,7 +1469,7 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update: if request.auth != null && (
         request.auth.uid == resource.data.userId ||
-        request.resource.data.diff(resource.data).affectedKeys.hasOnly(['chatMessages', 'chatCount'])
+        request.resource.data.keys().hasOnly(['chatMessages', 'chatCount'])
       );
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
@@ -1463,14 +1478,13 @@ service cloud.firestore {
         </div>
     </div>
 
-    <!-- AUTH MODAL -->
+    <!-- AUTH MODAL (no setup button) -->
     <div id="authModal" class="modal-overlay" style="display:flex;opacity:1;z-index:300;">
         <div class="modal" style="max-width:420px;" onclick="event.stopPropagation()">
             <div class="modal-header" style="justify-content:center;">
                 <h2 style="font-size:1.25rem;">🎮 Game Vault</h2>
             </div>
             <div class="modal-body">
-                <button onclick="showSetupFromAuth()" class="btn-secondary" style="width:100%;margin-bottom:1rem;">⚙️ Setup Firebase Config</button>
                 <div class="auth-tabs">
                     <button class="auth-tab active" onclick="switchAuthTab('login')" id="tabLogin">Login</button>
                     <button class="auth-tab" onclick="switchAuthTab('register')" id="tabRegister">Create Account</button>
@@ -1553,7 +1567,7 @@ service cloud.firestore {
             <div class="posts-grid" id="postsGrid"></div>
         </div>
 
-        <!-- PROFILE VIEW -->
+        <!-- PROFILE VIEW (admin gear) -->
         <div class="profile-view" id="profileView">
             <div class="profile-header">
                 <div class="avatar" id="profileAvatar">?</div>
@@ -1567,6 +1581,8 @@ service cloud.firestore {
                         <div class="profile-stat"><span class="profile-stat-value" id="profileFriends">0</span><span class="profile-stat-label">Friends</span></div>
                     </div>
                 </div>
+                <!-- Admin gear – hidden by default -->
+                <span class="admin-gear" id="adminGear" style="display:none;" title="Admin Setup" onclick="openSetupWizard()">⚙️</span>
             </div>
 
             <div class="settings-section">
@@ -1772,6 +1788,9 @@ service cloud.firestore {
             appId: "1:23799161276:web:4427b209cae7422d0d4bb9",
             measurementId: "G-K21DZ70JQM"
         };
+
+        // 🔥 REPLACE WITH YOUR ACTUAL ADMIN UID (from Firebase Auth)
+        const ADMIN_UID = "VYVZEQsGVGTVATjNim3KrCRgXwg2"; // <-- paste your UID here
 
         function isConfigValid() {
             return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR") &&
@@ -2058,7 +2077,7 @@ service cloud.firestore {
         // ===================== INIT =====================
         function init() {
             if (!isConfigValid()) {
-                document.getElementById("setupWizard").style.display = "block";
+                document.getElementById("setupWizard").classList.add("active");
                 document.getElementById("authModal").style.display = "none";
                 document.getElementById("appContainer").style.display = "none";
                 return;
@@ -2068,7 +2087,7 @@ service cloud.firestore {
                 alert("Firebase config is invalid. Error: " + err.message +
                     "\n\nClick 'Setup Firebase Config' to re-enter your credentials.");
                 localStorage.removeItem("gameVault_firebaseConfig");
-                document.getElementById("setupWizard").style.display = "block";
+                document.getElementById("setupWizard").classList.add("active");
                 document.getElementById("authModal").style.display = "none";
                 document.getElementById("appContainer").style.display = "none";
                 return;
@@ -2081,6 +2100,10 @@ service cloud.firestore {
                     currentUser = user;
                     document.getElementById("authModal").style.display = "none";
                     document.getElementById("appContainer").style.display = "block";
+                    // Show admin gear if UID matches
+                    if (user.uid === ADMIN_UID) {
+                        document.getElementById("adminGear").style.display = "inline-block";
+                    }
                     loadUserProfile();
                     loadMyData();
                     loadFriends();
@@ -2106,6 +2129,10 @@ service cloud.firestore {
             document.getElementById("userDropdownMenu").classList.remove("show");
         }
         document.addEventListener("click", closeUserDropdown);
+
+        function openSetupWizard() {
+            document.getElementById("setupWizard").classList.toggle("active");
+        }
 
         // ===================== AUTH =====================
         function switchAuthTab(tab) {
@@ -2151,9 +2178,6 @@ service cloud.firestore {
 
         async function logout() { await auth.signOut();
             location.reload(); }
-
-        function showSetupFromAuth() { document.getElementById("authModal").style.display = "none";
-            document.getElementById("setupWizard").style.display = "block"; }
 
         function resetConfig() { localStorage.removeItem("gameVault_firebaseConfig");
             location.reload(); }
@@ -2852,7 +2876,10 @@ service cloud.firestore {
                     if (arrow) arrow.classList.add('open');
                     if (post) post._chatOpen = true;
                 }
-            } catch (err) { showToast("Error sending message: " + err.message, true); }
+            } catch (err) {
+                console.error("Chat error:", err);
+                showToast("Error sending message: " + err.message, true);
+            }
         }
 
         // ===== Context Menu =====
