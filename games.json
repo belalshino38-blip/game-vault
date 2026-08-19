@@ -1,104 +1,178 @@
-[
-  {"id":1,"title":"The Witcher 3","genre":"RPG","year":2015,"steamId":292030,"multiplayer":false},
-  {"id":2,"title":"Red Dead Redemption 2","genre":"Action","year":2018,"steamId":1174180,"multiplayer":true},
-  {"id":3,"title":"Elden Ring","genre":"RPG","year":2022,"steamId":1245620,"multiplayer":true},
-  {"id":4,"title":"God of War","genre":"Action","year":2018,"steamId":1593500,"multiplayer":false},
-  {"id":5,"title":"Cyberpunk 2077","genre":"RPG","year":2020,"steamId":1091500,"multiplayer":false},
-  {"id":6,"title":"Hollow Knight","genre":"Adventure","year":2017,"steamId":367520,"multiplayer":false},
-  {"id":7,"title":"Hades","genre":"RPG","year":2020,"steamId":1145360,"multiplayer":false},
-  {"id":8,"title":"Dark Souls 3","genre":"Action","year":2016,"steamId":374320,"multiplayer":true},
-  {"id":9,"title":"Sekiro","genre":"Action","year":2019,"steamId":814380,"multiplayer":false},
-  {"id":10,"title":"Skyrim","genre":"RPG","year":2011,"steamId":72850,"multiplayer":false},
-  {"id":11,"title":"Fallout 4","genre":"RPG","year":2015,"steamId":377160,"multiplayer":false},
-  {"id":12,"title":"Mass Effect 2","genre":"RPG","year":2010,"steamId":24980,"multiplayer":false},
-  {"id":13,"title":"Baldur's Gate 3","genre":"RPG","year":2023,"steamId":1086940,"multiplayer":true},
-  {"id":14,"title":"Divinity Original Sin 2","genre":"RPG","year":2017,"steamId":435150,"multiplayer":true},
-  {"id":15,"title":"Stardew Valley","genre":"Simulation","year":2016,"steamId":413150,"multiplayer":true},
-  {"id":16,"title":"Terraria","genre":"Adventure","year":2011,"steamId":105600,"multiplayer":true},
-  {"id":17,"title":"Portal 2","genre":"Puzzle","year":2011,"steamId":620,"multiplayer":true},
-  {"id":18,"title":"Half-Life 2","genre":"Action","year":2004,"steamId":220,"multiplayer":false},
-  {"id":19,"title":"Doom Eternal","genre":"Shooter","year":2020,"steamId":782330,"multiplayer":true},
-  {"id":20,"title":"Borderlands 3","genre":"Shooter","year":2019,"steamId":397540,"multiplayer":true},
-  {"id":21,"title":"Grand Theft Auto V","genre":"Action","year":2013,"steamId":271590,"multiplayer":true},
-  {"id":22,"title":"Resident Evil 4","genre":"Horror","year":2005,"steamId":254700,"multiplayer":false},
-  {"id":23,"title":"Monster Hunter World","genre":"Action","year":2018,"steamId":582010,"multiplayer":true},
-  {"id":24,"title":"Devil May Cry 5","genre":"Action","year":2019,"steamId":601150,"multiplayer":false},
-  {"id":25,"title":"Persona 5","genre":"RPG","year":2016,"steamId":1687950,"multiplayer":false},
-  {"id":26,"title":"Street Fighter 6","genre":"Fighting","year":2023,"steamId":2167280,"multiplayer":true},
-  {"id":27,"title":"Tekken 8","genre":"Fighting","year":2024,"steamId":2360600,"multiplayer":true},
-  {"id":28,"title":"Mortal Kombat 1","genre":"Fighting","year":2023,"steamId":2196290,"multiplayer":true},
-  {"id":29,"title":"Guilty Gear Strive","genre":"Fighting","year":2021,"steamId":1383760,"multiplayer":true},
-  {"id":30,"title":"Rocket League","genre":"Sports","year":2015,"steamId":252950,"multiplayer":true},
-  {"id":31,"title":"Counter-Strike 2","genre":"Shooter","year":2023,"steamId":730,"multiplayer":true},
-  {"id":32,"title":"Dota 2","genre":"Strategy","year":2013,"steamId":570,"multiplayer":true},
-  {"id":33,"title":"League of Legends","genre":"MOBA","year":2009,"steamId":null,"multiplayer":true},
-  {"id":34,"title":"Overwatch 2","genre":"Shooter","year":2022,"steamId":null,"multiplayer":true},
-  {"id":35,"title":"Apex Legends","genre":"Shooter","year":2019,"steamId":1172470,"multiplayer":true},
-  {"id":36,"title":"Fortnite","genre":"Action","year":2017,"steamId":null,"multiplayer":true},
-  {"id":37,"title":"Valorant","genre":"Shooter","year":2020,"steamId":null,"multiplayer":true},
-  {"id":38,"title":"Halo Infinite","genre":"Shooter","year":2021,"steamId":1240440,"multiplayer":true},
-  {"id":39,"title":"Gears 5","genre":"Shooter","year":2019,"steamId":1097840,"multiplayer":true},
-  {"id":40,"title":"Forza Horizon 5","genre":"Racing","year":2021,"steamId":1551360,"multiplayer":true},
-  {"id":41,"title":"Gran Turismo 7","genre":"Racing","year":2022,"steamId":null,"multiplayer":true},
-  {"id":42,"title":"FIFA 23","genre":"Sports","year":2022,"steamId":1927140,"multiplayer":true},
-  {"id":43,"title":"NBA 2K23","genre":"Sports","year":2022,"steamId":1919590,"multiplayer":true},
-  {"id":44,"title":"Madden NFL 23","genre":"Sports","year":2022,"steamId":1937270,"multiplayer":true},
-  {"id":45,"title":"The Last of Us","genre":"Action","year":2013,"steamId":1888930,"multiplayer":false},
-  {"id":46,"title":"Ghost of Tsushima","genre":"Action","year":2020,"steamId":2215430,"multiplayer":false},
-  {"id":47,"title":"Spider-Man","genre":"Action","year":2018,"steamId":1817070,"multiplayer":false},
-  {"id":48,"title":"Uncharted 4","genre":"Action","year":2016,"steamId":1658280,"multiplayer":false},
-  {"id":49,"title":"Metal Gear Solid V","genre":"Action","year":2015,"steamId":287700,"multiplayer":false},
-  {"id":50,"title":"Dragon Age Inquisition","genre":"RPG","year":2014,"steamId":1222680,"multiplayer":false},
-  {"id":51,"title":"Dishonored 2","genre":"Action","year":2016,"steamId":403640,"multiplayer":false},
-  {"id":52,"title":"Prey","genre":"Shooter","year":2017,"steamId":480490,"multiplayer":false},
-  {"id":53,"title":"Deus Ex Mankind Divided","genre":"Action","year":2016,"steamId":337000,"multiplayer":false},
-  {"id":54,"title":"Hitman 3","genre":"Action","year":2021,"steamId":1659040,"multiplayer":false},
-  {"id":55,"title":"Control","genre":"Action","year":2019,"steamId":870780,"multiplayer":false},
-  {"id":56,"title":"Alan Wake 2","genre":"Horror","year":2023,"steamId":2031440,"multiplayer":false},
-  {"id":57,"title":"Dead Space","genre":"Horror","year":2023,"steamId":1693980,"multiplayer":false},
-  {"id":58,"title":"Armored Core 6","genre":"Action","year":2023,"steamId":1888160,"multiplayer":false},
-  {"id":59,"title":"Starfield","genre":"RPG","year":2023,"steamId":1716740,"multiplayer":false},
-  {"id":60,"title":"Star Wars Jedi Fallen Order","genre":"Action","year":2019,"steamId":1172380,"multiplayer":false},
-  {"id":61,"title":"Star Wars Jedi Survivor","genre":"Action","year":2023,"steamId":1774580,"multiplayer":false},
-  {"id":62,"title":"GreedFall","genre":"RPG","year":2019,"steamId":606880,"multiplayer":false},
-  {"id":63,"title":"Steelrising","genre":"RPG","year":2022,"steamId":1283390,"multiplayer":false},
-  {"id":64,"title":"Thymesia","genre":"RPG","year":2022,"steamId":1343240,"multiplayer":false},
-  {"id":65,"title":"Lords of the Fallen","genre":"RPG","year":2023,"steamId":1501750,"multiplayer":true},
-  {"id":66,"title":"The Surge 2","genre":"RPG","year":2019,"steamId":644830,"multiplayer":false},
-  {"id":67,"title":"Code Vein","genre":"RPG","year":2019,"steamId":678900,"multiplayer":true},
-  {"id":68,"title":"Tales of Arise","genre":"RPG","year":2021,"steamId":740130,"multiplayer":false},
-  {"id":69,"title":"Ni no Kuni 2","genre":"RPG","year":2018,"steamId":589360,"multiplayer":false},
-  {"id":70,"title":"Rise of the Tomb Raider","genre":"Action","year":2015,"steamId":391220,"multiplayer":false},
-  {"id":71,"title":"Shadow of the Tomb Raider","genre":"Action","year":2018,"steamId":750920,"multiplayer":false},
-  {"id":72,"title":"Mirror's Edge Catalyst","genre":"Action","year":2016,"steamId":1233570,"multiplayer":false},
-  {"id":73,"title":"Need for Speed Heat","genre":"Racing","year":2019,"steamId":1222680,"multiplayer":true},
-  {"id":74,"title":"Wreckfest","genre":"Racing","year":2018,"steamId":228380,"multiplayer":true},
-  {"id":75,"title":"DiRT Rally 2.0","genre":"Racing","year":2019,"steamId":690790,"multiplayer":true},
-  {"id":76,"title":"Assetto Corsa Competizione","genre":"Racing","year":2019,"steamId":805550,"multiplayer":true},
-  {"id":77,"title":"Project CARS 3","genre":"Racing","year":2020,"steamId":958400,"multiplayer":true},
-  {"id":78,"title":"Guild Wars 2","genre":"MMO","year":2012,"steamId":1284190,"multiplayer":true},
-  {"id":79,"title":"Final Fantasy XIV","genre":"MMO","year":2013,"steamId":39210,"multiplayer":true},
-  {"id":80,"title":"Elder Scrolls Online","genre":"MMO","year":2014,"steamId":306130,"multiplayer":true},
-  {"id":81,"title":"World of Warcraft","genre":"MMO","year":2004,"steamId":null,"multiplayer":true},
-  {"id":82,"title":"Lost Ark","genre":"MMO","year":2022,"steamId":1599340,"multiplayer":true},
-  {"id":83,"title":"New World","genre":"MMO","year":2021,"steamId":1063730,"multiplayer":true},
-  {"id":84,"title":"Genshin Impact","genre":"RPG","year":2020,"steamId":null,"multiplayer":true},
-  {"id":85,"title":"Honkai Star Rail","genre":"RPG","year":2023,"steamId":1951830,"multiplayer":false},
-  {"id":86,"title":"Persona 5","genre":"RPG","year":2016,"steamId":1687950,"multiplayer":false},
-  {"id":87,"title":"Dead Cells","genre":"Action","year":2018,"steamId":588650,"multiplayer":false},
-  {"id":88,"title":"Hades 2","genre":"Action","year":2024,"steamId":2334690,"multiplayer":false},
-  {"id":89,"title":"Cuphead","genre":"Action","year":2017,"steamId":268910,"multiplayer":true},
-  {"id":90,"title":"Shovel Knight","genre":"Action","year":2014,"steamId":250760,"multiplayer":true},
-  {"id":91,"title":"Undertale","genre":"RPG","year":2015,"steamId":391540,"multiplayer":false},
-  {"id":92,"title":"Celeste","genre":"Action","year":2018,"steamId":504230,"multiplayer":false},
-  {"id":93,"title":"Hollow Knight","genre":"Action","year":2017,"steamId":367520,"multiplayer":false},
-  {"id":94,"title":"Slay the Spire","genre":"Strategy","year":2019,"steamId":646570,"multiplayer":false},
-  {"id":95,"title":"Monster Train","genre":"Strategy","year":2020,"steamId":1102190,"multiplayer":false},
-  {"id":96,"title":"Inscryption","genre":"Horror","year":2021,"steamId":1092790,"multiplayer":false},
-  {"id":97,"title":"Subnautica","genre":"Adventure","year":2018,"steamId":264710,"multiplayer":false},
-  {"id":98,"title":"No Man's Sky","genre":"Adventure","year":2016,"steamId":275850,"multiplayer":true},
-  {"id":99,"title":"Outer Wilds","genre":"Adventure","year":2019,"steamId":753640,"multiplayer":false},
-  {"id":100,"title":"Dark Souls Remastered","genre":"Souls","year":2018,"steamId":570940,"multiplayer":true},
-  {"id":101,"title":"Disco Elysium","genre":"RPG","year":2019,"steamId":632300,"multiplayer":false}
+import json
+
+input_path = "/mnt/data/Pasted text.txt"
+output_path = "/mnt/data/games_updated.json"
+
+with open(input_path, "r", encoding="utf-8") as f:
+    games = json.load(f)
+
+# Fix verified Steam app IDs in the original data.
+fixes = {
+    "Dragon Age Inquisition": 1222690,
+    "Guild Wars 2": 1284210,
+    "Hades 2": 1145350,
+    "Uncharted 4": 1659420,
+}
+
+for game in games:
+    if game["title"] in fixes:
+        game["steamId"] = fixes[game["title"]]
+
+# Remove duplicate game entries already present.
+seen_titles = set()
+cleaned = []
+for game in games:
+    key = game["title"].strip().lower()
+    if key in seen_titles:
+        continue
+    seen_titles.add(key)
+    cleaned.append(game)
+games = cleaned
+
+# 100 additional, non-duplicate games with Steam app IDs verified against SteamDB.
+additions = [
+    ("BioShock", "Shooter", 2007, 7670, False),
+    ("BioShock Infinite", "Shooter", 2013, 8870, False),
+    ("Batman: Arkham Asylum GOTY", "Action", 2010, 35140, False),
+    ("Batman: Arkham City GOTY", "Action", 2011, 200260, False),
+    ("Batman: Arkham Knight", "Action", 2015, 208650, False),
+    ("Grand Theft Auto IV", "Action", 2008, 12210, True),
+    ("Max Payne 3", "Action", 2012, 204100, False),
+    ("L.A. Noire", "Action", 2011, 110800, False),
+    ("Mafia: Definitive Edition", "Action", 2020, 1030840, False),
+    ("Mafia II", "Action", 2010, 50130, False),
+    ("Mafia III: Definitive Edition", "Action", 2016, 360430, False),
+    ("Sleeping Dogs", "Action", 2012, 202170, False),
+    ("Just Cause 2", "Action", 2010, 8190, False),
+    ("Just Cause 3", "Action", 2015, 225540, True),
+    ("Just Cause 4", "Action", 2018, 517630, True),
+    ("Mad Max", "Action", 2015, 234140, False),
+    ("Middle-earth: Shadow of Mordor", "Action", 2014, 241930, False),
+    ("Middle-earth: Shadow of War", "Action", 2017, 356190, False),
+    ("Tomb Raider", "Action", 2013, 203160, False),
+    ("UNCHARTED: Legacy of Thieves Collection", "Action", 2022, 1659420, False),
+    ("Horizon Zero Dawn Complete Edition", "Action", 2020, 1151640, False),
+    ("Horizon Forbidden West Complete Edition", "Action", 2024, 2420110, False),
+    ("Days Gone", "Action", 2021, 1259420, False),
+    ("DEATH STRANDING", "Adventure", 2020, 1190460, False),
+    ("God of War Ragnarök", "Action", 2024, 2322010, False),
+    ("Ratchet & Clank: Rift Apart", "Action", 2023, 1895880, False),
+    ("HELLDIVERS 2", "Action", 2024, 553850, True),
+    ("Ghostwire: Tokyo", "Action", 2022, 1475810, False),
+    ("DEATHLOOP", "Action", 2021, 1252330, False),
+    ("Dishonored", "Action", 2012, 205100, False),
+    ("Metro 2033 Redux", "Action", 2014, 286690, False),
+    ("Metro: Last Light Redux", "Action", 2014, 287390, False),
+    ("Metro Exodus", "Action", 2019, 412020, False),
+    ("Resident Evil 2", "Horror", 2019, 883710, False),
+    ("Resident Evil 3", "Horror", 2020, 952060, False),
+    ("Resident Evil 7 biohazard", "Horror", 2017, 418370, False),
+    ("Resident Evil Village", "Horror", 2021, 1196590, False),
+    ("Resident Evil 4", "Horror", 2023, 2050650, False),
+    ("NieR:Automata", "RPG", 2017, 524220, False),
+    ("NieR Replicant ver.1.22474487139...", "RPG", 2021, 1113560, False),
+    ("Yakuza 0", "Action", 2018, 638970, False),
+    ("Yakuza Kiwami", "Action", 2019, 834530, False),
+    ("Yakuza Kiwami 2", "Action", 2019, 927380, False),
+    ("Yakuza: Like a Dragon", "RPG", 2020, 1235140, False),
+    ("Like a Dragon: Infinite Wealth", "RPG", 2024, 2072450, False),
+    ("Persona 4 Golden", "RPG", 2020, 1113000, False),
+    ("Persona 3 Reload", "RPG", 2024, 2161700, False),
+    ("FINAL FANTASY VII REMAKE INTERGRADE", "RPG", 2022, 1462040, False),
+    ("FINAL FANTASY XV WINDOWS EDITION", "RPG", 2018, 637650, False),
+    ("Danganronpa: Trigger Happy Havoc", "Adventure", 2016, 413410, False),
+    ("Lies of P", "RPG", 2023, 1627720, False),
+    ("Dragon's Dogma 2", "RPG", 2024, 2054970, False),
+    ("Portal", "Puzzle", 2007, 400, False),
+    ("The Elder Scrolls V: Skyrim Special Edition", "RPG", 2016, 489830, False),
+    ("Fallout: New Vegas", "RPG", 2010, 22380, False),
+    ("DARK SOULS II", "Souls", 2014, 236430, True),
+    ("DARK SOULS II: Scholar of the First Sin", "Souls", 2015, 335300, True),
+    ("Ori and the Will of the Wisps", "Adventure", 2020, 1057090, False),
+    ("Satisfactory", "Simulation", 2019, 526870, True),
+    ("SnowRunner", "Simulation", 2020, 1465360, True),
+    ("MONSTER HUNTER RISE", "Action", 2022, 1446780, True),
+    ("Dying Light", "Action", 2015, 239140, True),
+    ("Dying Light 2", "Action", 2022, 534380, True),
+    ("Valheim", "Survival", 2021, 892970, True),
+    ("ARK: Survival Evolved", "Survival", 2017, 346110, True),
+    ("Rust", "Survival", 2018, 252490, True),
+    ("DayZ", "Survival", 2013, 221100, True),
+    ("Don't Starve Together", "Survival", 2016, 322330, True),
+    ("Project Zomboid", "Survival", 2013, 108600, True),
+    ("RimWorld", "Simulation", 2018, 294100, False),
+    ("Factorio", "Simulation", 2020, 427520, True),
+    ("Raft", "Survival", 2022, 648800, True),
+    ("Sea of Thieves", "Adventure", 2018, 1172620, True),
+    ("Crusader Kings III", "Strategy", 2020, 1158310, True),
+    ("Conan Exiles", "Survival", 2018, 440900, True),
+    ("SCUM", "Survival", 2018, 513710, True),
+    ("Phasmophobia", "Horror", 2020, 739630, True),
+    ("Unturned", "Survival", 2014, 304930, True),
+    ("FOR HONOR", "Action", 2017, 304390, True),
+    ("Far Cry 6", "Action", 2021, 2369390, True),
+    ("It Takes Two", "Adventure", 2021, 1426210, True),
+    ("Hook", "Puzzle", 2015, 367580, False),
+    ("Human Fall Flat", "Puzzle", 2016, 477160, True),
+    ("Beat Saber", "Rhythm", 2018, 620980, False),
+    ("The Stanley Parable: Ultra Deluxe", "Adventure", 2022, 1703340, False),
+    ("A Short Hike", "Adventure", 2019, 1055540, False),
+    ("Ori and the Blind Forest: Definitive Edition", "Adventure", 2016, 387290, False),
+    ("Sid Meier's Civilization VI", "Strategy", 2016, 289070, True),
+    ("Cities: Skylines", "Simulation", 2015, 255710, False),
+    ("Europa Universalis IV", "Strategy", 2013, 236850, True),
+    ("Stellaris", "Strategy", 2016, 281990, True),
+    ("Hearts of Iron IV", "Strategy", 2016, 394360, True),
+    ("F1 2020", "Racing", 2020, 1080110, True),
+    ("Planet Zoo", "Simulation", 2019, 703080, False),
+    ("Assassin's Creed Origins", "Action", 2017, 582160, False),
+    ("Assassin's Creed Odyssey", "Action", 2018, 812140, False),
+    ("Monster Sanctuary", "RPG", 2020, 814370, False),
+    ("Marvel's Guardians of the Galaxy", "Action", 2021, 1088850, False),
+    ("The Witcher: Enhanced Edition", "RPG", 2007, 20900, False),
+    ("Divinity: Original Sin", "RPG", 2014, 230230, True),
+    ("Pillars of Eternity", "RPG", 2015, 291650, False),
+    ("Pillars of Eternity II: Deadfire", "RPG", 2018, 560130, False),
+    ("Dragon Age: Origins - Ultimate Edition", "RPG", 2010, 47810, False),
+    ("Mass Effect Legendary Edition", "RPG", 2021, 1328670, False),
+    ("Mass Effect: Andromeda", "RPG", 2017, 1238000, False),
+    ("Kingdom Come: Deliverance", "RPG", 2018, 379430, True),
+    ("Mount & Blade II: Bannerlord", "RPG", 2022, 261550, True),
 ]
 
+# Keep only new, unique games and Steam IDs.
+existing_ids = {g["steamId"] for g in games if g.get("steamId") is not None}
+existing_titles = {g["title"].strip().lower() for g in games}
+selected = []
+used_ids = set(existing_ids)
+
+for title, genre, year, steam_id, multiplayer in additions:
+    if steam_id in used_ids or title.strip().lower() in existing_titles:
+        continue
+    selected.append({
+        "id": len(games) + len(selected) + 1,
+        "title": title,
+        "genre": genre,
+        "year": year,
+        "steamId": steam_id,
+        "multiplayer": multiplayer
+    })
+    used_ids.add(steam_id)
+    existing_titles.add(title.strip().lower())
+
+# The request was for exactly 100 additions.
+selected = selected[:100]
+
+final_games = games + selected
+
+# Re-number IDs cleanly.
+for i, game in enumerate(final_games, start=1):
+    game["id"] = i
+
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(final_games, f, ensure_ascii=False, indent=2)
+
+print(f"Created {output_path}")
+print(f"Original entries after duplicate cleanup: {len(games)}")
+print(f"New entries added: {len(selected)}")
+print(f"Final entries: {len(final_games)}")
