@@ -33,6 +33,223 @@
         ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        /* --- UNIFIED BUTTON STYLES --- */
+        button,
+        .btn,
+        .btn-success,
+        .btn-danger,
+        .btn-secondary,
+        .btn-warning,
+        .btn-file,
+        .btn-small,
+        .nav-btn,
+        .auth-tab,
+        .tab,
+        .clear-btn,
+        .close-btn,
+        .vote-btn,
+        .action-btn,
+        .post-chat-toggle,
+        .checkbox-label,
+        .upload-area,
+        .friend-card,
+        .game-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Primary button style (applies to ALL buttons) */
+        button,
+        .btn,
+        .btn-success,
+        .btn-danger,
+        .btn-secondary,
+        .btn-warning,
+        .btn-file,
+        .btn-small,
+        .nav-btn,
+        .auth-tab,
+        .tab,
+        .clear-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            line-height: 1.2;
+        }
+
+        button:hover,
+        .btn:hover,
+        .btn-success:hover,
+        .btn-danger:hover,
+        .btn-secondary:hover,
+        .btn-warning:hover,
+        .btn-file:hover,
+        .btn-small:hover,
+        .nav-btn:hover,
+        .auth-tab:hover,
+        .tab:hover,
+        .clear-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        button:active,
+        .btn:active,
+        .btn-success:active,
+        .btn-danger:active,
+        .btn-secondary:active,
+        .btn-warning:active,
+        .btn-file:active,
+        .btn-small:active,
+        .nav-btn:active,
+        .auth-tab:active,
+        .tab:active,
+        .clear-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Secondary / outline style for less prominent actions (e.g., "Clear") */
+        .btn-secondary,
+        .clear-btn {
+            background: var(--surface);
+            color: var(--text-muted);
+            border: 1px solid #2d2d44;
+            box-shadow: none;
+        }
+        .btn-secondary:hover,
+        .clear-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text);
+            box-shadow: none;
+        }
+
+        /* Small button variant */
+        .btn-small {
+            padding: 0.35rem 0.8rem;
+            font-size: 0.75rem;
+        }
+
+        /* Nav buttons (special active state) */
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+        .nav-btn {
+            background: var(--surface);
+            color: var(--text-muted);
+            border: 1px solid #2d2d44;
+        }
+        .nav-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text);
+        }
+
+        /* Auth tabs */
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .auth-tab {
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            color: var(--text-muted);
+        }
+        .auth-tab:hover {
+            background: var(--surface-hover);
+            color: var(--text);
+        }
+
+        /* File input label (styled as button) */
+        .btn-file {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.9rem;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+        }
+        .btn-file:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Close button (keep it subtle) */
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.75rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            box-shadow: none;
+        }
+        .close-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+        .close-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Vote buttons (keep emoji style) */
+        .vote-btn {
+            background: none !important;
+            border: none !important;
+            color: var(--text-muted) !important;
+            font-size: 1.4rem;
+            padding: 0.1rem 0.3rem;
+            box-shadow: none !important;
+        }
+        .vote-btn:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: var(--text) !important;
+            transform: scale(1.05);
+        }
+        .vote-btn:active {
+            transform: scale(0.9);
+        }
+        .vote-btn.upvote:hover { color: var(--vote-up) !important; transform: scale(1.1); }
+        .vote-btn.downvote:hover { color: var(--vote-down) !important; transform: scale(1.1); }
+        .vote-btn.upvote.active { color: var(--vote-up) !important; background: rgba(34, 197, 94, 0.1) !important; border-radius: 8px; }
+        .vote-btn.downvote.active { color: var(--vote-down) !important; background: rgba(239, 68, 68, 0.1) !important; border-radius: 8px; }
+
+        /* Action buttons in posts */
+        .action-btn {
+            background: none !important;
+            border: none !important;
+            color: var(--text-muted) !important;
+            box-shadow: none !important;
+            padding: 0.2rem 0.6rem;
+        }
+        .action-btn:hover {
+            color: var(--text) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            transform: scale(1.05);
+        }
+
+        /* --- REST OF THE STYLES (unchanged) --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -46,33 +263,6 @@
         header { background: rgba(21, 21, 34, 0.85); backdrop-filter: blur(12px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d2d44; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
         .nav-buttons { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-        .nav-btn { background: var(--surface); color: var(--text-muted); border: 1px solid #2d2d44; padding: 0.5rem 1.25rem; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; font-family: inherit; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .nav-btn:hover { background: var(--surface-hover); color: var(--text); transform: translateY(-2px); }
-        .nav-btn:active { transform: scale(0.95); }
-        .nav-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
-
-        button, .btn-secondary, .btn-success, .btn-danger, .btn-file, .btn-small, .btn-warning {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        button:hover, .btn-secondary:hover, .btn-success:hover, .btn-danger:hover, .btn-file:hover, .btn-small:hover, .btn-warning:hover {
-            transform: translateY(-2px);
-        }
-        button:active, .btn-secondary:active, .btn-success:active, .btn-danger:active, .btn-file:active, .btn-small:active, .btn-warning:active {
-            transform: scale(0.95);
-        }
-
-        .btn-secondary { background: var(--surface); border: 1px solid #2d2d44; color: var(--text-muted); }
-        .btn-secondary:hover { background: var(--surface-hover); color: var(--text); box-shadow: none; }
-        .btn-success { background: var(--success); color: white; border: none; }
-        .btn-success:hover { background: #34d399; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
-        .btn-danger { background: var(--danger); color: white; border: none; }
-        .btn-danger:hover { background: #f87171; box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3); }
-        .btn-small { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
-        .btn-warning { background: var(--warning); color: black; border: none; }
-        .btn-warning:hover { background: #fbbf24; }
-        .btn-file { display: inline-block; background: var(--success); color: white; padding: 0.5rem 1.25rem; border-radius: 50px; cursor: pointer; font-weight: 600; border: none; font-family: inherit; font-size: 0.9rem; }
-        .btn-file:hover { background: #34d399; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
-        .btn-file:active { transform: scale(0.95); }
 
         .user-dropdown { position: relative; display: inline-block; }
         .user-dropdown-btn { display: flex; align-items: center; gap: 0.75rem; background: var(--surface); padding: 0.3rem 0.5rem 0.3rem 0.3rem; border-radius: 50px; border: 1px solid #2d2d44; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text); font-family: inherit; font-size: 0.9rem; font-weight: 600; }
@@ -103,9 +293,6 @@
         .search-container { padding: 1.5rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
         .search-container .search-input-wrapper { display: flex; flex: 1; min-width: 200px; align-items: center; gap: 0.5rem; }
         .search-container .search-input-wrapper input[type="text"] { flex: 1; }
-        .search-container .search-input-wrapper .clear-btn { background: var(--surface); border: 1px solid #2d2d44; color: var(--text-muted); padding: 0.75rem 1.2rem; border-radius: 50px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 0.9rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
-        .search-container .search-input-wrapper .clear-btn:hover { background: var(--surface-hover); color: var(--text); transform: translateY(-2px); }
-        .search-container .search-input-wrapper .clear-btn:active { transform: scale(0.95); }
         .search-container input[type="text"], .search-container select, .search-container button { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .search-container input[type="text"] { flex: 1; min-width: 200px; }
         .search-container input:focus, .search-container select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); transform: scale(1.02); }
@@ -145,16 +332,8 @@
         .modal-overlay.active .modal { transform: scale(1); }
         .modal-header { padding: 1.5rem; border-bottom: 1px solid #2d2d44; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--surface); z-index: 10; border-radius: var(--radius) var(--radius) 0 0; gap: 1rem; }
         .modal-body { padding: 1.5rem; }
-        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.75rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: all 0.2s; line-height: 1; display: flex; align-items: center; justify-content: center; }
-        .close-btn:hover { background: var(--surface-hover); color: var(--text); transform: rotate(90deg); }
-        .close-btn:active { transform: scale(0.9); }
 
         .auth-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .auth-tab { flex: 1; padding: 0.75rem; background: var(--surface); border: 1px solid #2d2d44; color: var(--text-muted); border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-        .auth-tab:hover { transform: translateY(-2px); background: var(--surface-hover); color: var(--text); }
-        .auth-tab:active { transform: scale(0.95); }
-        .auth-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
-
         .auth-form { display: flex; flex-direction: column; gap: 1rem; }
         .auth-form button { margin-top: 0.5rem; }
         .auth-error { color: var(--danger); font-size: 0.85rem; display: none; }
@@ -215,10 +394,6 @@
         .user-result-email { font-size: 0.8rem; color: var(--text-muted); }
 
         .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid #2d2d44; padding-bottom: 0.5rem; flex-wrap: wrap; }
-        .tab { padding: 0.5rem 1.5rem; background: none; border: none; color: var(--text-muted); font-weight: 600; cursor: pointer; border-radius: 50px; transition: all 0.2s; }
-        .tab:hover { color: var(--text); background: var(--surface-hover); transform: translateY(-2px); }
-        .tab:active { transform: scale(0.95); }
-        .tab.active { color: var(--primary); background: rgba(139, 92, 246, 0.1); }
         .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; background: rgba(139, 92, 246, 0.15); color: var(--primary); border: 1px solid rgba(139, 92, 246, 0.3); }
         .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--surface); border: 1px solid var(--success); color: var(--success); padding: 1rem 1.5rem; border-radius: var(--radius); transform: translateX(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 300; font-weight: 600; box-shadow: var(--shadow); display: flex; align-items: center; gap: 0.5rem; }
         .toast.show { transform: translateX(0); }
@@ -235,13 +410,6 @@
         .post-card:hover { border-color: var(--primary); transform: translateY(-2px); }
         .post-card:active { transform: scale(0.98); }
         .post-vote-area { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.2rem 0.6rem 0.2rem 0.2rem; flex-shrink: 0; }
-        .post-vote-area .vote-btn { background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; padding: 0.1rem 0.3rem; transition: all 0.2s; line-height: 1.2; border-radius: 8px; }
-        .post-vote-area .vote-btn:hover { background: rgba(255, 255, 255, 0.05); color: var(--text); transform: scale(1.05); }
-        .post-vote-area .vote-btn:active { transform: scale(0.9); }
-        .post-vote-area .vote-btn.upvote:hover { color: var(--vote-up); transform: scale(1.1); }
-        .post-vote-area .vote-btn.downvote:hover { color: var(--vote-down); transform: scale(1.1); }
-        .post-vote-area .vote-btn.upvote.active { color: var(--vote-up); background: rgba(34, 197, 94, 0.1); border-radius: 8px; }
-        .post-vote-area .vote-btn.downvote.active { color: var(--vote-down); background: rgba(239, 68, 68, 0.1); border-radius: 8px; }
         .post-vote-area .score { font-weight: 700; font-size: 1rem; color: var(--text); }
         .post-content { flex: 1; min-width: 0; }
         .post-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
@@ -252,9 +420,6 @@
         .post-game { color: var(--accent); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.2rem; }
         .post-message { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.3rem; word-break: break-word; }
         .post-actions { display: flex; gap: 0.75rem; margin-top: 0.3rem; flex-wrap: wrap; align-items: center; font-size: 0.75rem; color: var(--text-muted); }
-        .post-actions .action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 0.3rem; }
-        .post-actions .action-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); transform: scale(1.05); }
-        .post-actions .action-btn:active { transform: scale(0.95); }
         .post-tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 50px; font-size: 0.6rem; font-weight: 700; }
         .tag-lfg { background: rgba(59, 130, 246, 0.2); color: var(--info); }
         .tag-player { background: rgba(16, 185, 129, 0.2); color: var(--success); }
@@ -299,6 +464,7 @@
     </style>
 </head>
 <body>
+    <!-- Setup Wizard -->
     <div id="setupWizard" class="setup-wizard">
         <h1>Admin Setup</h1>
         <p style="color:var(--text-muted);margin-bottom:1.5rem;">Update Firebase configuration.</p>
@@ -355,6 +521,8 @@ service cloud.firestore {
 }</div>
         </div>
     </div>
+
+    <!-- Auth Modal -->
     <div id="authModal" class="modal-overlay" style="display:flex;opacity:1;z-index:300;">
         <div class="modal" style="max-width:420px;" onclick="event.stopPropagation()">
             <div class="modal-header" style="justify-content:center;"><h2 style="font-size:1.25rem;">Game Vault</h2></div>
@@ -379,6 +547,8 @@ service cloud.firestore {
             </div>
         </div>
     </div>
+
+    <!-- App Container -->
     <div id="appContainer" style="display:none;">
         <header>
             <div class="logo" onclick="showGames()">🎮 Game Vault</div>
@@ -399,6 +569,8 @@ service cloud.firestore {
                 </div>
             </div>
         </header>
+
+        <!-- Stats / Filters -->
         <div class="stats-bar">
             <div class="stat success clickable" onclick="filterByStatus('completed')" id="filterCompleted">
                 <span class="stat-icon">🏆</span><div><div class="stat-value" id="completedCount">0</div></div></div>
@@ -411,6 +583,8 @@ service cloud.firestore {
             <div class="stat" style="cursor:default;border-color:transparent;">
                 <span class="stat-icon">👥</span><div><div class="stat-value" id="friendsCount">0</div></div></div>
         </div>
+
+        <!-- Games View -->
         <div id="gamesView">
             <div class="search-container">
                 <div class="search-input-wrapper">
@@ -427,6 +601,8 @@ service cloud.firestore {
             </div>
             <div class="games-grid" id="gamesGrid"></div>
         </div>
+
+        <!-- Posts View -->
         <div id="postsView" style="display:none;padding:2rem;max-width:1200px;margin:0 auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
                 <h2 style="font-size:1.5rem;">📝 Community Posts</h2>
@@ -450,6 +626,8 @@ service cloud.firestore {
             </div>
             <div class="posts-grid" id="postsGrid"></div>
         </div>
+
+        <!-- Profile View -->
         <div class="profile-view" id="profileView">
             <div class="profile-header">
                 <div class="avatar" id="profileAvatar">?</div>
@@ -470,39 +648,41 @@ service cloud.firestore {
                 <div class="settings-row">
                     <label>Display Name</label>
                     <input type="text" id="settingsName" placeholder="Enter new name" maxlength="20">
-                    <button class="btn-success btn-small" onclick="updateProfileName()">Update</button>
+                    <button onclick="updateProfileName()">Update</button>
                 </div>
                 <div class="settings-row">
                     <label>Name Color</label>
                     <input type="color" id="settingsNameColor" value="#f1f5f9">
-                    <button class="btn-success btn-small" onclick="updateNameColor()">Update</button>
+                    <button onclick="updateNameColor()">Update</button>
                 </div>
                 <div class="settings-row">
                     <label>Avatar Color</label>
                     <input type="color" id="settingsAvatarColor" value="#8b5cf6">
-                    <button class="btn-success btn-small" onclick="updateAvatarColor()">Update</button>
+                    <button onclick="updateAvatarColor()">Update</button>
                 </div>
                 <div class="settings-row">
                     <label>Profile Photo</label>
                     <label for="settingsPhotoFile" class="btn-file">📁 Choose Photo</label>
                     <input type="file" id="settingsPhotoFile" accept="image/*" style="display:none;">
-                    <button class="btn-success btn-small" onclick="uploadProfilePhoto()">Upload</button>
+                    <button onclick="uploadProfilePhoto()">Upload</button>
                 </div>
                 <div class="settings-row">
                     <label>Discord</label>
                     <input type="text" id="settingsDiscord" placeholder="username#0000">
-                    <button class="btn-success btn-small" onclick="updateSocial('discord')">Save</button>
+                    <button onclick="updateSocial('discord')">Save</button>
                 </div>
                 <div class="settings-row">
                     <label>Reddit</label>
                     <input type="text" id="settingsReddit" placeholder="u/username">
-                    <button class="btn-success btn-small" onclick="updateSocial('reddit')">Save</button>
+                    <button onclick="updateSocial('reddit')">Save</button>
                 </div>
             </div>
             <h3 class="section-title">🏆 Completed</h3><div class="profile-games-grid" id="completedGamesGrid"></div>
             <h3 class="section-title">▶ Playing</h3><div class="profile-games-grid" id="playingGamesGrid"></div>
             <h3 class="section-title">💾 My Save Files</h3><div id="profileSavesList"></div>
         </div>
+
+        <!-- Friends View -->
         <div class="friends-view" id="friendsView">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
                 <h2 style="font-size:1.5rem;">👥 Friends</h2>
@@ -516,6 +696,8 @@ service cloud.firestore {
             <div id="requestsContainer" style="display:none;"><div id="requestsList"></div></div>
         </div>
     </div>
+
+    <!-- Game Modal -->
     <div class="modal-overlay" id="gameModal" onclick="closeGameModal(event)">
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-header"><div><h2 id="modalTitle" style="font-size:1.25rem;">Game</h2><span class="badge" id="modalBadge" style="margin-top:0.25rem;">RPG</span></div><button class="close-btn" onclick="closeGameModal()">×</button></div>
@@ -548,6 +730,8 @@ service cloud.firestore {
             </div>
         </div>
     </div>
+
+    <!-- Post Modal -->
     <div class="modal-overlay" id="postModal" onclick="closePostModal(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:550px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;" id="postModalTitle">Create Post</h2><button class="close-btn" onclick="closePostModal()">×</button></div>
@@ -568,6 +752,8 @@ service cloud.firestore {
             </div>
         </div>
     </div>
+
+    <!-- Search Modal -->
     <div class="modal-overlay" id="searchModal" onclick="closeSearchModal(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:500px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;">Find Players</h2><button class="close-btn" onclick="closeSearchModal()">×</button></div>
@@ -578,6 +764,8 @@ service cloud.firestore {
             </div>
         </div>
     </div>
+
+    <!-- Friend Profile Modal -->
     <div class="modal-overlay" id="friendProfileModal" onclick="closeFriendProfile(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:700px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;">Friend Profile</h2><button class="close-btn" onclick="closeFriendProfile()">×</button></div>
@@ -599,11 +787,14 @@ service cloud.firestore {
             </div>
         </div>
     </div>
+
+    <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
         <div class="context-menu-item" id="ctxEdit">✏️ Edit</div>
         <div class="context-menu-item danger" id="ctxDelete">🗑 Delete</div>
     </div>
     <div class="toast" id="toast">Action completed!</div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAP2LzTvtVVb0_eTH_4kSwF6GtuBvZlFqA",
@@ -829,6 +1020,26 @@ service cloud.firestore {
             const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
             return colors[(id - 1) % colors.length];
         }
+
+        // --- FILTERS FIX ---
+        function filterByStatus(status) {
+            currentFilterStatus = status;
+            document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
+            if (status === 'all') {
+                document.getElementById('filterAll').classList.add('active');
+            } else {
+                const filterMap = {
+                    'completed': 'filterCompleted',
+                    'playing': 'filterPlaying',
+                    'looking': 'filterLooking',
+                    'lfg': 'filterLfg'
+                };
+                const target = document.getElementById(filterMap[status]);
+                if (target) target.classList.add('active');
+            }
+            filterGames();
+        }
+
         function filterGames() {
             const query = document.getElementById("searchInput").value.toLowerCase().trim();
             const sort = document.getElementById("sortSelect").value;
@@ -850,6 +1061,11 @@ service cloud.firestore {
             }
             const grid = document.getElementById("gamesGrid");
             grid.innerHTML = "";
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state">No games found for this filter. Try changing your search or filter.</div>`;
+                document.getElementById("resultsCount").textContent = "No games found";
+                return;
+            }
             document.getElementById("resultsCount").textContent = query ? `Found ${filtered.length} games` : "Showing all games";
             filtered.forEach(game => {
                 const isCompleted = myCompletions.includes(game.id);
@@ -894,6 +1110,8 @@ service cloud.firestore {
                 grid.appendChild(card);
             });
         }
+
+        // --- REST OF THE FUNCTIONS (unchanged from previous version) ---
         async function openGameModal(game) {
             currentGame = game;
             document.getElementById("modalTitle").textContent = game.title;
