@@ -131,9 +131,9 @@
         .game-card.lfg::after { content: '👥'; position: absolute; top: 10px; right: 10px; background: var(--danger); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.3) 100%); border-radius: var(--radius) var(--radius) 0 0; flex-shrink: 0; }
-        .cover::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 70%); z-index: 1; pointer-events: none; }
-        .cover .fallback { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-weight: 900; font-size: 1.6rem; text-align: center; padding: 1.5rem; word-break: break-word; color: #fff; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.5); }
-        .cover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent); z-index: 1; pointer-events: none; }
+        .cover::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0%, transparent 70%); z-index: 1; pointer-events: none; }
+        .cover .fallback { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-weight: 600; font-size: 1.1rem; text-align: center; padding: 1rem; word-break: break-word; color: rgba(255,255,255,0.85); z-index: 2; text-shadow: 0 2px 8px rgba(0,0,0,0.6); background: rgba(0,0,0,0.2); backdrop-filter: blur(2px); }
+        .cover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent); z-index: 1; pointer-events: none; }
         .game-info { padding: 0.875rem; position: relative; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }
         .game-title { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .game-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
@@ -783,7 +783,7 @@ service cloud.firestore {
                 document.getElementById("headerName").textContent = userProfile.displayName;
                 document.getElementById("headerName").style.color = userProfile.nameColor || "#f1f5f9";
                 const avatar = document.getElementById("headerAvatar");
-                setAvatarElement(avatar, userProfile);
+                if (avatar) setAvatarElement(avatar, userProfile);
                 document.getElementById("settingsName").value = userProfile.displayName || "";
                 document.getElementById("settingsNameColor").value = userProfile.nameColor || "#f1f5f9";
                 document.getElementById("settingsAvatarColor").value = userProfile.avatarColor || "#8b5cf6";
@@ -792,6 +792,7 @@ service cloud.firestore {
             }
         }
         function setAvatarElement(el, profile) {
+            if (!el) return;
             if (profile.photoData && profile.photoData.length > 50) {
                 el.style.backgroundImage = `url(${profile.photoData})`;
                 el.style.backgroundSize = "cover";
@@ -870,16 +871,16 @@ service cloud.firestore {
                         <div class="cover" style="background: linear-gradient(135deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
                             <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" 
                                  style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" 
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback\' style=\'background:linear-gradient(135deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);\'>${game.title}</div>';">
-                            <div class="fallback">${game.title}</div>
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback\' style=\'background:rgba(0,0,0,0.3); backdrop-filter:blur(4px);\'>${game.title}</div>';">
+                            <div class="fallback" style="background:rgba(0,0,0,0.2); backdrop-filter:blur(2px);">${game.title}</div>
                         </div>
                     `;
                 } else {
                     const angle1 = Math.floor(Math.random() * 360);
                     coverHtml = `
                         <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
-                            <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 60%); z-index:1; pointer-events:none;"></div>
-                            <div class="fallback" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;text-align:center;padding:1.5rem;color:#fff;text-shadow:0 4px 15px rgba(0,0,0,0.8);">${game.title}</div>
+                            <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 60%); z-index:1; pointer-events:none;"></div>
+                            <div class="fallback" style="font-size:1rem; font-weight:600; color:rgba(255,255,255,0.9); text-shadow:0 2px 8px rgba(0,0,0,0.8); background:rgba(0,0,0,0.2); backdrop-filter:blur(2px);">${game.title}</div>
                             <div style="position:absolute; top:15px; right:15px; font-size:0.8rem; color:rgba(255,255,255,0.3); font-weight:900; z-index:2;">${game.genre.slice(0,3).toUpperCase()}</div>
                         </div>
                     `;
@@ -921,8 +922,8 @@ service cloud.firestore {
                     fallback.style.height = "100%";
                     fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
                     fallback.style.color = "#fff";
-                    fallback.style.fontWeight = "900";
-                    fallback.style.fontSize = "1.5rem";
+                    fallback.style.fontWeight = "600";
+                    fallback.style.fontSize = "1rem";
                     fallback.style.textAlign = "center";
                     fallback.style.padding = "1rem";
                     fallback.style.wordBreak = "break-word";
@@ -940,8 +941,8 @@ service cloud.firestore {
                 fallback.style.height = "100%";
                 fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
                 fallback.style.color = "#fff";
-                fallback.style.fontWeight = "900";
-                fallback.style.fontSize = "1.5rem";
+                fallback.style.fontWeight = "600";
+                fallback.style.fontSize = "1rem";
                 fallback.style.textAlign = "center";
                 fallback.style.padding = "1rem";
                 fallback.style.wordBreak = "break-word";
@@ -1412,7 +1413,7 @@ service cloud.firestore {
             if (!userProfile) return;
             const count = myCompletions.length, playingCount = myPlaying.length, lookingCount = myLooking.length, lfgCount = myLFG.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
             const avatar = document.getElementById("profileAvatar");
-            setAvatarElement(avatar, userProfile);
+            if (avatar) setAvatarElement(avatar, userProfile);
             document.getElementById("profileName").textContent = userProfile.displayName;
             document.getElementById("profileName").style.color = userProfile.nameColor || "#f1f5f9";
             document.getElementById("profileEmail").textContent = currentUser.email;
@@ -1422,10 +1423,10 @@ service cloud.firestore {
             document.getElementById("profileFriends").textContent = friendsList.length;
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
-            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
+            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
-            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
+            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
             const savesList = document.getElementById("profileSavesList");
             const allSaves = [];
             Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
@@ -1453,9 +1454,10 @@ service cloud.firestore {
         }
         async function updateAvatarColor() {
             const color = document.getElementById("settingsAvatarColor").value;
-            try { await db.collection("users").doc(currentUser.uid).update({ avatarColor: color }); userProfile.avatarColor = color; const headerAvatar = document.getElementById("headerAvatar"); const profileAvatar = document.getElementById("profileAvatar"); if (!userProfile.photoData) { headerAvatar.style.background = color; headerAvatar.style.backgroundImage = "none"; headerAvatar.textContent = getInitials(userProfile.displayName); profileAvatar.style.background = color; profileAvatar.style.backgroundImage = "none"; profileAvatar.textContent = getInitials(userProfile.displayName); } showToast("Avatar color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+            try { await db.collection("users").doc(currentUser.uid).update({ avatarColor: color }); userProfile.avatarColor = color; const headerAvatar = document.getElementById("headerAvatar"); const profileAvatar = document.getElementById("profileAvatar"); if (!userProfile.photoData) { if (headerAvatar) { headerAvatar.style.background = color; headerAvatar.style.backgroundImage = "none"; headerAvatar.textContent = getInitials(userProfile.displayName); } if (profileAvatar) { profileAvatar.style.background = color; profileAvatar.style.backgroundImage = "none"; profileAvatar.textContent = getInitials(userProfile.displayName); } } showToast("Avatar color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
         }
         async function uploadProfilePhoto() {
+            if (!userProfile) { showToast("Please wait for profile to load", true); return; }
             const fileInput = document.getElementById("settingsPhotoFile");
             const file = fileInput.files[0];
             if (!file) { showToast("Please select an image", true); return; }
@@ -1468,8 +1470,8 @@ service cloud.firestore {
                     userProfile.photoData = base64;
                     const headerAvatar = document.getElementById("headerAvatar");
                     const profileAvatar = document.getElementById("profileAvatar");
-                    headerAvatar.style.backgroundImage = `url(${base64})`; headerAvatar.style.backgroundSize = "cover"; headerAvatar.style.backgroundPosition = "center"; headerAvatar.textContent = "";
-                    profileAvatar.style.backgroundImage = `url(${base64})`; profileAvatar.style.backgroundSize = "cover"; profileAvatar.style.backgroundPosition = "center"; profileAvatar.textContent = "";
+                    if (headerAvatar) { headerAvatar.style.backgroundImage = `url(${base64})`; headerAvatar.style.backgroundSize = "cover"; headerAvatar.style.backgroundPosition = "center"; headerAvatar.textContent = ""; }
+                    if (profileAvatar) { profileAvatar.style.backgroundImage = `url(${base64})`; profileAvatar.style.backgroundSize = "cover"; profileAvatar.style.backgroundPosition = "center"; profileAvatar.textContent = ""; }
                     showToast("Profile photo uploaded!");
                 } catch (err) { showToast("Upload failed: " + err.message, true); }
             };
@@ -1604,10 +1606,10 @@ service cloud.firestore {
             } else { postsSection.style.display = "none"; }
             const grid = document.getElementById("friendCompletedGrid");
             grid.innerHTML = "";
-            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
             const playingGrid = document.getElementById("friendPlayingGrid");
             playingGrid.innerHTML = "";
-            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1.2rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
             const savesContainer = document.getElementById("friendSavesContainer");
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
