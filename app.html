@@ -34,7 +34,7 @@
         ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* --- UNIFIED BUTTON STYLES (unchanged) --- */
+        /* --- UNIFIED BUTTON STYLES --- */
         button, .btn, .btn-success, .btn-danger, .btn-secondary, .btn-warning, .btn-file, .btn-small, .nav-btn, .auth-tab, .tab, .clear-btn, .close-btn, .vote-btn, .action-btn, .post-chat-toggle, .checkbox-label, .upload-area, .friend-card, .game-card, .stat.clickable, .search-select {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -97,7 +97,7 @@
         .action-btn { background: none !important; border: none !important; color: var(--text-muted) !important; box-shadow: none !important; padding: 0.2rem 0.6rem; }
         .action-btn:hover { color: var(--text) !important; background: rgba(255, 255, 255, 0.05) !important; transform: scale(1.05); }
 
-        /* --- STATS BAR (unchanged) --- */
+        /* --- STATS BAR --- */
         .stats-bar { background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9)); padding: 0.7rem 2rem; display: flex; gap: 1.5rem; border-bottom: 1px solid #1e1e2e; flex-wrap: wrap; align-items: center; }
         .stat { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 1.2rem; border-radius: 50px; cursor: default; color: var(--text-muted); border: 1px solid transparent; background: transparent; }
         .stat.clickable { cursor: pointer; background: var(--surface); border: 1px solid #2d2d44; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -111,126 +111,30 @@
         .stat.playing { color: var(--info); }
         .stat.accent { color: var(--accent); }
 
-        /* --- SEARCH CONTAINER (FIXED: search larger, filters smaller) --- */
-        .search-container {
-            padding: 1.5rem 2rem;
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-        }
-        .search-container .search-input-wrapper {
-            display: flex;
-            flex: 1 1 400px;   /* grows more */
-            min-width: 200px;   /* wider */
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .search-container .search-input-wrapper input[type="text"] {
-            flex: 1;
-            min-width: 120px;
-        }
-        .search-container .search-select {
-            flex-shrink: 0;
-            min-width: 80px;        /* smaller */
-            padding: 0.6rem 2rem 0.6rem 1rem; /* less padding */
-            font-size: 0.8rem;      /* smaller text */
-        }
-        .search-container .results-count {
-            flex-shrink: 0;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-        .search-container input[type="text"],
-        .search-container select,
-        .search-container button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .search-container input:focus,
-        .search-container select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-            transform: scale(1.02);
-        }
+        /* --- SEARCH CONTAINER (compact filters, large search) --- */
+        .search-container { padding: 1.5rem 2rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: nowrap; overflow-x: auto; }
+        .search-container .search-input-wrapper { display: flex; flex: 1 1 400px; min-width: 200px; align-items: center; gap: 0.5rem; }
+        .search-container .search-input-wrapper input[type="text"] { flex: 1; min-width: 120px; }
+        .search-container .search-select { flex-shrink: 0; min-width: 80px; padding: 0.6rem 2rem 0.6rem 1rem; font-size: 0.8rem; }
+        .search-container .results-count { flex-shrink: 0; color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
+        .search-container input[type="text"], .search-container select, .search-container button { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .search-container input:focus, .search-container select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); transform: scale(1.02); }
         .search-container button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .search-container button:active { transform: scale(0.95); }
 
-        .search-select {
-            appearance: none;
-            -webkit-appearance: none;
-            background: var(--surface);
-            border: 1px solid #2d2d44;
-            color: var(--text);
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: 500;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.8rem center;
-            background-size: 10px;
-        }
-        .search-select:hover {
-            transform: translateY(-2px);
-            background-color: var(--surface-hover);
-            border-color: var(--primary);
-        }
-        .search-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-        }
-        .search-select option {
-            background: var(--surface);
-            color: var(--text);
-        }
+        .search-select { appearance: none; -webkit-appearance: none; background: var(--surface); border: 1px solid #2d2d44; color: var(--text); border-radius: 50px; cursor: pointer; font-family: inherit; font-weight: 500; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.8rem center; background-size: 10px; }
+        .search-select:hover { transform: translateY(-2px); background-color: var(--surface-hover); border-color: var(--primary); }
+        .search-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+        .search-select option { background: var(--surface); color: var(--text); }
 
-        .tab {
-            background: var(--surface);
-            border: 1px solid #2d2d44;
-            color: var(--text-muted);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .tab:hover {
-            transform: translateY(-2px);
-            background: var(--surface-hover);
-            color: var(--text);
-        }
+        .tab { background: var(--surface); border: 1px solid #2d2d44; color: var(--text-muted); padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tab:hover { transform: translateY(-2px); background: var(--surface-hover); color: var(--text); }
         .tab:active { transform: scale(0.95); }
-        .tab.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-        }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
 
-        /* --- RESPONSIVE TWEAKS --- */
-        @media (max-width: 820px) {
-            .search-container {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            .search-container .search-input-wrapper {
-                flex: 1 1 100%;
-                min-width: 100px;
-            }
-            .search-container .search-select {
-                flex: 1 1 auto;
-                min-width: 70px;
-            }
-        }
+        @media (max-width: 820px) { .search-container { flex-wrap: wrap; gap: 0.5rem; } .search-container .search-input-wrapper { flex: 1 1 100%; min-width: 100px; } .search-container .search-select { flex: 1 1 auto; min-width: 70px; } }
 
-        /* --- REST OF STYLES (unchanged from optimized version) --- */
+        /* --- REST OF STYLES (unchanged) --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -482,7 +386,7 @@ service cloud.firestore {
     }
   }
 }</div>
-            <p style="color:var(--success);margin-top:0.5rem;">✅ Allows real‑time chat updates.</p>
+            <p style="color:var(--success);margin-top:0.5rem;">✅ Allows real‑time chat updates (chatMessages, chatCount).</p>
         </div>
     </div>
 
@@ -930,6 +834,8 @@ service cloud.firestore {
         let postsPerPage = 20;
         let currentPage = 0;
         let isLoadingMore = false;
+        let retryCount = 0;
+        const MAX_RETRIES = 5;
 
         // --- LOAD GAMES ---
         async function loadGames() {
@@ -1090,6 +996,7 @@ service cloud.firestore {
                 cover.appendChild(fallback);
             }
 
+            // Show/hide checkboxes based on multiplayer
             const completeLabel = document.getElementById("completeLabel");
             if (game.multiplayer) {
                 completeLabel.style.display = "none";
@@ -1099,6 +1006,7 @@ service cloud.firestore {
             }
             document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
 
+            // Set checkbox states from data
             document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
             document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
             document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
@@ -1125,61 +1033,110 @@ service cloud.firestore {
             document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
         }
 
-        // --- TOGGLE STATUSES ---
+        // --- FIXED: INDEPENDENT TOGGLES (no cross-removal) ---
         async function toggleComplete() {
             if (!currentGame) return;
-            if (currentGame.multiplayer) { showToast("Cannot mark multiplayer games as completed", true); document.getElementById("completeCheckbox").checked = false; return; }
-            const cb = document.getElementById("completeCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId);
+            if (currentGame.multiplayer) {
+                showToast("Multiplayer games cannot be marked as completed", true);
+                document.getElementById("completeCheckbox").checked = false;
+                return;
+            }
+            const cb = document.getElementById("completeCheckbox");
+            const gameId = currentGame.id;
+            const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString());
             try {
-                if (cb.checked) { await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() }); if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id); } else { await ref.delete(); myCompletions = myCompletions.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Game marked as completed!" : "Unmarked");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+                if (cb.checked) {
+                    await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myCompletions.includes(gameId)) myCompletions.push(gameId);
+                } else {
+                    await ref.delete();
+                    myCompletions = myCompletions.filter(id => id !== gameId);
+                }
+                updateStatusLabels();
+                filterGames();
+                updateStats();
+                showToast(cb.checked ? "Marked as completed!" : "Unmarked");
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked;
+            }
         }
 
         async function togglePlaying() {
             if (!currentGame) return;
-            const cb = document.getElementById("playingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            const cb = document.getElementById("playingCheckbox");
+            const gameId = currentGame.id;
+            const ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
             try {
                 if (cb.checked) {
                     await ref.set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myPlaying.includes(currentGame.id)) myPlaying.push(currentGame.id);
-                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
-                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
-                } else { await ref.delete(); myPlaying = myPlaying.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+                    if (!myPlaying.includes(gameId)) myPlaying.push(gameId);
+                } else {
+                    await ref.delete();
+                    myPlaying = myPlaying.filter(id => id !== gameId);
+                }
+                updateStatusLabels();
+                filterGames();
+                updateStats();
+                showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked;
+            }
         }
 
         async function toggleLooking() {
             if (!currentGame) return;
-            const cb = document.getElementById("lookingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            const cb = document.getElementById("lookingCheckbox");
+            const gameId = currentGame.id;
+            const ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
             try {
                 if (cb.checked) {
                     await ref.set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myLooking.includes(currentGame.id)) myLooking.push(currentGame.id);
-                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
-                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
-                } else { await ref.delete(); myLooking = myLooking.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for players!" : "Removed from looking");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+                    if (!myLooking.includes(gameId)) myLooking.push(gameId);
+                } else {
+                    await ref.delete();
+                    myLooking = myLooking.filter(id => id !== gameId);
+                }
+                updateStatusLabels();
+                filterGames();
+                updateStats();
+                showToast(cb.checked ? "Looking for players!" : "Removed from looking");
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked;
+            }
         }
 
         async function toggleLFG() {
             if (!currentGame) return;
-            if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true); document.getElementById("lfgCheckbox").checked = false; return; }
-            const cb = document.getElementById("lfgCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            if (!currentGame.multiplayer) {
+                showToast("This game doesn't support multiplayer!", true);
+                document.getElementById("lfgCheckbox").checked = false;
+                return;
+            }
+            const cb = document.getElementById("lfgCheckbox");
+            const gameId = currentGame.id;
+            const ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
             try {
                 if (cb.checked) {
                     await ref.set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myLFG.includes(currentGame.id)) myLFG.push(currentGame.id);
-                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
-                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
-                } else { await ref.delete(); myLFG = myLFG.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+                    if (!myLFG.includes(gameId)) myLFG.push(gameId);
+                } else {
+                    await ref.delete();
+                    myLFG = myLFG.filter(id => id !== gameId);
+                }
+                updateStatusLabels();
+                filterGames();
+                updateStats();
+                showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked;
+            }
         }
 
-        // --- SAVE FILES ---
+        // --- SAVE FILES (unchanged) ---
         function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
         function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
         function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
@@ -1239,22 +1196,27 @@ service cloud.firestore {
             if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
         }
 
-        // --- OPTIMIZED POSTS WITH REAL-TIME UPDATES ---
+        // --- OPTIMIZED POSTS WITH REAL-TIME UPDATES + RETRY ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
                 postsUnsubscribe = null;
             }
+            retryCount = 0;
             currentPage = 0;
             posts = [];
             chatOpenState = {};
             document.getElementById('loadMorePostsBtn').style.display = 'none';
+            setupPostsListener();
+        }
 
+        function setupPostsListener() {
             const query = db.collection("posts")
                 .orderBy("createdAt", "desc")
                 .limit(postsPerPage);
 
             postsUnsubscribe = query.onSnapshot(async (snapshot) => {
+                retryCount = 0; // reset on success
                 const newPosts = [];
                 for (const doc of snapshot.docs) {
                     const data = doc.data();
@@ -1281,11 +1243,16 @@ service cloud.firestore {
                 }
                 posts = newPosts;
                 // Check if more posts exist
-                const totalCount = await db.collection("posts").count().get();
-                const total = totalCount.data().count;
-                if (total > postsPerPage) {
-                    document.getElementById('loadMorePostsBtn').style.display = 'inline-block';
-                } else {
+                try {
+                    const totalCount = await db.collection("posts").count().get();
+                    const total = totalCount.data().count;
+                    if (total > postsPerPage) {
+                        document.getElementById('loadMorePostsBtn').style.display = 'inline-block';
+                    } else {
+                        document.getElementById('loadMorePostsBtn').style.display = 'none';
+                    }
+                } catch (e) {
+                    // count() might not be available in all setups, hide load more
                     document.getElementById('loadMorePostsBtn').style.display = 'none';
                 }
                 renderPosts(
@@ -1296,7 +1263,18 @@ service cloud.firestore {
             }, (error) => {
                 console.error("Post listener error:", error);
                 if (error.code === 'permission-denied') {
-                    showToast("Permission denied. Please check Firestore rules.", true);
+                    showToast("Permission denied. Make sure Firestore rules allow reading posts.", true);
+                } else if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+                    if (retryCount < MAX_RETRIES) {
+                        retryCount++;
+                        const delay = 3000 * retryCount;
+                        console.log(`Retrying posts listener (attempt ${retryCount}) in ${delay}ms...`);
+                        setTimeout(setupPostsListener, delay);
+                    } else {
+                        showToast("Network connection issue. Please refresh the page.", true);
+                    }
+                } else {
+                    showToast("Failed to load posts: " + error.message, true);
                 }
             });
         }
@@ -1347,12 +1325,17 @@ service cloud.firestore {
                     document.getElementById("postTagFilter").value
                 );
 
-                const totalCount = await db.collection("posts").count().get();
-                const total = totalCount.data().count;
-                if (posts.length >= total) {
+                // Check if we have all posts
+                try {
+                    const totalCount = await db.collection("posts").count().get();
+                    const total = totalCount.data().count;
+                    if (posts.length >= total) {
+                        loadBtn.style.display = 'none';
+                    } else {
+                        loadBtn.style.display = 'inline-block';
+                    }
+                } catch (e) {
                     loadBtn.style.display = 'none';
-                } else {
-                    loadBtn.style.display = 'inline-block';
                 }
             } catch (err) {
                 console.error("Load more error:", err);
@@ -1364,6 +1347,7 @@ service cloud.firestore {
             }
         }
 
+        // --- RENDER POSTS ---
         function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
             let filtered = posts.filter(p => {
                 const gameMatch = p.gameTitle.toLowerCase().includes(filter.toLowerCase());
@@ -1384,7 +1368,7 @@ service cloud.firestore {
 
             const grid = document.getElementById("postsGrid");
             if (!filtered.length) {
-                grid.innerHTML = '<div class="empty-state">No posts match your search.</div>';
+                grid.innerHTML = '<div class="empty-state">No posts yet. Be the first to create one!</div>';
                 return;
             }
 
@@ -1440,8 +1424,6 @@ service cloud.firestore {
 
         function toggleChat(postId) {
             chatOpenState[postId] = !chatOpenState[postId];
-            const post = posts.find(p => p.id === postId);
-            if (post) post._chatOpen = chatOpenState[postId];
             renderPosts(
                 document.getElementById("postSearchInput").value,
                 document.getElementById("postSortFilter").value,
@@ -1449,6 +1431,7 @@ service cloud.firestore {
             );
         }
 
+        // --- SEND CHAT MESSAGE ---
         async function sendChatMessage(postId) {
             const input = document.getElementById(`chatInput_${postId}`);
             const msg = input.value.trim();
@@ -1501,7 +1484,7 @@ service cloud.firestore {
             }
         }
 
-        // --- POST CRUD ---
+        // --- POST CRUD (unchanged) ---
         function filterPosts() {
             const search = document.getElementById("postSearchInput").value;
             const sort = document.getElementById("postSortFilter").value;
@@ -1547,6 +1530,7 @@ service cloud.firestore {
             } catch (err) { console.error("Error voting:", err); showToast("Error voting: " + err.message, true); }
         }
 
+        // --- GAME COMBOBOX (unchanged) ---
         function setupGameCombobox() {
             const input = document.getElementById("postGameSearch");
             const dropdown = document.getElementById("gameDropdown");
@@ -1658,7 +1642,7 @@ service cloud.firestore {
             try { await db.collection("posts").doc(postId).delete(); showToast("Post deleted"); } catch (err) { showToast("Error: " + err.message, true); }
         }
 
-        // --- CONTEXT MENU ---
+        // --- CONTEXT MENU (unchanged) ---
         let contextTarget = null;
 
         function showContextMenu(e) {
@@ -1782,7 +1766,7 @@ service cloud.firestore {
             updateNav('friends');
         }
 
-        // --- PROFILE ---
+        // --- PROFILE (unchanged) ---
         function renderProfile() {
             if (!userProfile) return;
             const count = myCompletions.length, playingCount = myPlaying.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
@@ -1822,7 +1806,7 @@ service cloud.firestore {
             } catch(err) { showToast("Error removing: " + err.message, true); }
         }
 
-        // --- PROFILE SETTINGS ---
+        // --- PROFILE SETTINGS (unchanged) ---
         async function updateProfileName() {
             const name = document.getElementById("settingsName").value.trim();
             if (!name) { showToast("Please enter a name", true); return; }
@@ -1866,7 +1850,7 @@ service cloud.firestore {
             try { await db.collection("users").doc(currentUser.uid).update({ [type]: val }); userProfile[type] = val; showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} updated!`); } catch (err) { showToast("Error: " + err.message, true); }
         }
 
-        // --- FRIENDS ---
+        // --- FRIENDS (unchanged) ---
         async function loadFriends() {
             try {
                 const snap = await db.collection("users").doc(currentUser.uid).collection("friends").get();
