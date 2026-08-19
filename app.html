@@ -318,9 +318,9 @@
         .game-card.lfg::after { content: '👥'; position: absolute; top: 10px; right: 10px; background: var(--danger); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.3) 100%); border-radius: var(--radius) var(--radius) 0 0; flex-shrink: 0; }
-        .cover::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0%, transparent 70%); z-index: 1; pointer-events: none; }
-        .cover .fallback { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-weight: 600; font-size: 1.1rem; text-align: center; padding: 1rem; word-break: break-word; color: rgba(255,255,255,0.85); z-index: 2; text-shadow: 0 2px 8px rgba(0,0,0,0.6); background: rgba(0,0,0,0.2); backdrop-filter: blur(2px); }
-        .cover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent); z-index: 1; pointer-events: none; }
+        .cover .cover-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 0; }
+        .cover .fallback { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-weight: 600; font-size: 0.9rem; text-align: center; padding: 0.5rem; word-break: break-word; color: rgba(255,255,255,0.9); z-index: 2; text-shadow: 0 2px 8px rgba(0,0,0,0.6); background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); }
+        .cover .genre-tag { position: absolute; bottom: 12px; right: 12px; font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.5); z-index: 2; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
         .game-info { padding: 0.875rem; position: relative; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }
         .game-title { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .game-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
@@ -1021,7 +1021,7 @@ service cloud.firestore {
             return colors[(id - 1) % colors.length];
         }
 
-        // --- FILTERS FIX ---
+        // --- FILTERS ---
         function filterByStatus(status) {
             currentFilterStatus = status;
             document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
@@ -1040,6 +1040,7 @@ service cloud.firestore {
             filterGames();
         }
 
+        // --- UPDATED GAME CARD RENDER (no title on cover, sharp images) ---
         function filterGames() {
             const query = document.getElementById("searchInput").value.toLowerCase().trim();
             const sort = document.getElementById("sortSelect").value;
@@ -1083,21 +1084,20 @@ service cloud.firestore {
                 const color = getColor(game.id);
                 let coverHtml;
                 if (game.steamId) {
+                    // Use standard image (non-2x) for better sharpness
                     coverHtml = `
-                        <div class="cover" style="background: linear-gradient(135deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
-                            <img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg" 
-                                 style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1;" 
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback\' style=\'background:rgba(0,0,0,0.3); backdrop-filter:blur(4px);\'>${game.title}</div>';">
-                            <div class="fallback" style="background:rgba(0,0,0,0.2); backdrop-filter:blur(2px);">${game.title}</div>
+                        <div class="cover">
+                            <img class="cover-image" src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg" 
+                                 alt="${game.title}" 
+                                 onerror="this.parentElement.innerHTML='<div class=\\'cover\\' style=\\'background:linear-gradient(135deg,${color}80,${color});\\'><div class=\\'fallback\\'>${game.title}</div></div>'">
                         </div>
                     `;
                 } else {
                     const angle1 = Math.floor(Math.random() * 360);
                     coverHtml = `
                         <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
-                            <div style="position:absolute; inset:0; background:radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 60%); z-index:1; pointer-events:none;"></div>
-                            <div class="fallback" style="font-size:1rem; font-weight:600; color:rgba(255,255,255,0.9); text-shadow:0 2px 8px rgba(0,0,0,0.8); background:rgba(0,0,0,0.2); backdrop-filter:blur(2px);">${game.title}</div>
-                            <div style="position:absolute; top:15px; right:15px; font-size:0.8rem; color:rgba(255,255,255,0.3); font-weight:900; z-index:2;">${game.genre.slice(0,3).toUpperCase()}</div>
+                            <div class="fallback">${game.title}</div>
+                            <span class="genre-tag">${game.genre.slice(0,3).toUpperCase()}</span>
                         </div>
                     `;
                 }
@@ -1111,7 +1111,7 @@ service cloud.firestore {
             });
         }
 
-        // --- REST OF THE FUNCTIONS (unchanged from previous version) ---
+        // --- UPDATED MODAL COVER (clean image, no text overlay) ---
         async function openGameModal(game) {
             currentGame = game;
             document.getElementById("modalTitle").textContent = game.title;
@@ -1125,7 +1125,7 @@ service cloud.firestore {
 
             if (game.steamId) {
                 const img = document.createElement('img');
-                img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900_2x.jpg`;
+                img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg`;
                 img.style.width = "100%";
                 img.style.height = "100%";
                 img.style.objectFit = "cover";
@@ -1188,6 +1188,8 @@ service cloud.firestore {
             document.getElementById("gameModal").classList.add("active");
             document.body.style.overflow = "hidden";
         }
+
+        // --- REST OF THE FUNCTIONS (unchanged from previous version) ---
         function closeGameModal(e) {
             if (!e || e.target === document.getElementById("gameModal")) {
                 document.getElementById("gameModal").classList.remove("active");
