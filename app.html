@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
+        /* --- SAME STYLES AS BEFORE (unchanged) --- */
         :root {
             --bg: #0a0a0f;
             --surface: #151522;
@@ -122,7 +123,7 @@
             transform: scale(0.95);
         }
 
-        /* Secondary / outline style for less prominent actions (e.g., "Clear") */
+        /* Secondary / outline style for less prominent actions */
         .btn-secondary,
         .clear-btn {
             background: var(--surface);
@@ -143,7 +144,7 @@
             font-size: 0.75rem;
         }
 
-        /* Nav buttons (special active state) */
+        /* Nav buttons */
         .nav-btn.active {
             background: var(--primary);
             color: white;
@@ -176,7 +177,7 @@
             color: var(--text);
         }
 
-        /* File input label (styled as button) */
+        /* File input label */
         .btn-file {
             background: var(--primary);
             color: #fff;
@@ -196,7 +197,7 @@
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
 
-        /* Close button (keep it subtle) */
+        /* Close button */
         .close-btn {
             background: none;
             border: none;
@@ -215,7 +216,7 @@
             transform: scale(0.9);
         }
 
-        /* Vote buttons (keep emoji style) */
+        /* Vote buttons */
         .vote-btn {
             background: none !important;
             border: none !important;
@@ -251,7 +252,7 @@
             transform: scale(1.05);
         }
 
-        /* --- STATS FILTER BUTTONS (FIXED) --- */
+        /* --- STATS FILTER BUTTONS --- */
         .stat.clickable {
             background: var(--surface);
             border: 1px solid #2d2d44;
@@ -279,7 +280,6 @@
             border-color: var(--primary);
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
-        /* Keep the accent colors for the icons, but override on active */
         .stat.clickable.active .stat-icon,
         .stat.clickable.active .stat-value {
             color: #fff;
@@ -292,7 +292,6 @@
             font-size: 1.5rem;
         }
 
-        /* Non-clickable stats (just info) */
         .stat {
             display: flex;
             align-items: center;
@@ -315,7 +314,7 @@
         .stat.playing { color: var(--info); }
         .stat.accent { color: var(--accent); }
 
-        /* --- CUSTOM DROPDOWN SELECTS (FIXED) --- */
+        /* --- CUSTOM DROPDOWN SELECTS --- */
         .search-select {
             appearance: none;
             -webkit-appearance: none;
@@ -350,7 +349,7 @@
             color: var(--text);
         }
 
-        /* --- TABS (All Friends / Requests) FIXED --- */
+        /* --- TABS --- */
         .tab {
             background: var(--surface);
             border: 1px solid #2d2d44;
@@ -378,7 +377,7 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
-        /* --- REST OF THE STYLES (unchanged) --- */
+        /* --- REST OF THE STYLES (same as before) --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -1023,6 +1022,956 @@ service cloud.firestore {
         let posts = [];
         let editingPostId = null;
         let friendPosts = [];
+
+        // --- REAL‑TIME POSTS LISTENER ---
+        let postsUnsubscribe = null;
+        let userCache = {};
+        let chatOpenState = {};
+
+        function loadPosts() {
+            // If we already have a listener, detach it
+            if (postsUnsubscribe) {
+                postsUnsubscribe();
+                postsUnsubscribe = null;
+            }
+
+            // Clear the cache for fresh user data (optional)
+            // userCache = {};
+
+            // Set up live listener
+            postsUnsubscribe = db.collection("posts")
+                .orderBy("createdAt", "desc")
+                .onSnapshot(async (snapshot) => {
+                    const newPosts = [];
+                    for (const doc of snapshot.docs) {
+                        const data = doc.data();
+                        let user = userCache[data.userId];
+                        if (!user) {
+                            try {
+                                const userDoc = await db.collection("users").doc(data.userId).get();
+                                if (userDoc.exists) {
+                                    user = userDoc.data();
+                                    userCache[data.userId] = user;
+                                } else {
+                                    // fallback user
+                                    user = { displayName: "Unknown", avatarColor: "#8b5cf6", nameColor: "#f1f5f9", photoData: "" };
+                                }
+                            } catch (e) {
+                                console.warn("Failed to fetch user", data.userId, e);
+                                user = { displayName: "Unknown", avatarColor: "#8b5cf6", nameColor: "#f1f5f9", photoData: "" };
+                            }
+                        }
+                        // Get user's vote
+                        let userVote = 0;
+                        if (currentUser) {
+                            try {
+                                const voteDoc = await db.collection("posts").doc(doc.id).collection("votes").doc(currentUser.uid).get();
+                                if (voteDoc.exists) userVote = voteDoc.data().vote;
+                            } catch (e) {}
+                        }
+                        // Preserve chat open state
+                        const postObj = { id: doc.id, ...data, user: user, userVote: userVote };
+                        // Restore _chatOpen from the state map
+                        if (chatOpenState[doc.id] !== undefined) {
+                            postObj._chatOpen = chatOpenState[doc.id];
+                        } else {
+                            postObj._chatOpen = false;
+                        }
+                        newPosts.push(postObj);
+                    }
+                    // Remove duplicates (just in case)
+                    const seen = new Set();
+                    posts = newPosts.filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
+                    // Re‑render posts with current filters
+                    renderPosts(
+                        document.getElementById("postSearchInput").value,
+                        document.getElementById("postSortFilter").value,
+                        document.getElementById("postTagFilter").value
+                    );
+                }, (error) => {
+                    console.error("Post listener error:", error);
+                    showToast("Failed to load posts: " + error.message, true);
+                });
+        }
+
+        // --- UPDATED renderPosts to respect chatOpenState ---
+        function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
+            const seen = new Set();
+            posts = posts.filter(post => { if (seen.has(post.id)) return false; seen.add(post.id); return true; });
+            let filtered = posts.filter(p => p.gameTitle.toLowerCase().includes(filter.toLowerCase()) || (p.user && p.user.displayName.toLowerCase().includes(filter.toLowerCase())));
+            if (tagFilter !== "all") { filtered = filtered.filter(p => p.tag === tagFilter); }
+            switch (sort) {
+                case "new": filtered.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)); break;
+                case "top": filtered.sort((a, b) => (b.score || 0) - (a.score || 0)); break;
+                case "hot": default: filtered.sort((a, b) => { const scoreA = (a.score || 0) + (a.chatCount || 0) * 0.1; const scoreB = (b.score || 0) + (b.chatCount || 0) * 0.1; return scoreB - scoreA; }); break;
+            }
+            const grid = document.getElementById("postsGrid");
+            if (!filtered.length) { grid.innerHTML = '<div class="empty-state">No posts yet. Be the first to create one!</div>'; return; }
+            grid.innerHTML = filtered.map(post => {
+                const isAuthor = post.userId === currentUser.uid;
+                const tagLabel = getTagLabel(post.tag);
+                const tagClass = getTagClass(post.tag);
+                const chatCount = post.chatCount || 0;
+                const isChatOpen = chatOpenState[post.id] || false;
+                const score = post.score || 0;
+                const upvoteClass = post.userVote === 1 ? 'active' : '';
+                const downvoteClass = post.userVote === -1 ? 'active' : '';
+                return `<div class="post-card" data-postid="${post.id}">
+                    <div class="post-vote-area">
+                        <button class="vote-btn upvote ${upvoteClass}" onclick="votePost('${post.id}',1)" title="Like">👍</button>
+                        <span class="score">${score}</span>
+                        <button class="vote-btn downvote ${downvoteClass}" onclick="votePost('${post.id}',-1)" title="Dislike">👎</button>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-header">
+                            <div class="post-avatar" style="background:${post.user.avatarColor || '#8b5cf6'};${post.user.photoData ? `background-image:url(${post.user.photoData});background-size:cover;` : ''}">${post.user.photoData ? '' : getInitials(post.user.displayName)}</div>
+                            <span class="post-user" style="color:${post.user.nameColor || '#f1f5f9'}">${post.user.displayName}</span>
+                            <span class="post-meta">${post.createdAt ? new Date(post.createdAt.toMillis()).toLocaleString() : 'Just now'}</span>
+                            <span class="post-tag ${tagClass}">${tagLabel}</span>
+                        </div>
+                        <div class="post-title">${post.title || 'Looking for players'}</div>
+                        <div class="post-game">🎮 ${post.gameTitle}</div>
+                        <div class="post-message">${post.message || ""}</div>
+                        <div class="post-actions">
+                            ${isAuthor ? `<button class="action-btn" onclick="editPost('${post.id}')">✏️ Edit</button>` : ''}
+                            ${isAuthor ? `<button class="action-btn" onclick="deletePost('${post.id}')">🗑 Delete</button>` : ''}
+                            ${!isAuthor ? `<button class="action-btn" onclick="addFriendFromPost('${post.userId}')">➕ Add Friend</button>` : ''}
+                            <button class="post-chat-toggle action-btn" onclick="toggleChat('${post.id}')">💬 <span id="chatCount_${post.id}">${chatCount}</span> <span class="arrow ${isChatOpen ? 'open' : ''}" id="chatArrow_${post.id}">▼</span></button>
+                        </div>
+                        <div class="post-chat-container ${isChatOpen ? 'open' : ''}" id="chatContainer_${post.id}">
+                            <div class="post-chat-title">💬 Chat</div>
+                            <div id="chatMessages_${post.id}">${post.chatMessages ? post.chatMessages.map(m => `<div class="chat-message" data-msgid="${m.id}" data-postid="${post.id}" data-userid="${m.userId}"><div class="chat-msg-avatar" style="background:${m.avatarColor || '#8b5cf6'};${m.photoData ? `background-image:url(${m.photoData});background-size:cover;` : ''}">${m.photoData ? '' : getInitials(m.displayName)}</div><div class="chat-msg-body"><span class="chat-msg-user" style="color:${m.nameColor || '#f1f5f9'}">${m.displayName}</span><span class="chat-msg-time">${new Date(m.timestamp).toLocaleString()}</span><div class="chat-msg-text">${m.message}</div></div></div>`).join('') : '<p style="color:var(--text-muted);font-size:0.8rem;">No messages yet</p>'}</div>
+                            <div class="chat-input-row"><input type="text" id="chatInput_${post.id}" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChatMessage('${post.id}')"><button class="btn-small" onclick="sendChatMessage('${post.id}')">Send</button></div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join("");
+            document.querySelectorAll('.chat-message').forEach(el => { el.addEventListener('contextmenu', showContextMenu); });
+        }
+
+        // --- UPDATED toggleChat to use chatOpenState ---
+        function toggleChat(postId) {
+            // Toggle the state in our map
+            chatOpenState[postId] = !chatOpenState[postId];
+            // Update the post object for consistency (optional)
+            const post = posts.find(p => p.id === postId);
+            if (post) post._chatOpen = chatOpenState[postId];
+            // Re‑render with current filters to apply the open/close
+            renderPosts(
+                document.getElementById("postSearchInput").value,
+                document.getElementById("postSortFilter").value,
+                document.getElementById("postTagFilter").value
+            );
+        }
+
+        // --- KEEP sendChatMessage, but it will now also trigger the listener ---
+        // (unchanged, but we can keep the local update for instant feedback)
+        async function sendChatMessage(postId) {
+            const input = document.getElementById(`chatInput_${postId}`);
+            const msg = input.value.trim();
+            if (!msg) return;
+            input.value = "";
+            try {
+                const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                const data = postDoc.data();
+                const messages = data.chatMessages || [];
+                const newMsg = { id: Date.now().toString(), userId: currentUser.uid, displayName: userProfile.displayName, nameColor: userProfile.nameColor || "#f1f5f9", avatarColor: userProfile.avatarColor || "#8b5cf6", photoData: userProfile.photoData || "", message: msg, timestamp: Date.now() };
+                messages.push(newMsg);
+                await postRef.update({ chatMessages: messages, chatCount: messages.length });
+                // The listener will update all clients, but we also update locally for instant feedback
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    if (!post.chatMessages) post.chatMessages = [];
+                    post.chatMessages.push(newMsg);
+                    post.chatCount = messages.length;
+                    // Keep chat open
+                    chatOpenState[postId] = true;
+                    renderPosts(
+                        document.getElementById("postSearchInput").value,
+                        document.getElementById("postSortFilter").value,
+                        document.getElementById("postTagFilter").value
+                    );
+                }
+            } catch (err) { console.error("Chat error:", err); showToast("Error sending message: " + err.message, true); }
+        }
+
+        // --- REST OF THE FUNCTIONS (unchanged from previous version) ---
+        // (All other functions: filterByStatus, filterGames, openGameModal, etc. remain exactly as before)
+        // I will include them here for completeness.
+
+        function filterByStatus(status) {
+            currentFilterStatus = status;
+            document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
+            if (status === 'all') {
+                document.getElementById('filterAll').classList.add('active');
+            } else {
+                const filterMap = {
+                    'completed': 'filterCompleted',
+                    'playing': 'filterPlaying',
+                    'looking': 'filterLooking',
+                    'lfg': 'filterLfg'
+                };
+                const target = document.getElementById(filterMap[status]);
+                if (target) target.classList.add('active');
+            }
+            filterGames();
+        }
+
+        function filterGames() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            const sort = document.getElementById("sortSelect").value;
+            let filtered = games.filter(g => {
+                const titleMatch = g.title.toLowerCase().includes(query);
+                let statusMatch = true;
+                if (currentFilterStatus === 'completed') statusMatch = myCompletions.includes(g.id);
+                else if (currentFilterStatus === 'playing') statusMatch = myPlaying.includes(g.id);
+                else if (currentFilterStatus === 'looking') statusMatch = myLooking.includes(g.id);
+                else if (currentFilterStatus === 'lfg') statusMatch = myLFG.includes(g.id);
+                return titleMatch && statusMatch;
+            });
+            switch(sort) {
+                case 'title-asc': filtered.sort((a,b) => a.title.localeCompare(b.title)); break;
+                case 'title-desc': filtered.sort((a,b) => b.title.localeCompare(a.title)); break;
+                case 'year-desc': filtered.sort((a,b) => b.year - a.year); break;
+                case 'year-asc': filtered.sort((a,b) => a.year - b.year); break;
+                default: break;
+            }
+            const grid = document.getElementById("gamesGrid");
+            grid.innerHTML = "";
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state">No games found for this filter. Try changing your search or filter.</div>`;
+                document.getElementById("resultsCount").textContent = "No games found";
+                return;
+            }
+            document.getElementById("resultsCount").textContent = query ? `Found ${filtered.length} games` : "Showing all games";
+            filtered.forEach(game => {
+                const isCompleted = myCompletions.includes(game.id);
+                const isPlaying = myPlaying.includes(game.id);
+                const isLooking = myLooking.includes(game.id);
+                const isLFG = myLFG.includes(game.id);
+                const card = document.createElement("div");
+                let cls = "game-card";
+                if (isCompleted) cls += " completed";
+                if (isPlaying) cls += " playing";
+                if (isLooking) cls += " looking_for_players";
+                if (isLFG) cls += " lfg";
+                card.className = cls;
+                card.onclick = () => openGameModal(game);
+                const color = getColor(game.id);
+                let coverHtml;
+                if (game.steamId) {
+                    coverHtml = `
+                        <div class="cover">
+                            <img class="cover-image" src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg" 
+                                 alt="${game.title}" 
+                                 onerror="this.parentElement.innerHTML='<div class=\\'cover\\' style=\\'background:linear-gradient(135deg,${color}80,${color});\\'><div class=\\'fallback\\'>${game.title}</div></div>'">
+                        </div>
+                    `;
+                } else {
+                    const angle1 = Math.floor(Math.random() * 360);
+                    coverHtml = `
+                        <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
+                            <div class="fallback">${game.title}</div>
+                            <span class="genre-tag">${game.genre.slice(0,3).toUpperCase()}</span>
+                        </div>
+                    `;
+                }
+                let badge = "";
+                if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
+                else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
+                else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
+                else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
+                card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}${badge}</div></div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        async function openGameModal(game) {
+            currentGame = game;
+            document.getElementById("modalTitle").textContent = game.title;
+            document.getElementById("modalBadge").textContent = `${game.genre} • ${game.year}`;
+            document.getElementById("modalDesc").textContent = game.desc || `${game.title} is a ${game.genre} game released in ${game.year}.`;
+
+            const cover = document.getElementById("modalCover");
+            const color = getColor(game.id);
+            cover.innerHTML = '';
+            cover.style.background = 'none';
+
+            if (game.steamId) {
+                const img = document.createElement('img');
+                img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg`;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "var(--radius)";
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.style.display = "flex";
+                    fallback.style.alignItems = "center";
+                    fallback.style.justifyContent = "center";
+                    fallback.style.width = "100%";
+                    fallback.style.height = "100%";
+                    fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
+                    fallback.style.color = "#fff";
+                    fallback.style.fontWeight = "600";
+                    fallback.style.fontSize = "1rem";
+                    fallback.style.textAlign = "center";
+                    fallback.style.padding = "1rem";
+                    fallback.style.wordBreak = "break-word";
+                    fallback.style.borderRadius = "var(--radius)";
+                    fallback.textContent = game.title;
+                    cover.appendChild(fallback);
+                };
+                cover.appendChild(img);
+            } else {
+                const fallback = document.createElement('div');
+                fallback.style.display = "flex";
+                fallback.style.alignItems = "center";
+                fallback.style.justifyContent = "center";
+                fallback.style.width = "100%";
+                fallback.style.height = "100%";
+                fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
+                fallback.style.color = "#fff";
+                fallback.style.fontWeight = "600";
+                fallback.style.fontSize = "1rem";
+                fallback.style.textAlign = "center";
+                fallback.style.padding = "1rem";
+                fallback.style.wordBreak = "break-word";
+                fallback.style.borderRadius = "var(--radius)";
+                fallback.textContent = game.title;
+                cover.appendChild(fallback);
+            }
+
+            const completeLabel = document.getElementById("completeLabel");
+            if (game.multiplayer) {
+                completeLabel.style.display = "none";
+                document.getElementById("completeCheckbox").checked = false;
+            } else {
+                completeLabel.style.display = "flex";
+            }
+            document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
+
+            document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
+            document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
+            document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
+            document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
+            updateStatusLabels();
+            renderModalSaves();
+            await loadFriendSavesForGame(game.id);
+            document.getElementById("gameModal").classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeGameModal(e) {
+            if (!e || e.target === document.getElementById("gameModal")) {
+                document.getElementById("gameModal").classList.remove("active");
+                document.body.style.overflow = "";
+                currentGame = null;
+            }
+        }
+
+        function updateStatusLabels() {
+            document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox").checked);
+            document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
+            document.getElementById("lookingLabel").classList.toggle("looking-checked", document.getElementById("lookingCheckbox").checked);
+            document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
+        }
+
+        async function toggleComplete() {
+            if (!currentGame) return;
+            if (currentGame.multiplayer) { showToast("Cannot mark multiplayer games as completed", true); document.getElementById("completeCheckbox").checked = false; return; }
+            const cb = document.getElementById("completeCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId);
+            try {
+                if (cb.checked) { await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() }); if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id); } else { await ref.delete(); myCompletions = myCompletions.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Game marked as completed!" : "Unmarked");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        async function togglePlaying() {
+            if (!currentGame) return;
+            const cb = document.getElementById("playingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myPlaying.includes(currentGame.id)) myPlaying.push(currentGame.id);
+                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
+                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
+                } else { await ref.delete(); myPlaying = myPlaying.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        async function toggleLooking() {
+            if (!currentGame) return;
+            const cb = document.getElementById("lookingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myLooking.includes(currentGame.id)) myLooking.push(currentGame.id);
+                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
+                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
+                } else { await ref.delete(); myLooking = myLooking.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for players!" : "Removed from looking");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        async function toggleLFG() {
+            if (!currentGame) return;
+            if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true); document.getElementById("lfgCheckbox").checked = false; return; }
+            const cb = document.getElementById("lfgCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myLFG.includes(currentGame.id)) myLFG.push(currentGame.id);
+                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
+                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
+                } else { await ref.delete(); myLFG = myLFG.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
+        function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
+        function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
+        function handleFileSelect(e) { if (e.target.files.length) processFile(e.target.files[0]); }
+
+        async function processFile(file) {
+            if (!currentGame) return;
+            if (file.size > 500 * 1024) { showToast("File too large (max 500KB)", true); return; }
+            const gameId = currentGame.id;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    showToast("Uploading save...");
+                    const base64 = e.target.result.split(",")[1];
+                    const fileDoc = await db.collection("users").doc(currentUser.uid).collection("saveFiles").add({ gameId, name: file.name, data: base64, size: formatSize(file.size), uploadedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!mySaves[gameId]) mySaves[gameId] = [];
+                    mySaves[gameId].push({ id: fileDoc.id, gameId, name: file.name, data: base64, size: formatSize(file.size) });
+                    renderModalSaves(); updateStats(); showToast("Save uploaded!");
+                } catch (err) { showToast("Upload failed: " + err.message, true); }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+        }
+
+        function renderModalSaves() {
+            const container = document.getElementById("modalSaves");
+            const saves = mySaves[currentGame?.id] || [];
+            if (!saves.length) { container.innerHTML = '<p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.9rem;">No save files uploaded yet</p>'; return; }
+            container.innerHTML = saves.map(save => `<div class="save-item"><div><div class="save-name">${save.name}</div><div class="save-meta">${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join("");
+        }
+
+        function downloadSaveFromData(base64Data, name) {
+            try {
+                const byteString = atob(base64Data), ab = new ArrayBuffer(byteString.length), ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+                const blob = new Blob([ab]), url = URL.createObjectURL(blob), a = document.createElement("a");
+                a.href = url; a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                showToast("Download started!");
+            } catch (err) { showToast("Error downloading: " + err.message, true); }
+        }
+
+        async function loadFriendSavesForGame(gameId) {
+            const section = document.getElementById("friendSavesSection"), list = document.getElementById("friendSavesList");
+            if (!friendsList.length) { section.style.display = "none"; return; }
+            let has = false, html = "";
+            for (const friend of friendsList) {
+                try {
+                    const snap = await db.collection("users").doc(friend.uid).collection("saveFiles").where("gameId", "==", gameId).get();
+                    if (!snap.empty) {
+                        has = true;
+                        snap.docs.forEach(d => {
+                            const save = d.data();
+                            html += `<div class="friend-save-row"><div class="friend-save-avatar" style="background:${friend.avatarColor};${friend.photoData ? `background-image:url(${friend.photoData});background-size:cover;` : ''}">${friend.photoData ? '' : getInitials(friend.displayName)}</div><div style="flex:1;"><div class="save-name">${save.name}</div><div class="save-meta">${friend.displayName} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`;
+                        });
+                    }
+                } catch (err) { console.error(err); }
+            }
+            if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
+        }
+
+        function filterPosts() {
+            const search = document.getElementById("postSearchInput").value;
+            const sort = document.getElementById("postSortFilter").value;
+            const tag = document.getElementById("postTagFilter").value;
+            renderPosts(search, sort, tag);
+        }
+
+        function getTagLabel(tag) {
+            const map = { "lfg": "LFG", "player": "Looking", "tip": "Tip", "help": "Help", "rate": "Rate" };
+            return map[tag] || tag;
+        }
+
+        function getTagClass(tag) {
+            const map = { "lfg": "tag-lfg", "player": "tag-player", "tip": "tag-tip", "help": "tag-help", "rate": "tag-rate" };
+            return map[tag] || "";
+        }
+
+        async function votePost(postId, newVote) {
+            if (!currentUser) { showToast("Please login first", true); return; }
+            newVote = parseInt(newVote);
+            const postRef = db.collection("posts").doc(postId);
+            const voteRef = db.collection("posts").doc(postId).collection("votes").doc(currentUser.uid);
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const postDoc = await transaction.get(postRef);
+                    const voteDoc = await transaction.get(voteRef);
+                    if (!postDoc.exists) throw new Error("Post does not exist");
+                    const currentVote = voteDoc.exists ? voteDoc.data().vote : 0;
+                    let finalVote = newVote;
+                    if (newVote === currentVote) finalVote = 0;
+                    let upvoteInc = 0, downvoteInc = 0, scoreInc = 0;
+                    if (currentVote === 1) upvoteInc -= 1; else if (currentVote === -1) downvoteInc -= 1;
+                    scoreInc -= currentVote;
+                    if (finalVote === 1) upvoteInc += 1; else if (finalVote === -1) downvoteInc += 1;
+                    scoreInc += finalVote;
+                    if (finalVote === 0) { transaction.delete(voteRef); } else { transaction.set(voteRef, { vote: finalVote }); }
+                    transaction.update(postRef, { score: firebase.firestore.FieldValue.increment(scoreInc), upvotes: firebase.firestore.FieldValue.increment(upvoteInc), downvotes: firebase.firestore.FieldValue.increment(downvoteInc) });
+                    const post = posts.find(p => p.id === postId);
+                    if (post) { post.score += scoreInc; post.upvotes += upvoteInc; post.downvotes += downvoteInc; post.userVote = finalVote; }
+                });
+                filterPosts();
+                showToast("Vote updated!");
+            } catch (err) { console.error("Error voting:", err); showToast("Error voting: " + err.message, true); }
+        }
+
+        function setupGameCombobox() {
+            const input = document.getElementById("postGameSearch");
+            const dropdown = document.getElementById("gameDropdown");
+            const hidden = document.getElementById("postGameId");
+            input.addEventListener("focus", showGameDropdown);
+            input.addEventListener("blur", () => setTimeout(() => { dropdown.classList.remove("show"); }, 200));
+            dropdown.addEventListener("click", (e) => {
+                const item = e.target.closest(".dropdown-item");
+                if (item) {
+                    const gameId = parseInt(item.dataset.id);
+                    const title = item.textContent;
+                    input.value = title;
+                    hidden.value = gameId;
+                    dropdown.classList.remove("show");
+                }
+            });
+            filterGameOptions();
+        }
+
+        function showGameDropdown() { document.getElementById("gameDropdown").classList.add("show"); }
+
+        function filterGameOptions() {
+            const input = document.getElementById("postGameSearch");
+            const dropdown = document.getElementById("gameDropdown");
+            const query = input.value.toLowerCase().trim();
+            const filtered = games.filter(g => g.title.toLowerCase().includes(query));
+            if (!filtered.length) { dropdown.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);cursor:default;">No games found</div>'; } else { dropdown.innerHTML = filtered.map(g => `<div class="dropdown-item" data-id="${g.id}">${g.title}</div>`).join(""); }
+            dropdown.classList.add("show");
+        }
+
+        function openPostModal() {
+            editingPostId = null;
+            document.getElementById("postModalTitle").textContent = "Create Post";
+            document.getElementById("postSubmitBtn").textContent = "Create Post";
+            document.getElementById("postEditId").value = "";
+            document.getElementById("postTitle").value = "";
+            document.getElementById("postMessage").value = "";
+            document.getElementById("postGameSearch").value = "";
+            document.getElementById("postGameId").value = "";
+            document.getElementById("postTagSelect").value = "lfg";
+            document.getElementById("gameDropdown").classList.remove("show");
+            document.getElementById("postModal").classList.add("active");
+        }
+
+        function closePostModal(e) {
+            if (!e || e.target === document.getElementById("postModal")) { document.getElementById("postModal").classList.remove("active"); }
+        }
+
+        async function submitPost() {
+            const title = document.getElementById("postTitle").value.trim();
+            const gameId = parseInt(document.getElementById("postGameId").value);
+            const message = document.getElementById("postMessage").value.trim();
+            const tag = document.getElementById("postTagSelect").value;
+            const editId = document.getElementById("postEditId").value;
+            if (!title) { showToast("Please enter a title", true); return; }
+            if (!gameId) { showToast("Please select a game", true); return; }
+            const game = games.find(g => g.id === gameId);
+            if (!game) { showToast("Game not found", true); return; }
+            try {
+                if (editId) {
+                    await db.collection("posts").doc(editId).update({ title: title, gameId: gameId, gameTitle: game.title, message: message || "", tag: tag, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    showToast("Post updated successfully!"); closePostModal(); // Listener will update
+                } else {
+                    await db.collection("posts").add({ userId: currentUser.uid, title: title, gameId: gameId, gameTitle: game.title, message: message || "", tag: tag, chatMessages: [], chatCount: 0, score: 0, upvotes: 0, downvotes: 0, voters: {}, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    showToast("Post created!"); closePostModal(); // Listener will update
+                }
+            } catch (err) { console.error("Submit post error:", err); showToast("Error: " + err.message, true); }
+        }
+
+        function editPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) { showToast("Post not found", true); return; }
+            editingPostId = postId;
+            document.getElementById("postModalTitle").textContent = "Edit Post";
+            document.getElementById("postSubmitBtn").textContent = "Update Post";
+            document.getElementById("postEditId").value = postId;
+            document.getElementById("postTitle").value = post.title || "";
+            document.getElementById("postMessage").value = post.message || "";
+            document.getElementById("postGameSearch").value = post.gameTitle;
+            document.getElementById("postGameId").value = post.gameId;
+            document.getElementById("postTagSelect").value = post.tag || "lfg";
+            document.getElementById("gameDropdown").classList.remove("show");
+            document.getElementById("postModal").classList.add("active");
+        }
+
+        async function deletePost(postId) {
+            if (!confirm("Delete this post?")) return;
+            try { await db.collection("posts").doc(postId).delete(); showToast("Post deleted"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        // The sendChatMessage function is already updated above.
+
+        let contextTarget = null;
+        function showContextMenu(e) {
+            e.preventDefault();
+            const msgEl = e.currentTarget;
+            const msgId = msgEl.dataset.msgid;
+            const postId = msgEl.dataset.postid;
+            const userId = msgEl.dataset.userid;
+            const isOwn = userId === currentUser.uid;
+            contextTarget = { msgId, postId, element: msgEl };
+            const menu = document.getElementById("contextMenu");
+            const editItem = document.getElementById("ctxEdit");
+            const deleteItem = document.getElementById("ctxDelete");
+            editItem.style.display = isOwn ? "block" : "none";
+            deleteItem.style.display = isOwn ? "block" : "block";
+            menu.style.left = Math.min(e.pageX, window.innerWidth - 150) + "px";
+            menu.style.top = Math.min(e.pageY, window.innerHeight - 100) + "px";
+            menu.style.display = "block";
+            editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
+            deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
+        }
+        function hideContextMenu() { document.getElementById("contextMenu").style.display = "none"; }
+        document.addEventListener("click", hideContextMenu);
+
+        async function editChatMessage(postId, msgId) {
+            const newMsg = prompt("Edit your message:");
+            if (newMsg === null || newMsg.trim() === "") return;
+            try {
+                const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                const data = postDoc.data();
+                let messages = data.chatMessages || [];
+                const idx = messages.findIndex(m => m.id === msgId);
+                if (idx === -1) { showToast("Message not found", true); return; }
+                messages[idx].message = newMsg.trim();
+                await postRef.update({ chatMessages: messages });
+                // Listener will update all clients
+                showToast("Message updated");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function deleteChatMessage(postId, msgId) {
+            if (!confirm("Delete this message?")) return;
+            try {
+                const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                const data = postDoc.data();
+                let messages = data.chatMessages || [];
+                messages = messages.filter(m => m.id !== msgId);
+                await postRef.update({ chatMessages: messages, chatCount: messages.length });
+                // Listener will update
+                showToast("Message deleted");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function addFriendFromPost(userId) {
+            if (userId === currentUser.uid) { showToast("That's you!", true); return; }
+            try {
+                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(userId).get();
+                if (friendDoc.exists) { showToast("Already friends!", true); return; }
+                const reqSnap = await db.collection("users").doc(userId).collection("requests").where("from", "==", currentUser.uid).get();
+                if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
+                await db.collection("users").doc(userId).collection("requests").add({ from: currentUser.uid, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast("Friend request sent!");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        function showPosts() {
+            document.getElementById("gamesView").style.display = "none";
+            document.getElementById("profileView").classList.remove("active");
+            document.getElementById("friendsView").classList.remove("active");
+            document.getElementById("postsView").style.display = "block";
+            // Load posts (sets up real‑time listener)
+            loadPosts();
+            updateNav('posts');
+        }
+
+        function updateNav(tab) {
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if(tab === 'games') document.getElementById('navGames').classList.add('active');
+            if(tab === 'friends') document.getElementById('navFriends').classList.add('active');
+            if(tab === 'posts') document.getElementById('navPosts').classList.add('active');
+            if(tab === 'profile') document.getElementById('navProfile').classList.add('active');
+        }
+
+        function updateStats() {
+            const count = myCompletions.length;
+            const playingCount = myPlaying.length;
+            const totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
+            document.getElementById("completedCount").textContent = count;
+            document.getElementById("playingCount").textContent = playingCount;
+            document.getElementById("totalGames").textContent = games.length;
+            document.getElementById("savesCount").textContent = totalSaves;
+            document.getElementById("friendsCount").textContent = friendsList.length;
+        }
+
+        function showGames() { document.getElementById("gamesView").style.display = "block"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "none"; filterGames(); updateNav('games'); }
+        function showProfile() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.add("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "none"; renderProfile(); closeUserDropdown(); updateNav('profile'); }
+        function showFriends() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.add("active"); document.getElementById("postsView").style.display = "none"; renderFriends(); updateNav('friends'); }
+
+        function renderProfile() {
+            if (!userProfile) return;
+            const count = myCompletions.length, playingCount = myPlaying.length, lookingCount = myLooking.length, lfgCount = myLFG.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
+            const avatar = document.getElementById("profileAvatar");
+            if (avatar) setAvatarElement(avatar, userProfile);
+            document.getElementById("profileName").textContent = userProfile.displayName;
+            document.getElementById("profileName").style.color = userProfile.nameColor || "#f1f5f9";
+            document.getElementById("profileEmail").textContent = currentUser.email;
+            document.getElementById("profileCompleted").textContent = count;
+            document.getElementById("profilePlaying").textContent = playingCount;
+            document.getElementById("profileSaves").textContent = totalSaves;
+            document.getElementById("profileFriends").textContent = friendsList.length;
+            const grid = document.getElementById("completedGamesGrid");
+            grid.innerHTML = "";
+            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
+            const playingGrid = document.getElementById("playingGamesGrid");
+            playingGrid.innerHTML = "";
+            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
+            const savesList = document.getElementById("profileSavesList");
+            const allSaves = [];
+            Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
+            if (!allSaves.length) { savesList.innerHTML = '<div class="empty-state">No save files uploaded yet.</div>'; } else { savesList.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
+        }
+
+        async function removeGameFromList(gameId, listType) {
+            if (!confirm("Remove this game from your "+listType+" list?")) return;
+            const ref = listType === 'completed' ? db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString()) : db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
+            try {
+                await ref.delete();
+                if(listType === 'completed') myCompletions = myCompletions.filter(id => id !== gameId);
+                if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
+                showToast("Removed from list!");
+                renderProfile(); updateStats();
+            } catch(err) { showToast("Error removing: " + err.message, true); }
+        }
+
+        async function updateProfileName() {
+            const name = document.getElementById("settingsName").value.trim();
+            if (!name) { showToast("Please enter a name", true); return; }
+            try { await db.collection("users").doc(currentUser.uid).update({ displayName: name, searchName: name.toLowerCase() }); userProfile.displayName = name; document.getElementById("headerName").textContent = name; document.getElementById("profileName").textContent = name; showToast("Name updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function updateNameColor() {
+            const color = document.getElementById("settingsNameColor").value;
+            try { await db.collection("users").doc(currentUser.uid).update({ nameColor: color }); userProfile.nameColor = color; document.getElementById("headerName").style.color = color; document.getElementById("profileName").style.color = color; showToast("Name color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function updateAvatarColor() {
+            const color = document.getElementById("settingsAvatarColor").value;
+            try { await db.collection("users").doc(currentUser.uid).update({ avatarColor: color }); userProfile.avatarColor = color; const headerAvatar = document.getElementById("headerAvatar"); const profileAvatar = document.getElementById("profileAvatar"); if (!userProfile.photoData) { if (headerAvatar) { headerAvatar.style.background = color; headerAvatar.style.backgroundImage = "none"; headerAvatar.textContent = getInitials(userProfile.displayName); } if (profileAvatar) { profileAvatar.style.background = color; profileAvatar.style.backgroundImage = "none"; profileAvatar.textContent = getInitials(userProfile.displayName); } } showToast("Avatar color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function uploadProfilePhoto() {
+            if (!userProfile) { showToast("Please wait for profile to load", true); return; }
+            const fileInput = document.getElementById("settingsPhotoFile");
+            const file = fileInput.files[0];
+            if (!file) { showToast("Please select an image", true); return; }
+            if (file.size > 500 * 1024) { showToast("Image too large (max 500KB)", true); return; }
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const base64 = e.target.result;
+                    await db.collection("users").doc(currentUser.uid).update({ photoData: base64 });
+                    userProfile.photoData = base64;
+                    const headerAvatar = document.getElementById("headerAvatar");
+                    const profileAvatar = document.getElementById("profileAvatar");
+                    if (headerAvatar) { headerAvatar.style.backgroundImage = `url(${base64})`; headerAvatar.style.backgroundSize = "cover"; headerAvatar.style.backgroundPosition = "center"; headerAvatar.textContent = ""; }
+                    if (profileAvatar) { profileAvatar.style.backgroundImage = `url(${base64})`; profileAvatar.style.backgroundSize = "cover"; profileAvatar.style.backgroundPosition = "center"; profileAvatar.textContent = ""; }
+                    showToast("Profile photo uploaded!");
+                } catch (err) { showToast("Upload failed: " + err.message, true); }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function updateSocial(type) {
+            const val = document.getElementById(type === "discord" ? "settingsDiscord" : "settingsReddit").value.trim();
+            try { await db.collection("users").doc(currentUser.uid).update({ [type]: val }); userProfile[type] = val; showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} updated!`); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function loadFriends() {
+            try {
+                const snap = await db.collection("users").doc(currentUser.uid).collection("friends").get();
+                friendsList = [];
+                for (const doc of snap.docs) { try { const userDoc = await db.collection("users").doc(doc.id).get(); if (userDoc.exists) friendsList.push({ uid: doc.id, ...userDoc.data() }); } catch (e) { console.error(e); } }
+                updateStats();
+            } catch (err) { console.error("loadFriends error:", err); }
+        }
+
+        async function loadRequests() {
+            try {
+                const snap = await db.collection("users").doc(currentUser.uid).collection("requests").get();
+                friendRequests = [];
+                for (const doc of snap.docs) {
+                    const data = doc.data();
+                    if (data.status === "pending") { try { const userDoc = await db.collection("users").doc(data.from).get(); if (userDoc.exists) friendRequests.push({ id: doc.id, from: data.from, ...userDoc.data() }); } catch (e) { console.error(e); } }
+                }
+                const badge = document.getElementById("requestBadge");
+                if (friendRequests.length) { badge.textContent = friendRequests.length; badge.style.display = "inline-flex"; } else badge.style.display = "none";
+            } catch (err) { console.error("loadRequests error:", err); }
+        }
+
+        function renderFriends() {
+            const grid = document.getElementById("friendsGrid");
+            if (!friendsList.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No friends yet. Click "Find Players" to add friends!</div>'; return; }
+            grid.innerHTML = friendsList.map(f => `<div class="friend-card" onclick="openFriendProfile('${f.uid}')"><div class="friend-avatar" style="background:${f.avatarColor};${f.photoData ? `background-image:url(${f.photoData});background-size:cover;` : ''}">${f.photoData ? '' : getInitials(f.displayName)}</div><div class="friend-info"><div class="friend-name" style="color:${f.nameColor || '#f1f5f9'}">${f.displayName}</div><div class="friend-meta">${f.email}</div></div></div>`).join("");
+        }
+
+        function switchFriendsTab(tab) {
+            document.getElementById("tabAll").classList.toggle("active", tab === "all");
+            document.getElementById("tabRequests").classList.toggle("active", tab === "requests");
+            document.getElementById("friendsListContainer").style.display = tab === "all" ? "block" : "none";
+            document.getElementById("requestsContainer").style.display = tab === "requests" ? "block" : "none";
+            if (tab === "requests") renderRequests();
+        }
+
+        function renderRequests() {
+            const list = document.getElementById("requestsList");
+            if (!friendRequests.length) { list.innerHTML = '<div class="empty-state">No pending friend requests</div>'; return; }
+            list.innerHTML = friendRequests.map(req => `<div class="user-result"><div class="user-result-avatar" style="background:${req.avatarColor};${req.photoData ? `background-image:url(${req.photoData});background-size:cover;` : ''}">${req.photoData ? '' : getInitials(req.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${req.nameColor || '#f1f5f9'}">${req.displayName}</div><div class="user-result-email">${req.email}</div></div><div class="request-actions"><button class="btn-success btn-small" onclick="acceptRequest('${req.id}','${req.from}')">Accept</button><button class="btn-danger btn-small" onclick="declineRequest('${req.id}')">Decline</button></div></div>`).join("");
+        }
+
+        async function sendFriendRequest(targetUid) {
+            try {
+                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(targetUid).get();
+                if (friendDoc.exists) { showToast("Already friends!", true); return; }
+                const reqSnap = await db.collection("users").doc(targetUid).collection("requests").where("from", "==", currentUser.uid).get();
+                if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
+                await db.collection("users").doc(targetUid).collection("requests").add({ from: currentUser.uid, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast("Friend request sent!");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function acceptRequest(requestId, fromUid) {
+            try {
+                const batch = db.batch();
+                batch.set(db.collection("users").doc(currentUser.uid).collection("friends").doc(fromUid), { since: firebase.firestore.FieldValue.serverTimestamp() });
+                batch.set(db.collection("users").doc(fromUid).collection("friends").doc(currentUser.uid), { since: firebase.firestore.FieldValue.serverTimestamp() });
+                batch.delete(db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId));
+                await batch.commit();
+                await loadFriends(); await loadRequests(); renderFriends(); updateStats(); showToast("Friend added!");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function declineRequest(requestId) {
+            try { await db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId).delete(); await loadRequests(); renderRequests(); showToast("Request declined"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        function openSearchModal() {
+            document.getElementById("searchModal").classList.add("active");
+            document.getElementById("userSearchInput").value = "";
+            document.getElementById("searchResults").innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
+            document.getElementById("userSearchInput").focus();
+        }
+
+        function closeSearchModal(e) {
+            if (!e || e.target === document.getElementById("searchModal")) { document.getElementById("searchModal").classList.remove("active"); }
+        }
+
+        let searchTimeout;
+        async function searchUsers() {
+            const term = document.getElementById("userSearchInput").value.trim().toLowerCase();
+            const resultsEl = document.getElementById("searchResults"), loadingEl = document.getElementById("searchLoading");
+            if (term.length < 2) { resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>'; return; }
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                loadingEl.style.display = "block";
+                resultsEl.innerHTML = "";
+                try {
+                    const nameSnap = await db.collection("users").where("searchName", ">=", term).where("searchName", "<=", term + "\uf8ff").limit(20).get();
+                    let users = [];
+                    nameSnap.docs.forEach(d => { if (d.id !== currentUser.uid) users.push({ uid: d.id, ...d.data() }); });
+                    const emailSnap = await db.collection("users").where("email", ">=", term).where("email", "<=", term + "\uf8ff").limit(20).get();
+                    emailSnap.docs.forEach(d => { if (d.id !== currentUser.uid && !users.find(u => u.uid === d.id)) users.push({ uid: d.id, ...d.data() }); });
+                    if (!users.length) { resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No players found</p>'; } else { resultsEl.innerHTML = users.map(u => `<div class="user-result"><div class="user-result-avatar" style="background:${u.avatarColor};${u.photoData ? `background-image:url(${u.photoData});background-size:cover;` : ''}">${u.photoData ? '' : getInitials(u.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${u.nameColor || '#f1f5f9'}">${u.displayName}</div><div class="user-result-email">${u.email}</div></div><button class="btn-success btn-small" onclick="sendFriendRequest('${u.uid}')">Add Friend</button></div>`).join(""); }
+                } catch (err) { resultsEl.innerHTML = `<p style="color:var(--danger);text-align:center;padding:2rem;">Error: ${err.message}</p>`; }
+                loadingEl.style.display = "none";
+            }, 300);
+        }
+
+        async function openFriendProfile(friendUid) {
+            const userDoc = await db.collection("users").doc(friendUid).get();
+            if (!userDoc.exists) { showToast("User not found", true); return; }
+            const profile = userDoc.data();
+            const compSnap = await db.collection("users").doc(friendUid).collection("completions").get();
+            const friendCompletions = compSnap.docs.map(d => parseInt(d.id));
+            const playingSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "playing").get();
+            const friendPlaying = playingSnap.docs.map(d => parseInt(d.id));
+            const savesSnap = await db.collection("users").doc(friendUid).collection("saveFiles").get();
+            const friendSaves = {};
+            let totalFriendSaves = 0;
+            savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = []; friendSaves[gid].push(data); totalFriendSaves++; });
+            const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
+            friendPosts = [];
+            postSnap.docs.forEach(d => { friendPosts.push({ id: d.id, ...d.data() }); });
+            const avatar = document.getElementById("friendProfileAvatar");
+            if (profile.photoData) { avatar.style.backgroundImage = `url(${profile.photoData})`; avatar.style.backgroundSize = "cover"; avatar.style.backgroundPosition = "center"; avatar.textContent = ""; } else { avatar.style.backgroundImage = "none"; avatar.style.background = profile.avatarColor; avatar.textContent = getInitials(profile.displayName); }
+            document.getElementById("friendProfileName").textContent = profile.displayName;
+            document.getElementById("friendProfileName").style.color = profile.nameColor || "#f1f5f9";
+            document.getElementById("friendProfileEmail").textContent = profile.email;
+            document.getElementById("friendCompleted").textContent = friendCompletions.length;
+            document.getElementById("friendPlaying").textContent = friendPlaying.length;
+            document.getElementById("friendSavesCount").textContent = totalFriendSaves;
+            const socialDiv = document.getElementById("friendSocialLinks");
+            socialDiv.innerHTML = "";
+            if (profile.discord) socialDiv.innerHTML += `<span class="badge badge-info">Discord: ${profile.discord}</span>`;
+            if (profile.reddit) socialDiv.innerHTML += `<span class="badge badge-warning">Reddit: ${profile.reddit}</span>`;
+            if (!profile.discord && !profile.reddit) socialDiv.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
+            const postsSection = document.getElementById("friendPostsSection");
+            const postsList = document.getElementById("friendPostsList");
+            if (friendPosts.length) {
+                postsSection.style.display = "block";
+                postsList.innerHTML = friendPosts.map(p => `<div style="padding:0.5rem 0;border-bottom:1px solid #2d2d44;display:flex;justify-content:space-between;align-items:center;"><div><span class="post-tag ${getTagClass(p.tag)}" style="font-size:0.6rem;">${getTagLabel(p.tag)}</span><strong style="color:var(--accent);margin-left:0.5rem;">${p.gameTitle}</strong><div style="font-size:0.85rem;color:var(--text-muted);">${p.message || ''}</div></div><button class="btn-success btn-small" onclick="addFriendFromPost('${p.userId}')">Add Friend</button></div>`).join("");
+            } else { postsSection.style.display = "none"; }
+            const grid = document.getElementById("friendCompletedGrid");
+            grid.innerHTML = "";
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            const playingGrid = document.getElementById("friendPlayingGrid");
+            playingGrid.innerHTML = "";
+            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+            const savesContainer = document.getElementById("friendSavesContainer");
+            const allSaves = [];
+            Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
+            if (!allSaves.length) { savesContainer.innerHTML = '<div class="empty-state">No save files shared yet</div>'; } else { savesContainer.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
+            document.getElementById("friendProfileModal").classList.add("active");
+        }
+
+        function closeFriendProfile(e) {
+            if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
+        }
+
+        function showToast(msg, isError) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.className = "toast" + (isError ? " error" : "");
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+
+        // --- INIT ---
         function init() {
             if (!isConfigValid()) {
                 document.getElementById("setupWizard").classList.add("active");
@@ -1055,15 +2004,22 @@ service cloud.firestore {
                     loadMyData();
                     loadFriends();
                     loadRequests();
+                    // Load posts (sets up real-time listener)
                     loadPosts();
                     setupGameCombobox();
                     document.getElementById("userDropdownBtn").addEventListener("click", toggleUserDropdown);
                 } else {
+                    // Unsubscribe from posts listener on logout
+                    if (postsUnsubscribe) {
+                        postsUnsubscribe();
+                        postsUnsubscribe = null;
+                    }
                     document.getElementById("authModal").style.display = "flex";
                     document.getElementById("appContainer").style.display = "none";
                 }
             });
         }
+
         function toggleUserDropdown(e) { e.stopPropagation(); document.getElementById("userDropdownMenu").classList.toggle("show"); }
         function closeUserDropdown() { document.getElementById("userDropdownMenu").classList.remove("show"); }
         document.addEventListener("click", closeUserDropdown);
@@ -1144,830 +2100,6 @@ service cloud.firestore {
             return colors[(id - 1) % colors.length];
         }
 
-        // --- FILTERS ---
-        function filterByStatus(status) {
-            currentFilterStatus = status;
-            document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
-            if (status === 'all') {
-                document.getElementById('filterAll').classList.add('active');
-            } else {
-                const filterMap = {
-                    'completed': 'filterCompleted',
-                    'playing': 'filterPlaying',
-                    'looking': 'filterLooking',
-                    'lfg': 'filterLfg'
-                };
-                const target = document.getElementById(filterMap[status]);
-                if (target) target.classList.add('active');
-            }
-            filterGames();
-        }
-
-        // --- GAME CARD RENDER (clean covers) ---
-        function filterGames() {
-            const query = document.getElementById("searchInput").value.toLowerCase().trim();
-            const sort = document.getElementById("sortSelect").value;
-            let filtered = games.filter(g => {
-                const titleMatch = g.title.toLowerCase().includes(query);
-                let statusMatch = true;
-                if (currentFilterStatus === 'completed') statusMatch = myCompletions.includes(g.id);
-                else if (currentFilterStatus === 'playing') statusMatch = myPlaying.includes(g.id);
-                else if (currentFilterStatus === 'looking') statusMatch = myLooking.includes(g.id);
-                else if (currentFilterStatus === 'lfg') statusMatch = myLFG.includes(g.id);
-                return titleMatch && statusMatch;
-            });
-            switch(sort) {
-                case 'title-asc': filtered.sort((a,b) => a.title.localeCompare(b.title)); break;
-                case 'title-desc': filtered.sort((a,b) => b.title.localeCompare(a.title)); break;
-                case 'year-desc': filtered.sort((a,b) => b.year - a.year); break;
-                case 'year-asc': filtered.sort((a,b) => a.year - b.year); break;
-                default: break;
-            }
-            const grid = document.getElementById("gamesGrid");
-            grid.innerHTML = "";
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="empty-state">No games found for this filter. Try changing your search or filter.</div>`;
-                document.getElementById("resultsCount").textContent = "No games found";
-                return;
-            }
-            document.getElementById("resultsCount").textContent = query ? `Found ${filtered.length} games` : "Showing all games";
-            filtered.forEach(game => {
-                const isCompleted = myCompletions.includes(game.id);
-                const isPlaying = myPlaying.includes(game.id);
-                const isLooking = myLooking.includes(game.id);
-                const isLFG = myLFG.includes(game.id);
-                const card = document.createElement("div");
-                let cls = "game-card";
-                if (isCompleted) cls += " completed";
-                if (isPlaying) cls += " playing";
-                if (isLooking) cls += " looking_for_players";
-                if (isLFG) cls += " lfg";
-                card.className = cls;
-                card.onclick = () => openGameModal(game);
-                const color = getColor(game.id);
-                let coverHtml;
-                if (game.steamId) {
-                    coverHtml = `
-                        <div class="cover">
-                            <img class="cover-image" src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg" 
-                                 alt="${game.title}" 
-                                 onerror="this.parentElement.innerHTML='<div class=\\'cover\\' style=\\'background:linear-gradient(135deg,${color}80,${color});\\'><div class=\\'fallback\\'>${game.title}</div></div>'">
-                        </div>
-                    `;
-                } else {
-                    const angle1 = Math.floor(Math.random() * 360);
-                    coverHtml = `
-                        <div class="cover" style="background: linear-gradient(${angle1}deg, ${color} 0%, ${color}cc 50%, ${color}33 100%);">
-                            <div class="fallback">${game.title}</div>
-                            <span class="genre-tag">${game.genre.slice(0,3).toUpperCase()}</span>
-                        </div>
-                    `;
-                }
-                let badge = "";
-                if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
-                else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
-                else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
-                else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
-                card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}${badge}</div></div>`;
-                grid.appendChild(card);
-            });
-        }
-
-        // --- MODAL COVER (clean) ---
-        async function openGameModal(game) {
-            currentGame = game;
-            document.getElementById("modalTitle").textContent = game.title;
-            document.getElementById("modalBadge").textContent = `${game.genre} • ${game.year}`;
-            document.getElementById("modalDesc").textContent = game.desc || `${game.title} is a ${game.genre} game released in ${game.year}.`;
-
-            const cover = document.getElementById("modalCover");
-            const color = getColor(game.id);
-            cover.innerHTML = '';
-            cover.style.background = 'none';
-
-            if (game.steamId) {
-                const img = document.createElement('img');
-                img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg`;
-                img.style.width = "100%";
-                img.style.height = "100%";
-                img.style.objectFit = "cover";
-                img.style.borderRadius = "var(--radius)";
-                img.onerror = function() {
-                    this.style.display = 'none';
-                    const fallback = document.createElement('div');
-                    fallback.style.display = "flex";
-                    fallback.style.alignItems = "center";
-                    fallback.style.justifyContent = "center";
-                    fallback.style.width = "100%";
-                    fallback.style.height = "100%";
-                    fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
-                    fallback.style.color = "#fff";
-                    fallback.style.fontWeight = "600";
-                    fallback.style.fontSize = "1rem";
-                    fallback.style.textAlign = "center";
-                    fallback.style.padding = "1rem";
-                    fallback.style.wordBreak = "break-word";
-                    fallback.style.borderRadius = "var(--radius)";
-                    fallback.textContent = game.title;
-                    cover.appendChild(fallback);
-                };
-                cover.appendChild(img);
-            } else {
-                const fallback = document.createElement('div');
-                fallback.style.display = "flex";
-                fallback.style.alignItems = "center";
-                fallback.style.justifyContent = "center";
-                fallback.style.width = "100%";
-                fallback.style.height = "100%";
-                fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
-                fallback.style.color = "#fff";
-                fallback.style.fontWeight = "600";
-                fallback.style.fontSize = "1rem";
-                fallback.style.textAlign = "center";
-                fallback.style.padding = "1rem";
-                fallback.style.wordBreak = "break-word";
-                fallback.style.borderRadius = "var(--radius)";
-                fallback.textContent = game.title;
-                cover.appendChild(fallback);
-            }
-
-            const completeLabel = document.getElementById("completeLabel");
-            if (game.multiplayer) {
-                completeLabel.style.display = "none";
-                document.getElementById("completeCheckbox").checked = false;
-            } else {
-                completeLabel.style.display = "flex";
-            }
-            document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
-
-            document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
-            document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
-            document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
-            document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
-            updateStatusLabels();
-            renderModalSaves();
-            await loadFriendSavesForGame(game.id);
-            document.getElementById("gameModal").classList.add("active");
-            document.body.style.overflow = "hidden";
-        }
-
-        // --- REST OF THE FUNCTIONS (unchanged) ---
-        function closeGameModal(e) {
-            if (!e || e.target === document.getElementById("gameModal")) {
-                document.getElementById("gameModal").classList.remove("active");
-                document.body.style.overflow = "";
-                currentGame = null;
-            }
-        }
-        function updateStatusLabels() {
-            document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox").checked);
-            document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
-            document.getElementById("lookingLabel").classList.toggle("looking-checked", document.getElementById("lookingCheckbox").checked);
-            document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
-        }
-        async function toggleComplete() {
-            if (!currentGame) return;
-            if (currentGame.multiplayer) { showToast("Cannot mark multiplayer games as completed", true); document.getElementById("completeCheckbox").checked = false; return; }
-            const cb = document.getElementById("completeCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId);
-            try {
-                if (cb.checked) { await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() }); if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id); } else { await ref.delete(); myCompletions = myCompletions.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Game marked as completed!" : "Unmarked");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
-        }
-        async function togglePlaying() {
-            if (!currentGame) return;
-            const cb = document.getElementById("playingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
-            try {
-                if (cb.checked) {
-                    await ref.set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myPlaying.includes(currentGame.id)) myPlaying.push(currentGame.id);
-                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
-                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
-                } else { await ref.delete(); myPlaying = myPlaying.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
-        }
-        async function toggleLooking() {
-            if (!currentGame) return;
-            const cb = document.getElementById("lookingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
-            try {
-                if (cb.checked) {
-                    await ref.set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myLooking.includes(currentGame.id)) myLooking.push(currentGame.id);
-                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
-                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
-                } else { await ref.delete(); myLooking = myLooking.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for players!" : "Removed from looking");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
-        }
-        async function toggleLFG() {
-            if (!currentGame) return;
-            if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true); document.getElementById("lfgCheckbox").checked = false; return; }
-            const cb = document.getElementById("lfgCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
-            try {
-                if (cb.checked) {
-                    await ref.set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!myLFG.includes(currentGame.id)) myLFG.push(currentGame.id);
-                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
-                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
-                } else { await ref.delete(); myLFG = myLFG.filter(id => id !== currentGame.id); }
-                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
-            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
-        }
-        function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
-        function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
-        function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
-        function handleFileSelect(e) { if (e.target.files.length) processFile(e.target.files[0]); }
-        async function processFile(file) {
-            if (!currentGame) return;
-            if (file.size > 500 * 1024) { showToast("File too large (max 500KB)", true); return; }
-            const gameId = currentGame.id;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    showToast("Uploading save...");
-                    const base64 = e.target.result.split(",")[1];
-                    const fileDoc = await db.collection("users").doc(currentUser.uid).collection("saveFiles").add({ gameId, name: file.name, data: base64, size: formatSize(file.size), uploadedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    if (!mySaves[gameId]) mySaves[gameId] = [];
-                    mySaves[gameId].push({ id: fileDoc.id, gameId, name: file.name, data: base64, size: formatSize(file.size) });
-                    renderModalSaves(); updateStats(); showToast("Save uploaded!");
-                } catch (err) { showToast("Upload failed: " + err.message, true); }
-            };
-            reader.readAsDataURL(file);
-        }
-        function formatSize(bytes) {
-            if (bytes < 1024) return bytes + " B";
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-            return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-        }
-        function renderModalSaves() {
-            const container = document.getElementById("modalSaves");
-            const saves = mySaves[currentGame?.id] || [];
-            if (!saves.length) { container.innerHTML = '<p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.9rem;">No save files uploaded yet</p>'; return; }
-            container.innerHTML = saves.map(save => `<div class="save-item"><div><div class="save-name">${save.name}</div><div class="save-meta">${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join("");
-        }
-        function downloadSaveFromData(base64Data, name) {
-            try {
-                const byteString = atob(base64Data), ab = new ArrayBuffer(byteString.length), ia = new Uint8Array(ab);
-                for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-                const blob = new Blob([ab]), url = URL.createObjectURL(blob), a = document.createElement("a");
-                a.href = url; a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-                showToast("Download started!");
-            } catch (err) { showToast("Error downloading: " + err.message, true); }
-        }
-        async function loadFriendSavesForGame(gameId) {
-            const section = document.getElementById("friendSavesSection"), list = document.getElementById("friendSavesList");
-            if (!friendsList.length) { section.style.display = "none"; return; }
-            let has = false, html = "";
-            for (const friend of friendsList) {
-                try {
-                    const snap = await db.collection("users").doc(friend.uid).collection("saveFiles").where("gameId", "==", gameId).get();
-                    if (!snap.empty) {
-                        has = true;
-                        snap.docs.forEach(d => {
-                            const save = d.data();
-                            html += `<div class="friend-save-row"><div class="friend-save-avatar" style="background:${friend.avatarColor};${friend.photoData ? `background-image:url(${friend.photoData});background-size:cover;` : ''}">${friend.photoData ? '' : getInitials(friend.displayName)}</div><div style="flex:1;"><div class="save-name">${save.name}</div><div class="save-meta">${friend.displayName} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`;
-                        });
-                    }
-                } catch (err) { console.error(err); }
-            }
-            if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
-        }
-        async function loadPosts() {
-            try {
-                const snap = await db.collection("posts").orderBy("createdAt", "desc").get();
-                const newPosts = [];
-                for (const doc of snap.docs) {
-                    const data = doc.data();
-                    const userDoc = await db.collection("users").doc(data.userId).get();
-                    if (userDoc.exists) {
-                        let userVote = 0;
-                        if (currentUser) {
-                            try { const voteDoc = await db.collection("posts").doc(doc.id).collection("votes").doc(currentUser.uid).get(); if (voteDoc.exists) userVote = voteDoc.data().vote; } catch (e) {}
-                        }
-                        newPosts.push({ id: doc.id, ...data, user: userDoc.data(), userVote: userVote });
-                    }
-                }
-                const seen = new Set();
-                posts = newPosts.filter(post => { if (seen.has(post.id)) return false; seen.add(post.id); return true; });
-                renderPosts();
-            } catch (err) { console.error("loadPosts error:", err); }
-        }
-        function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
-            const seen = new Set();
-            posts = posts.filter(post => { if (seen.has(post.id)) return false; seen.add(post.id); return true; });
-            let filtered = posts.filter(p => p.gameTitle.toLowerCase().includes(filter.toLowerCase()) || (p.user && p.user.displayName.toLowerCase().includes(filter.toLowerCase())));
-            if (tagFilter !== "all") { filtered = filtered.filter(p => p.tag === tagFilter); }
-            switch (sort) {
-                case "new": filtered.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)); break;
-                case "top": filtered.sort((a, b) => (b.score || 0) - (a.score || 0)); break;
-                case "hot": default: filtered.sort((a, b) => { const scoreA = (a.score || 0) + (a.chatCount || 0) * 0.1; const scoreB = (b.score || 0) + (b.chatCount || 0) * 0.1; return scoreB - scoreA; }); break;
-            }
-            const grid = document.getElementById("postsGrid");
-            if (!filtered.length) { grid.innerHTML = '<div class="empty-state">No posts yet. Be the first to create one!</div>'; return; }
-            grid.innerHTML = filtered.map(post => {
-                const isAuthor = post.userId === currentUser.uid;
-                const tagLabel = getTagLabel(post.tag);
-                const tagClass = getTagClass(post.tag);
-                const chatCount = post.chatCount || 0;
-                const isChatOpen = post._chatOpen || false;
-                const score = post.score || 0;
-                const upvoteClass = post.userVote === 1 ? 'active' : '';
-                const downvoteClass = post.userVote === -1 ? 'active' : '';
-                return `<div class="post-card" data-postid="${post.id}">
-                    <div class="post-vote-area">
-                        <button class="vote-btn upvote ${upvoteClass}" onclick="votePost('${post.id}',1)" title="Like">👍</button>
-                        <span class="score">${score}</span>
-                        <button class="vote-btn downvote ${downvoteClass}" onclick="votePost('${post.id}',-1)" title="Dislike">👎</button>
-                    </div>
-                    <div class="post-content">
-                        <div class="post-header">
-                            <div class="post-avatar" style="background:${post.user.avatarColor || '#8b5cf6'};${post.user.photoData ? `background-image:url(${post.user.photoData});background-size:cover;` : ''}">${post.user.photoData ? '' : getInitials(post.user.displayName)}</div>
-                            <span class="post-user" style="color:${post.user.nameColor || '#f1f5f9'}">${post.user.displayName}</span>
-                            <span class="post-meta">${new Date(post.createdAt?.toMillis()).toLocaleString()}</span>
-                            <span class="post-tag ${tagClass}">${tagLabel}</span>
-                        </div>
-                        <div class="post-title">${post.title || 'Looking for players'}</div>
-                        <div class="post-game">🎮 ${post.gameTitle}</div>
-                        <div class="post-message">${post.message || ""}</div>
-                        <div class="post-actions">
-                            ${isAuthor ? `<button class="action-btn" onclick="editPost('${post.id}')">✏️ Edit</button>` : ''}
-                            ${isAuthor ? `<button class="action-btn" onclick="deletePost('${post.id}')">🗑 Delete</button>` : ''}
-                            ${!isAuthor ? `<button class="action-btn" onclick="addFriendFromPost('${post.userId}')">➕ Add Friend</button>` : ''}
-                            <button class="post-chat-toggle action-btn" onclick="toggleChat('${post.id}')">💬 <span id="chatCount_${post.id}">${chatCount}</span> <span class="arrow ${isChatOpen ? 'open' : ''}" id="chatArrow_${post.id}">▼</span></button>
-                        </div>
-                        <div class="post-chat-container ${isChatOpen ? 'open' : ''}" id="chatContainer_${post.id}">
-                            <div class="post-chat-title">💬 Chat</div>
-                            <div id="chatMessages_${post.id}">${post.chatMessages ? post.chatMessages.map(m => `<div class="chat-message" data-msgid="${m.id}" data-postid="${post.id}" data-userid="${m.userId}"><div class="chat-msg-avatar" style="background:${m.avatarColor || '#8b5cf6'};${m.photoData ? `background-image:url(${m.photoData});background-size:cover;` : ''}">${m.photoData ? '' : getInitials(m.displayName)}</div><div class="chat-msg-body"><span class="chat-msg-user" style="color:${m.nameColor || '#f1f5f9'}">${m.displayName}</span><span class="chat-msg-time">${new Date(m.timestamp).toLocaleString()}</span><div class="chat-msg-text">${m.message}</div></div></div>`).join('') : '<p style="color:var(--text-muted);font-size:0.8rem;">No messages yet</p>'}</div>
-                            <div class="chat-input-row"><input type="text" id="chatInput_${post.id}" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChatMessage('${post.id}')"><button class="btn-small" onclick="sendChatMessage('${post.id}')">Send</button></div>
-                        </div>
-                    </div>
-                </div>`;
-            }).join("");
-            document.querySelectorAll('.chat-message').forEach(el => { el.addEventListener('contextmenu', showContextMenu); });
-        }
-        function filterPosts() {
-            const search = document.getElementById("postSearchInput").value;
-            const sort = document.getElementById("postSortFilter").value;
-            const tag = document.getElementById("postTagFilter").value;
-            renderPosts(search, sort, tag);
-        }
-        function getTagLabel(tag) {
-            const map = { "lfg": "LFG", "player": "Looking", "tip": "Tip", "help": "Help", "rate": "Rate" };
-            return map[tag] || tag;
-        }
-        function getTagClass(tag) {
-            const map = { "lfg": "tag-lfg", "player": "tag-player", "tip": "tag-tip", "help": "tag-help", "rate": "tag-rate" };
-            return map[tag] || "";
-        }
-        function toggleChat(postId) {
-            const container = document.getElementById(`chatContainer_${postId}`);
-            const arrow = document.getElementById(`chatArrow_${postId}`);
-            if (container) {
-                container.classList.toggle('open');
-                if (arrow) arrow.classList.toggle('open');
-                const post = posts.find(p => p.id === postId);
-                if (post) post._chatOpen = container.classList.contains('open');
-            }
-        }
-        async function votePost(postId, newVote) {
-            if (!currentUser) { showToast("Please login first", true); return; }
-            newVote = parseInt(newVote);
-            const postRef = db.collection("posts").doc(postId);
-            const voteRef = db.collection("posts").doc(postId).collection("votes").doc(currentUser.uid);
-            try {
-                await db.runTransaction(async (transaction) => {
-                    const postDoc = await transaction.get(postRef);
-                    const voteDoc = await transaction.get(voteRef);
-                    if (!postDoc.exists) throw new Error("Post does not exist");
-                    const currentVote = voteDoc.exists ? voteDoc.data().vote : 0;
-                    let finalVote = newVote;
-                    if (newVote === currentVote) finalVote = 0;
-                    let upvoteInc = 0, downvoteInc = 0, scoreInc = 0;
-                    if (currentVote === 1) upvoteInc -= 1; else if (currentVote === -1) downvoteInc -= 1;
-                    scoreInc -= currentVote;
-                    if (finalVote === 1) upvoteInc += 1; else if (finalVote === -1) downvoteInc += 1;
-                    scoreInc += finalVote;
-                    if (finalVote === 0) { transaction.delete(voteRef); } else { transaction.set(voteRef, { vote: finalVote }); }
-                    transaction.update(postRef, { score: firebase.firestore.FieldValue.increment(scoreInc), upvotes: firebase.firestore.FieldValue.increment(upvoteInc), downvotes: firebase.firestore.FieldValue.increment(downvoteInc) });
-                    const post = posts.find(p => p.id === postId);
-                    if (post) { post.score += scoreInc; post.upvotes += upvoteInc; post.downvotes += downvoteInc; post.userVote = finalVote; }
-                });
-                filterPosts();
-                showToast("Vote updated!");
-            } catch (err) { console.error("Error voting:", err); showToast("Error voting: " + err.message, true); }
-        }
-        function setupGameCombobox() {
-            const input = document.getElementById("postGameSearch");
-            const dropdown = document.getElementById("gameDropdown");
-            const hidden = document.getElementById("postGameId");
-            input.addEventListener("focus", showGameDropdown);
-            input.addEventListener("blur", () => setTimeout(() => { dropdown.classList.remove("show"); }, 200));
-            dropdown.addEventListener("click", (e) => {
-                const item = e.target.closest(".dropdown-item");
-                if (item) {
-                    const gameId = parseInt(item.dataset.id);
-                    const title = item.textContent;
-                    input.value = title;
-                    hidden.value = gameId;
-                    dropdown.classList.remove("show");
-                }
-            });
-            filterGameOptions();
-        }
-        function showGameDropdown() { document.getElementById("gameDropdown").classList.add("show"); }
-        function filterGameOptions() {
-            const input = document.getElementById("postGameSearch");
-            const dropdown = document.getElementById("gameDropdown");
-            const query = input.value.toLowerCase().trim();
-            const filtered = games.filter(g => g.title.toLowerCase().includes(query));
-            if (!filtered.length) { dropdown.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);cursor:default;">No games found</div>'; } else { dropdown.innerHTML = filtered.map(g => `<div class="dropdown-item" data-id="${g.id}">${g.title}</div>`).join(""); }
-            dropdown.classList.add("show");
-        }
-        function openPostModal() {
-            editingPostId = null;
-            document.getElementById("postModalTitle").textContent = "Create Post";
-            document.getElementById("postSubmitBtn").textContent = "Create Post";
-            document.getElementById("postEditId").value = "";
-            document.getElementById("postTitle").value = "";
-            document.getElementById("postMessage").value = "";
-            document.getElementById("postGameSearch").value = "";
-            document.getElementById("postGameId").value = "";
-            document.getElementById("postTagSelect").value = "lfg";
-            document.getElementById("gameDropdown").classList.remove("show");
-            document.getElementById("postModal").classList.add("active");
-        }
-        function closePostModal(e) {
-            if (!e || e.target === document.getElementById("postModal")) { document.getElementById("postModal").classList.remove("active"); }
-        }
-        async function submitPost() {
-            const title = document.getElementById("postTitle").value.trim();
-            const gameId = parseInt(document.getElementById("postGameId").value);
-            const message = document.getElementById("postMessage").value.trim();
-            const tag = document.getElementById("postTagSelect").value;
-            const editId = document.getElementById("postEditId").value;
-            if (!title) { showToast("Please enter a title", true); return; }
-            if (!gameId) { showToast("Please select a game", true); return; }
-            const game = games.find(g => g.id === gameId);
-            if (!game) { showToast("Game not found", true); return; }
-            try {
-                if (editId) {
-                    await db.collection("posts").doc(editId).update({ title: title, gameId: gameId, gameTitle: game.title, message: message || "", tag: tag, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    showToast("Post updated successfully!"); closePostModal(); loadPosts();
-                } else {
-                    await db.collection("posts").add({ userId: currentUser.uid, title: title, gameId: gameId, gameTitle: game.title, message: message || "", tag: tag, chatMessages: [], chatCount: 0, score: 0, upvotes: 0, downvotes: 0, voters: {}, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    showToast("Post created!"); closePostModal(); loadPosts();
-                }
-            } catch (err) { console.error("Submit post error:", err); showToast("Error: " + err.message, true); }
-        }
-        function editPost(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (!post) { showToast("Post not found", true); return; }
-            editingPostId = postId;
-            document.getElementById("postModalTitle").textContent = "Edit Post";
-            document.getElementById("postSubmitBtn").textContent = "Update Post";
-            document.getElementById("postEditId").value = postId;
-            document.getElementById("postTitle").value = post.title || "";
-            document.getElementById("postMessage").value = post.message || "";
-            document.getElementById("postGameSearch").value = post.gameTitle;
-            document.getElementById("postGameId").value = post.gameId;
-            document.getElementById("postTagSelect").value = post.tag || "lfg";
-            document.getElementById("gameDropdown").classList.remove("show");
-            document.getElementById("postModal").classList.add("active");
-        }
-        async function deletePost(postId) {
-            if (!confirm("Delete this post?")) return;
-            try { await db.collection("posts").doc(postId).delete(); loadPosts(); showToast("Post deleted"); } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function sendChatMessage(postId) {
-            const input = document.getElementById(`chatInput_${postId}`);
-            const msg = input.value.trim();
-            if (!msg) return;
-            input.value = "";
-            try {
-                const postRef = db.collection("posts").doc(postId);
-                const postDoc = await postRef.get();
-                const data = postDoc.data();
-                const messages = data.chatMessages || [];
-                const newMsg = { id: Date.now().toString(), userId: currentUser.uid, displayName: userProfile.displayName, nameColor: userProfile.nameColor || "#f1f5f9", avatarColor: userProfile.avatarColor || "#8b5cf6", photoData: userProfile.photoData || "", message: msg, timestamp: Date.now() };
-                messages.push(newMsg);
-                await postRef.update({ chatMessages: messages, chatCount: messages.length });
-                const post = posts.find(p => p.id === postId);
-                if (post) {
-                    if (!post.chatMessages) post.chatMessages = [];
-                    post.chatMessages.push(newMsg);
-                    post.chatCount = messages.length;
-                    renderPosts(document.getElementById("postSearchInput").value, document.getElementById("postSortFilter").value, document.getElementById("postTagFilter").value);
-                    const container = document.getElementById(`chatContainer_${postId}`);
-                    if (container) container.classList.add('open');
-                    const arrow = document.getElementById(`chatArrow_${postId}`);
-                    if (arrow) arrow.classList.add('open');
-                    if (post) post._chatOpen = true;
-                }
-            } catch (err) { console.error("Chat error:", err); showToast("Error sending message: " + err.message, true); }
-        }
-        let contextTarget = null;
-        function showContextMenu(e) {
-            e.preventDefault();
-            const msgEl = e.currentTarget;
-            const msgId = msgEl.dataset.msgid;
-            const postId = msgEl.dataset.postid;
-            const userId = msgEl.dataset.userid;
-            const isOwn = userId === currentUser.uid;
-            contextTarget = { msgId, postId, element: msgEl };
-            const menu = document.getElementById("contextMenu");
-            const editItem = document.getElementById("ctxEdit");
-            const deleteItem = document.getElementById("ctxDelete");
-            editItem.style.display = isOwn ? "block" : "none";
-            deleteItem.style.display = isOwn ? "block" : "block";
-            menu.style.left = Math.min(e.pageX, window.innerWidth - 150) + "px";
-            menu.style.top = Math.min(e.pageY, window.innerHeight - 100) + "px";
-            menu.style.display = "block";
-            editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
-            deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
-        }
-        function hideContextMenu() { document.getElementById("contextMenu").style.display = "none"; }
-        document.addEventListener("click", hideContextMenu);
-        async function editChatMessage(postId, msgId) {
-            const newMsg = prompt("Edit your message:");
-            if (newMsg === null || newMsg.trim() === "") return;
-            try {
-                const postRef = db.collection("posts").doc(postId);
-                const postDoc = await postRef.get();
-                const data = postDoc.data();
-                let messages = data.chatMessages || [];
-                const idx = messages.findIndex(m => m.id === msgId);
-                if (idx === -1) { showToast("Message not found", true); return; }
-                messages[idx].message = newMsg.trim();
-                await postRef.update({ chatMessages: messages });
-                const post = posts.find(p => p.id === postId);
-                if (post) { const m = post.chatMessages.find(m => m.id === msgId); if (m) m.message = newMsg.trim(); renderPosts(document.getElementById("postSearchInput").value, document.getElementById("postSortFilter").value, document.getElementById("postTagFilter").value); }
-                showToast("Message updated");
-            } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function deleteChatMessage(postId, msgId) {
-            if (!confirm("Delete this message?")) return;
-            try {
-                const postRef = db.collection("posts").doc(postId);
-                const postDoc = await postRef.get();
-                const data = postDoc.data();
-                let messages = data.chatMessages || [];
-                messages = messages.filter(m => m.id !== msgId);
-                await postRef.update({ chatMessages: messages, chatCount: messages.length });
-                const post = posts.find(p => p.id === postId);
-                if (post) { post.chatMessages = messages; post.chatCount = messages.length; renderPosts(document.getElementById("postSearchInput").value, document.getElementById("postSortFilter").value, document.getElementById("postTagFilter").value); }
-                showToast("Message deleted");
-            } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function addFriendFromPost(userId) {
-            if (userId === currentUser.uid) { showToast("That's you!", true); return; }
-            try {
-                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(userId).get();
-                if (friendDoc.exists) { showToast("Already friends!", true); return; }
-                const reqSnap = await db.collection("users").doc(userId).collection("requests").where("from", "==", currentUser.uid).get();
-                if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
-                await db.collection("users").doc(userId).collection("requests").add({ from: currentUser.uid, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                showToast("Friend request sent!");
-            } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        function showPosts() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "block"; loadPosts(); updateNav('posts'); }
-        function updateNav(tab) {
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            if(tab === 'games') document.getElementById('navGames').classList.add('active');
-            if(tab === 'friends') document.getElementById('navFriends').classList.add('active');
-            if(tab === 'posts') document.getElementById('navPosts').classList.add('active');
-            if(tab === 'profile') document.getElementById('navProfile').classList.add('active');
-        }
-        function updateStats() {
-            const count = myCompletions.length;
-            const playingCount = myPlaying.length;
-            const totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
-            document.getElementById("completedCount").textContent = count;
-            document.getElementById("playingCount").textContent = playingCount;
-            document.getElementById("totalGames").textContent = games.length;
-            document.getElementById("savesCount").textContent = totalSaves;
-            document.getElementById("friendsCount").textContent = friendsList.length;
-        }
-        function showGames() { document.getElementById("gamesView").style.display = "block"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "none"; filterGames(); updateNav('games'); }
-        function showProfile() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.add("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "none"; renderProfile(); closeUserDropdown(); updateNav('profile'); }
-        function showFriends() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.add("active"); document.getElementById("postsView").style.display = "none"; renderFriends(); updateNav('friends'); }
-        function renderProfile() {
-            if (!userProfile) return;
-            const count = myCompletions.length, playingCount = myPlaying.length, lookingCount = myLooking.length, lfgCount = myLFG.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
-            const avatar = document.getElementById("profileAvatar");
-            if (avatar) setAvatarElement(avatar, userProfile);
-            document.getElementById("profileName").textContent = userProfile.displayName;
-            document.getElementById("profileName").style.color = userProfile.nameColor || "#f1f5f9";
-            document.getElementById("profileEmail").textContent = currentUser.email;
-            document.getElementById("profileCompleted").textContent = count;
-            document.getElementById("profilePlaying").textContent = playingCount;
-            document.getElementById("profileSaves").textContent = totalSaves;
-            document.getElementById("profileFriends").textContent = friendsList.length;
-            const grid = document.getElementById("completedGamesGrid");
-            grid.innerHTML = "";
-            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
-            const playingGrid = document.getElementById("playingGamesGrid");
-            playingGrid.innerHTML = "";
-            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
-            const savesList = document.getElementById("profileSavesList");
-            const allSaves = [];
-            Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
-            if (!allSaves.length) { savesList.innerHTML = '<div class="empty-state">No save files uploaded yet.</div>'; } else { savesList.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
-        }
-        async function removeGameFromList(gameId, listType) {
-            if (!confirm("Remove this game from your "+listType+" list?")) return;
-            const ref = listType === 'completed' ? db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString()) : db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
-            try {
-                await ref.delete();
-                if(listType === 'completed') myCompletions = myCompletions.filter(id => id !== gameId);
-                if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
-                showToast("Removed from list!");
-                renderProfile(); updateStats();
-            } catch(err) { showToast("Error removing: " + err.message, true); }
-        }
-        async function updateProfileName() {
-            const name = document.getElementById("settingsName").value.trim();
-            if (!name) { showToast("Please enter a name", true); return; }
-            try { await db.collection("users").doc(currentUser.uid).update({ displayName: name, searchName: name.toLowerCase() }); userProfile.displayName = name; document.getElementById("headerName").textContent = name; document.getElementById("profileName").textContent = name; showToast("Name updated!"); } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function updateNameColor() {
-            const color = document.getElementById("settingsNameColor").value;
-            try { await db.collection("users").doc(currentUser.uid).update({ nameColor: color }); userProfile.nameColor = color; document.getElementById("headerName").style.color = color; document.getElementById("profileName").style.color = color; showToast("Name color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function updateAvatarColor() {
-            const color = document.getElementById("settingsAvatarColor").value;
-            try { await db.collection("users").doc(currentUser.uid).update({ avatarColor: color }); userProfile.avatarColor = color; const headerAvatar = document.getElementById("headerAvatar"); const profileAvatar = document.getElementById("profileAvatar"); if (!userProfile.photoData) { if (headerAvatar) { headerAvatar.style.background = color; headerAvatar.style.backgroundImage = "none"; headerAvatar.textContent = getInitials(userProfile.displayName); } if (profileAvatar) { profileAvatar.style.background = color; profileAvatar.style.backgroundImage = "none"; profileAvatar.textContent = getInitials(userProfile.displayName); } } showToast("Avatar color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function uploadProfilePhoto() {
-            if (!userProfile) { showToast("Please wait for profile to load", true); return; }
-            const fileInput = document.getElementById("settingsPhotoFile");
-            const file = fileInput.files[0];
-            if (!file) { showToast("Please select an image", true); return; }
-            if (file.size > 500 * 1024) { showToast("Image too large (max 500KB)", true); return; }
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const base64 = e.target.result;
-                    await db.collection("users").doc(currentUser.uid).update({ photoData: base64 });
-                    userProfile.photoData = base64;
-                    const headerAvatar = document.getElementById("headerAvatar");
-                    const profileAvatar = document.getElementById("profileAvatar");
-                    if (headerAvatar) { headerAvatar.style.backgroundImage = `url(${base64})`; headerAvatar.style.backgroundSize = "cover"; headerAvatar.style.backgroundPosition = "center"; headerAvatar.textContent = ""; }
-                    if (profileAvatar) { profileAvatar.style.backgroundImage = `url(${base64})`; profileAvatar.style.backgroundSize = "cover"; profileAvatar.style.backgroundPosition = "center"; profileAvatar.textContent = ""; }
-                    showToast("Profile photo uploaded!");
-                } catch (err) { showToast("Upload failed: " + err.message, true); }
-            };
-            reader.readAsDataURL(file);
-        }
-        async function updateSocial(type) {
-            const val = document.getElementById(type === "discord" ? "settingsDiscord" : "settingsReddit").value.trim();
-            try { await db.collection("users").doc(currentUser.uid).update({ [type]: val }); userProfile[type] = val; showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} updated!`); } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function loadFriends() {
-            try {
-                const snap = await db.collection("users").doc(currentUser.uid).collection("friends").get();
-                friendsList = [];
-                for (const doc of snap.docs) { try { const userDoc = await db.collection("users").doc(doc.id).get(); if (userDoc.exists) friendsList.push({ uid: doc.id, ...userDoc.data() }); } catch (e) { console.error(e); } }
-                updateStats();
-            } catch (err) { console.error("loadFriends error:", err); }
-        }
-        async function loadRequests() {
-            try {
-                const snap = await db.collection("users").doc(currentUser.uid).collection("requests").get();
-                friendRequests = [];
-                for (const doc of snap.docs) {
-                    const data = doc.data();
-                    if (data.status === "pending") { try { const userDoc = await db.collection("users").doc(data.from).get(); if (userDoc.exists) friendRequests.push({ id: doc.id, from: data.from, ...userDoc.data() }); } catch (e) { console.error(e); } }
-                }
-                const badge = document.getElementById("requestBadge");
-                if (friendRequests.length) { badge.textContent = friendRequests.length; badge.style.display = "inline-flex"; } else badge.style.display = "none";
-            } catch (err) { console.error("loadRequests error:", err); }
-        }
-        function renderFriends() {
-            const grid = document.getElementById("friendsGrid");
-            if (!friendsList.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No friends yet. Click "Find Players" to add friends!</div>'; return; }
-            grid.innerHTML = friendsList.map(f => `<div class="friend-card" onclick="openFriendProfile('${f.uid}')"><div class="friend-avatar" style="background:${f.avatarColor};${f.photoData ? `background-image:url(${f.photoData});background-size:cover;` : ''}">${f.photoData ? '' : getInitials(f.displayName)}</div><div class="friend-info"><div class="friend-name" style="color:${f.nameColor || '#f1f5f9'}">${f.displayName}</div><div class="friend-meta">${f.email}</div></div></div>`).join("");
-        }
-        function switchFriendsTab(tab) {
-            document.getElementById("tabAll").classList.toggle("active", tab === "all");
-            document.getElementById("tabRequests").classList.toggle("active", tab === "requests");
-            document.getElementById("friendsListContainer").style.display = tab === "all" ? "block" : "none";
-            document.getElementById("requestsContainer").style.display = tab === "requests" ? "block" : "none";
-            if (tab === "requests") renderRequests();
-        }
-        function renderRequests() {
-            const list = document.getElementById("requestsList");
-            if (!friendRequests.length) { list.innerHTML = '<div class="empty-state">No pending friend requests</div>'; return; }
-            list.innerHTML = friendRequests.map(req => `<div class="user-result"><div class="user-result-avatar" style="background:${req.avatarColor};${req.photoData ? `background-image:url(${req.photoData});background-size:cover;` : ''}">${req.photoData ? '' : getInitials(req.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${req.nameColor || '#f1f5f9'}">${req.displayName}</div><div class="user-result-email">${req.email}</div></div><div class="request-actions"><button class="btn-success btn-small" onclick="acceptRequest('${req.id}','${req.from}')">Accept</button><button class="btn-danger btn-small" onclick="declineRequest('${req.id}')">Decline</button></div></div>`).join("");
-        }
-        async function sendFriendRequest(targetUid) {
-            try {
-                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(targetUid).get();
-                if (friendDoc.exists) { showToast("Already friends!", true); return; }
-                const reqSnap = await db.collection("users").doc(targetUid).collection("requests").where("from", "==", currentUser.uid).get();
-                if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
-                await db.collection("users").doc(targetUid).collection("requests").add({ from: currentUser.uid, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                showToast("Friend request sent!");
-            } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function acceptRequest(requestId, fromUid) {
-            try {
-                const batch = db.batch();
-                batch.set(db.collection("users").doc(currentUser.uid).collection("friends").doc(fromUid), { since: firebase.firestore.FieldValue.serverTimestamp() });
-                batch.set(db.collection("users").doc(fromUid).collection("friends").doc(currentUser.uid), { since: firebase.firestore.FieldValue.serverTimestamp() });
-                batch.delete(db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId));
-                await batch.commit();
-                await loadFriends(); await loadRequests(); renderFriends(); updateStats(); showToast("Friend added!");
-            } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        async function declineRequest(requestId) {
-            try { await db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId).delete(); await loadRequests(); renderRequests(); showToast("Request declined"); } catch (err) { showToast("Error: " + err.message, true); }
-        }
-        function openSearchModal() {
-            document.getElementById("searchModal").classList.add("active");
-            document.getElementById("userSearchInput").value = "";
-            document.getElementById("searchResults").innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
-            document.getElementById("userSearchInput").focus();
-        }
-        function closeSearchModal(e) {
-            if (!e || e.target === document.getElementById("searchModal")) { document.getElementById("searchModal").classList.remove("active"); }
-        }
-        let searchTimeout;
-        async function searchUsers() {
-            const term = document.getElementById("userSearchInput").value.trim().toLowerCase();
-            const resultsEl = document.getElementById("searchResults"), loadingEl = document.getElementById("searchLoading");
-            if (term.length < 2) { resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>'; return; }
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(async () => {
-                loadingEl.style.display = "block";
-                resultsEl.innerHTML = "";
-                try {
-                    const nameSnap = await db.collection("users").where("searchName", ">=", term).where("searchName", "<=", term + "\uf8ff").limit(20).get();
-                    let users = [];
-                    nameSnap.docs.forEach(d => { if (d.id !== currentUser.uid) users.push({ uid: d.id, ...d.data() }); });
-                    const emailSnap = await db.collection("users").where("email", ">=", term).where("email", "<=", term + "\uf8ff").limit(20).get();
-                    emailSnap.docs.forEach(d => { if (d.id !== currentUser.uid && !users.find(u => u.uid === d.id)) users.push({ uid: d.id, ...d.data() }); });
-                    if (!users.length) { resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No players found</p>'; } else { resultsEl.innerHTML = users.map(u => `<div class="user-result"><div class="user-result-avatar" style="background:${u.avatarColor};${u.photoData ? `background-image:url(${u.photoData});background-size:cover;` : ''}">${u.photoData ? '' : getInitials(u.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${u.nameColor || '#f1f5f9'}">${u.displayName}</div><div class="user-result-email">${u.email}</div></div><button class="btn-success btn-small" onclick="sendFriendRequest('${u.uid}')">Add Friend</button></div>`).join(""); }
-                } catch (err) { resultsEl.innerHTML = `<p style="color:var(--danger);text-align:center;padding:2rem;">Error: ${err.message}</p>`; }
-                loadingEl.style.display = "none";
-            }, 300);
-        }
-        async function openFriendProfile(friendUid) {
-            const userDoc = await db.collection("users").doc(friendUid).get();
-            if (!userDoc.exists) { showToast("User not found", true); return; }
-            const profile = userDoc.data();
-            const compSnap = await db.collection("users").doc(friendUid).collection("completions").get();
-            const friendCompletions = compSnap.docs.map(d => parseInt(d.id));
-            const playingSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "playing").get();
-            const friendPlaying = playingSnap.docs.map(d => parseInt(d.id));
-            const savesSnap = await db.collection("users").doc(friendUid).collection("saveFiles").get();
-            const friendSaves = {};
-            let totalFriendSaves = 0;
-            savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = []; friendSaves[gid].push(data); totalFriendSaves++; });
-            const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
-            friendPosts = [];
-            postSnap.docs.forEach(d => { friendPosts.push({ id: d.id, ...d.data() }); });
-            const avatar = document.getElementById("friendProfileAvatar");
-            if (profile.photoData) { avatar.style.backgroundImage = `url(${profile.photoData})`; avatar.style.backgroundSize = "cover"; avatar.style.backgroundPosition = "center"; avatar.textContent = ""; } else { avatar.style.backgroundImage = "none"; avatar.style.background = profile.avatarColor; avatar.textContent = getInitials(profile.displayName); }
-            document.getElementById("friendProfileName").textContent = profile.displayName;
-            document.getElementById("friendProfileName").style.color = profile.nameColor || "#f1f5f9";
-            document.getElementById("friendProfileEmail").textContent = profile.email;
-            document.getElementById("friendCompleted").textContent = friendCompletions.length;
-            document.getElementById("friendPlaying").textContent = friendPlaying.length;
-            document.getElementById("friendSavesCount").textContent = totalFriendSaves;
-            const socialDiv = document.getElementById("friendSocialLinks");
-            socialDiv.innerHTML = "";
-            if (profile.discord) socialDiv.innerHTML += `<span class="badge badge-info">Discord: ${profile.discord}</span>`;
-            if (profile.reddit) socialDiv.innerHTML += `<span class="badge badge-warning">Reddit: ${profile.reddit}</span>`;
-            if (!profile.discord && !profile.reddit) socialDiv.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
-            const postsSection = document.getElementById("friendPostsSection");
-            const postsList = document.getElementById("friendPostsList");
-            if (friendPosts.length) {
-                postsSection.style.display = "block";
-                postsList.innerHTML = friendPosts.map(p => `<div style="padding:0.5rem 0;border-bottom:1px solid #2d2d44;display:flex;justify-content:space-between;align-items:center;"><div><span class="post-tag ${getTagClass(p.tag)}" style="font-size:0.6rem;">${getTagLabel(p.tag)}</span><strong style="color:var(--accent);margin-left:0.5rem;">${p.gameTitle}</strong><div style="font-size:0.85rem;color:var(--text-muted);">${p.message || ''}</div></div><button class="btn-success btn-small" onclick="addFriendFromPost('${p.userId}')">Add Friend</button></div>`).join("");
-            } else { postsSection.style.display = "none"; }
-            const grid = document.getElementById("friendCompletedGrid");
-            grid.innerHTML = "";
-            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
-            const playingGrid = document.getElementById("friendPlayingGrid");
-            playingGrid.innerHTML = "";
-            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = `<div class="cover" style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); height: 140px;"><div class="fallback" style="font-size:1rem;">${game.title}</div></div>`; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
-            const savesContainer = document.getElementById("friendSavesContainer");
-            const allSaves = [];
-            Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
-            if (!allSaves.length) { savesContainer.innerHTML = '<div class="empty-state">No save files shared yet</div>'; } else { savesContainer.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
-            document.getElementById("friendProfileModal").classList.add("active");
-        }
-        function closeFriendProfile(e) {
-            if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
-        }
-        function showToast(msg, isError) {
-            const toast = document.getElementById("toast");
-            toast.textContent = msg;
-            toast.className = "toast" + (isError ? " error" : "");
-            toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
-        }
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
                 closeGameModal();
@@ -1976,6 +2108,7 @@ service cloud.firestore {
                 closePostModal();
             }
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof init !== 'undefined') {
                 init();
