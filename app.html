@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* --- SAME STYLES AS BEFORE (unchanged) --- */
+        /* --- ROOT & RESET --- */
         :root {
             --bg: #0a0a0f;
             --surface: #151522;
@@ -112,26 +112,125 @@
         .stat.accent { color: var(--accent); }
 
         /* --- SEARCH CONTAINER --- */
-        .search-container { padding: 1.5rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-        .search-container .search-input-wrapper { display: flex; flex: 1; min-width: 200px; align-items: center; gap: 0.5rem; }
-        .search-container .search-input-wrapper input[type="text"] { flex: 1; }
-        .search-container input[type="text"], .search-container select, .search-container button { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .search-container input[type="text"] { flex: 1; min-width: 200px; }
-        .search-container input:focus, .search-container select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); transform: scale(1.02); }
+        .search-container {
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        .search-container .search-input-wrapper {
+            display: flex;
+            flex: 0 1 280px;
+            min-width: 140px;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .search-container .search-input-wrapper input[type="text"] {
+            flex: 1;
+            min-width: 80px;
+        }
+        .search-container .search-select {
+            flex-shrink: 0;
+        }
+        .search-container .results-count {
+            flex-shrink: 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .search-container input[type="text"],
+        .search-container select,
+        .search-container button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-container input:focus,
+        .search-container select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+            transform: scale(1.02);
+        }
         .search-container button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .search-container button:active { transform: scale(0.95); }
 
-        .search-select { appearance: none; -webkit-appearance: none; background: var(--surface); border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem 2.5rem 0.75rem 1.5rem; border-radius: 50px; cursor: pointer; font-family: inherit; font-size: 0.9rem; font-weight: 500; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px; min-width: 120px; }
-        .search-select:hover { transform: translateY(-2px); background-color: var(--surface-hover); border-color: var(--primary); }
-        .search-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
-        .search-select option { background: var(--surface); color: var(--text); }
+        .search-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            color: var(--text);
+            padding: 0.75rem 2.5rem 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px;
+            min-width: 100px;
+        }
+        .search-select:hover {
+            transform: translateY(-2px);
+            background-color: var(--surface-hover);
+            border-color: var(--primary);
+        }
+        .search-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .search-select option {
+            background: var(--surface);
+            color: var(--text);
+        }
 
-        .tab { background: var(--surface); border: 1px solid #2d2d44; color: var(--text-muted); padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .tab:hover { transform: translateY(-2px); background: var(--surface-hover); color: var(--text); }
+        .tab {
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            color: var(--text-muted);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tab:hover {
+            transform: translateY(-2px);
+            background: var(--surface-hover);
+            color: var(--text);
+        }
         .tab:active { transform: scale(0.95); }
-        .tab.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
 
-        /* --- REST OF STYLES (unchanged) --- */
+        /* --- RESPONSIVE TWEAKS --- */
+        @media (max-width: 820px) {
+            .search-container {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .search-container .search-input-wrapper {
+                flex: 1 1 100%;
+                min-width: 100px;
+            }
+            .search-container .search-select {
+                flex: 1 1 auto;
+                min-width: 80px;
+            }
+        }
+
+        /* --- REST OF STYLES (unchanged from optimized version) --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -306,7 +405,22 @@
         .game-combobox .dropdown-item { padding: 0.6rem 1rem; cursor: pointer; transition: background 0.15s; }
         .game-combobox .dropdown-item:hover { background: var(--surface-hover); }
         .game-combobox .dropdown-item.selected { background: var(--primary); }
-        @media (max-width: 640px) { .games-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 0 1rem 1rem; } .stats-bar { padding: 0.5rem 1rem; gap: 0.75rem; } .stat { padding: 0.3rem 0.8rem; font-size: 0.8rem; } .stat .stat-value { font-size: 1rem; } .search-container { padding: 1rem; flex-direction: column; align-items: stretch; } .search-container .search-input-wrapper { flex-wrap: wrap; } header { padding: 0.5rem 1rem; flex-wrap: wrap; } .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; } .profile-header { flex-direction: column; text-align: center; } .friends-grid { grid-template-columns: 1fr; } .posts-grid { grid-template-columns: 1fr; } .modal { max-width: 100%; margin: 0.5rem; } .post-card { flex-direction: column; align-items: stretch; } .post-vote-area { flex-direction: row; justify-content: flex-start; padding: 0.2rem 0; } }
+        @media (max-width: 640px) {
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 0 1rem 1rem; }
+            .stats-bar { padding: 0.5rem 1rem; gap: 0.75rem; }
+            .stat { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+            .stat .stat-value { font-size: 1rem; }
+            .search-container { padding: 1rem; flex-wrap: wrap; }
+            .search-container .search-input-wrapper { flex: 1 1 100%; }
+            header { padding: 0.5rem 1rem; flex-wrap: wrap; }
+            .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+            .profile-header { flex-direction: column; text-align: center; }
+            .friends-grid { grid-template-columns: 1fr; }
+            .posts-grid { grid-template-columns: 1fr; }
+            .modal { max-width: 100%; margin: 0.5rem; }
+            .post-card { flex-direction: column; align-items: stretch; }
+            .post-vote-area { flex-direction: row; justify-content: flex-start; padding: 0.2rem 0; }
+        }
     </style>
 </head>
 <body>
@@ -452,12 +566,12 @@ service cloud.firestore {
                     <option value="year-desc">Year (New)</option>
                     <option value="year-asc">Year (Old)</option>
                 </select>
-                <span style="color:var(--text-muted);font-size:0.85rem;" id="resultsCount">Showing all games</span>
+                <span class="results-count" id="resultsCount">Showing all games</span>
             </div>
             <div class="games-grid" id="gamesGrid"></div>
         </div>
 
-        <!-- Posts View (with pagination) -->
+        <!-- Posts View (with filters next to search bar) -->
         <div id="postsView" style="display:none;padding:2rem;max-width:1200px;margin:0 auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
                 <h2 style="font-size:1.5rem;">📝 Community Posts</h2>
@@ -467,12 +581,12 @@ service cloud.firestore {
                 <div class="search-input-wrapper">
                     <input type="text" id="postSearchInput" placeholder="Search posts by game or user..." oninput="filterPosts()">
                 </div>
-                <select id="postSortFilter" class="search-select" onchange="filterPosts()" style="min-width:100px;">
+                <select id="postSortFilter" class="search-select" onchange="filterPosts()" style="min-width:90px;">
                     <option value="hot">🔥 Hot</option>
                     <option value="new">🕒 New</option>
                     <option value="top">🏆 Top</option>
                 </select>
-                <select id="postTagFilter" class="search-select" onchange="filterPosts()" style="min-width:140px;">
+                <select id="postTagFilter" class="search-select" onchange="filterPosts()" style="min-width:120px;">
                     <option value="all">All Tags</option>
                     <option value="lfg">👥 LFG</option>
                     <option value="player">🔍 Looking</option>
@@ -669,23 +783,74 @@ service cloud.firestore {
         };
         const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
 
-        // --- HELPERS (unchanged) ---
+        function isConfigValid() {
+            return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR") &&
+                firebaseConfig.authDomain && !firebaseConfig.authDomain.includes("YOUR") &&
+                firebaseConfig.projectId && !firebaseConfig.projectId.includes("YOUR") &&
+                firebaseConfig.appId && !firebaseConfig.appId.includes("YOUR");
+        }
+
+        function autoParseConfig() {
+            const paste = document.getElementById("configPaste").value;
+            const errorEl = document.getElementById("setupError");
+            try {
+                const extract = (k) => { const m = paste.match(new RegExp(k + '\\s*:\\s*["\']([^"\']+)["\']', 'i')); return m ? m[1].trim() : ""; };
+                const apiKey = extract("apiKey"), authDomain = extract("authDomain"), databaseURL = extract("databaseURL"), projectId = extract("projectId"), storageBucket = extract("storageBucket"), messagingSenderId = extract("messagingSenderId"), appId = extract("appId"), measurementId = extract("measurementId");
+                if (!apiKey || !authDomain || !projectId) { errorEl.textContent = "Could not parse config."; errorEl.style.display = "block"; return; }
+                document.getElementById("cfgApiKey").value = apiKey;
+                document.getElementById("cfgAuthDomain").value = authDomain;
+                document.getElementById("cfgDatabaseURL").value = databaseURL;
+                document.getElementById("cfgProjectId").value = projectId;
+                document.getElementById("cfgStorageBucket").value = storageBucket;
+                document.getElementById("cfgMessagingSenderId").value = messagingSenderId;
+                document.getElementById("cfgAppId").value = appId;
+                document.getElementById("cfgMeasurementId").value = measurementId;
+                errorEl.textContent = "All fields auto-filled! Click 'Save & Launch App' below.";
+                errorEl.style.color = "var(--success)";
+                errorEl.style.display = "block";
+            } catch (e) { errorEl.textContent = "Parse error: " + e.message; errorEl.style.display = "block"; }
+        }
+
+        function saveConfig() {
+            const apiKey = document.getElementById("cfgApiKey").value.trim();
+            const authDomain = document.getElementById("cfgAuthDomain").value.trim();
+            const databaseURL = document.getElementById("cfgDatabaseURL").value.trim();
+            const projectId = document.getElementById("cfgProjectId").value.trim();
+            const storageBucket = document.getElementById("cfgStorageBucket").value.trim();
+            const messagingSenderId = document.getElementById("cfgMessagingSenderId").value.trim();
+            const appId = document.getElementById("cfgAppId").value.trim();
+            const measurementId = document.getElementById("cfgMeasurementId").value.trim();
+            const errorEl = document.getElementById("setupError");
+            if (!apiKey || !authDomain || !databaseURL || !projectId || !storageBucket || !messagingSenderId || !appId || !measurementId) {
+                errorEl.textContent = "Please fill in all 8 fields.";
+                errorEl.style.display = "block";
+                return;
+            }
+            localStorage.setItem("gameVault_firebaseConfig", JSON.stringify({ apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId }));
+            location.reload();
+        }
+
+        const savedCfg = localStorage.getItem("gameVault_firebaseConfig");
+        if (savedCfg) { try { Object.assign(firebaseConfig, JSON.parse(savedCfg)); } catch (e) { console.error(e); } }
+
+        // --- HELPERS ---
         function getInitials(title) {
             const words = title.split(/[ \t:]+/).filter(w => w.length > 0 && !w.match(/^[0-9]$/));
             if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
             return title.substring(0, 2).toUpperCase();
         }
+
         function getColor(id) {
             const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
             return colors[(id - 1) % colors.length];
         }
+
         function formatSize(bytes) {
             if (bytes < 1024) return bytes + " B";
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
             return (bytes / (1024 * 1024)).toFixed(1) + " MB";
         }
 
-        // --- GAME COVER HTML (with lazy loading) ---
         function getCoverHTML(game) {
             const color = getColor(game.id);
             if (game.steamId) {
@@ -725,16 +890,9 @@ service cloud.firestore {
         let posts = [];
         let postsUnsubscribe = null;
         let chatOpenState = {};
-        let allPostDocs = []; // store all post IDs for pagination
         let postsPerPage = 20;
         let currentPage = 0;
         let isLoadingMore = false;
-
-        // --- FIREBASE CONFIG FUNCTIONS (unchanged) ---
-        function isConfigValid() { /* ... */ }
-        function autoParseConfig() { /* ... */ }
-        function saveConfig() { /* ... */ }
-        // (these are kept from previous version – omitted for brevity but must be included)
 
         // --- LOAD GAMES ---
         async function loadGames() {
@@ -749,63 +907,326 @@ service cloud.firestore {
             }
             filterGames();
         }
-        function generateMissingGames() { /* ... */ }
+
+        function generateMissingGames() {
+            const genres = ["Action", "RPG", "Adventure", "Shooter", "Strategy", "Sports", "Racing", "Simulation", "Puzzle", "Fighting", "MMO", "MOBA", "Battle Royale", "Survival", "Horror"];
+            const years = Array.from({ length: 30 }, (_, i) => 1994 + i);
+            const result = [];
+            for (let i = 1; i <= 1000; i++) {
+                result.push({
+                    id: i,
+                    title: `Game ${i}`,
+                    genre: genres[i % genres.length],
+                    year: years[i % years.length],
+                    steamId: null,
+                    multiplayer: i % 3 === 0
+                });
+            }
+            return result;
+        }
 
         // --- FILTERS ---
-        function filterByStatus(status) { /* ... */ }
-        function filterGames() { /* ... */ }
+        function filterByStatus(status) {
+            currentFilterStatus = status;
+            document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
+            if (status === 'all') {
+                document.getElementById('filterAll').classList.add('active');
+            } else {
+                const filterMap = {
+                    'completed': 'filterCompleted',
+                    'playing': 'filterPlaying',
+                    'looking': 'filterLooking',
+                    'lfg': 'filterLfg'
+                };
+                const target = document.getElementById(filterMap[status]);
+                if (target) target.classList.add('active');
+            }
+            filterGames();
+        }
 
-        // --- OPEN GAME MODAL (unchanged) ---
-        async function openGameModal(game) { /* ... */ }
-        function closeGameModal(e) { /* ... */ }
-        function updateStatusLabels() { /* ... */ }
-        async function toggleComplete() { /* ... */ }
-        async function togglePlaying() { /* ... */ }
-        async function toggleLooking() { /* ... */ }
-        async function toggleLFG() { /* ... */ }
+        function filterGames() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            const sort = document.getElementById("sortSelect").value;
+            let filtered = games.filter(g => {
+                const titleMatch = g.title.toLowerCase().includes(query);
+                let statusMatch = true;
+                if (currentFilterStatus === 'completed') statusMatch = myCompletions.includes(g.id);
+                else if (currentFilterStatus === 'playing') statusMatch = myPlaying.includes(g.id);
+                else if (currentFilterStatus === 'looking') statusMatch = myLooking.includes(g.id);
+                else if (currentFilterStatus === 'lfg') statusMatch = myLFG.includes(g.id);
+                return titleMatch && statusMatch;
+            });
+            switch(sort) {
+                case 'title-asc': filtered.sort((a,b) => a.title.localeCompare(b.title)); break;
+                case 'title-desc': filtered.sort((a,b) => b.title.localeCompare(a.title)); break;
+                case 'year-desc': filtered.sort((a,b) => b.year - a.year); break;
+                case 'year-asc': filtered.sort((a,b) => a.year - b.year); break;
+                default: break;
+            }
+            const grid = document.getElementById("gamesGrid");
+            grid.innerHTML = "";
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state">No games found for this filter. Try changing your search or filter.</div>`;
+                document.getElementById("resultsCount").textContent = "No games found";
+                return;
+            }
+            document.getElementById("resultsCount").textContent = query ? `Found ${filtered.length} games` : "Showing all games";
+            filtered.forEach(game => {
+                const isCompleted = myCompletions.includes(game.id);
+                const isPlaying = myPlaying.includes(game.id);
+                const isLooking = myLooking.includes(game.id);
+                const isLFG = myLFG.includes(game.id);
+                const card = document.createElement("div");
+                let cls = "game-card";
+                if (isCompleted) cls += " completed";
+                if (isPlaying) cls += " playing";
+                if (isLooking) cls += " looking_for_players";
+                if (isLFG) cls += " lfg";
+                card.className = cls;
+                card.onclick = () => openGameModal(game);
+                let coverHtml = getCoverHTML(game);
+                let badge = "";
+                if (isCompleted) badge = `<span class="game-status-badge" style="background:rgba(16,185,129,0.2);color:var(--success);">Completed</span>`;
+                else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
+                else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
+                else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
+                card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}${badge}</div></div>`;
+                grid.appendChild(card);
+            });
+        }
 
-        // --- SAVE FILES (unchanged) ---
-        function allowDrop(e) { /* ... */ }
-        function leaveDrop(e) { /* ... */ }
-        function dropSave(e) { /* ... */ }
-        function handleFileSelect(e) { /* ... */ }
-        async function processFile(file) { /* ... */ }
-        function renderModalSaves() { /* ... */ }
-        function downloadSaveFromData(base64Data, name) { /* ... */ }
-        async function loadFriendSavesForGame(gameId) { /* ... */ }
+        // --- OPEN GAME MODAL ---
+        async function openGameModal(game) {
+            currentGame = game;
+            document.getElementById("modalTitle").textContent = game.title;
+            document.getElementById("modalBadge").textContent = `${game.genre} • ${game.year}`;
+            document.getElementById("modalDesc").textContent = game.desc || `${game.title} is a ${game.genre} game released in ${game.year}.`;
 
-        // --- OPTIMIZED POSTS: Denormalized user data + pagination ---
+            const cover = document.getElementById("modalCover");
+            const color = getColor(game.id);
+            cover.innerHTML = '';
+            cover.style.background = 'none';
+
+            if (game.steamId) {
+                const img = document.createElement('img');
+                img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg`;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "var(--radius)";
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.style.display = "flex";
+                    fallback.style.alignItems = "center";
+                    fallback.style.justifyContent = "center";
+                    fallback.style.width = "100%";
+                    fallback.style.height = "100%";
+                    fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
+                    fallback.style.color = "#fff";
+                    fallback.style.fontWeight = "600";
+                    fallback.style.fontSize = "1rem";
+                    fallback.style.textAlign = "center";
+                    fallback.style.padding = "1rem";
+                    fallback.style.wordBreak = "break-word";
+                    fallback.style.borderRadius = "var(--radius)";
+                    fallback.textContent = game.title;
+                    cover.appendChild(fallback);
+                };
+                cover.appendChild(img);
+            } else {
+                const fallback = document.createElement('div');
+                fallback.style.display = "flex";
+                fallback.style.alignItems = "center";
+                fallback.style.justifyContent = "center";
+                fallback.style.width = "100%";
+                fallback.style.height = "100%";
+                fallback.style.background = `linear-gradient(135deg, ${color}80, ${color})`;
+                fallback.style.color = "#fff";
+                fallback.style.fontWeight = "600";
+                fallback.style.fontSize = "1rem";
+                fallback.style.textAlign = "center";
+                fallback.style.padding = "1rem";
+                fallback.style.wordBreak = "break-word";
+                fallback.style.borderRadius = "var(--radius)";
+                fallback.textContent = game.title;
+                cover.appendChild(fallback);
+            }
+
+            const completeLabel = document.getElementById("completeLabel");
+            if (game.multiplayer) {
+                completeLabel.style.display = "none";
+                document.getElementById("completeCheckbox").checked = false;
+            } else {
+                completeLabel.style.display = "flex";
+            }
+            document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
+
+            document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
+            document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
+            document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
+            document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
+            updateStatusLabels();
+            renderModalSaves();
+            await loadFriendSavesForGame(game.id);
+            document.getElementById("gameModal").classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeGameModal(e) {
+            if (!e || e.target === document.getElementById("gameModal")) {
+                document.getElementById("gameModal").classList.remove("active");
+                document.body.style.overflow = "";
+                currentGame = null;
+            }
+        }
+
+        function updateStatusLabels() {
+            document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox").checked);
+            document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
+            document.getElementById("lookingLabel").classList.toggle("looking-checked", document.getElementById("lookingCheckbox").checked);
+            document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
+        }
+
+        // --- TOGGLE STATUSES ---
+        async function toggleComplete() {
+            if (!currentGame) return;
+            if (currentGame.multiplayer) { showToast("Cannot mark multiplayer games as completed", true); document.getElementById("completeCheckbox").checked = false; return; }
+            const cb = document.getElementById("completeCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId);
+            try {
+                if (cb.checked) { await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() }); if (!myCompletions.includes(currentGame.id)) myCompletions.push(currentGame.id); } else { await ref.delete(); myCompletions = myCompletions.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Game marked as completed!" : "Unmarked");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        async function togglePlaying() {
+            if (!currentGame) return;
+            const cb = document.getElementById("playingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myPlaying.includes(currentGame.id)) myPlaying.push(currentGame.id);
+                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
+                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "playing", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
+                } else { await ref.delete(); myPlaying = myPlaying.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        async function toggleLooking() {
+            if (!currentGame) return;
+            const cb = document.getElementById("lookingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myLooking.includes(currentGame.id)) myLooking.push(currentGame.id);
+                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
+                    if (myLFG.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "looking", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLFG = myLFG.filter(id => id !== currentGame.id); document.getElementById("lfgCheckbox").checked = false; }
+                } else { await ref.delete(); myLooking = myLooking.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for players!" : "Removed from looking");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        async function toggleLFG() {
+            if (!currentGame) return;
+            if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true); document.getElementById("lfgCheckbox").checked = false; return; }
+            const cb = document.getElementById("lfgCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myLFG.includes(currentGame.id)) myLFG.push(currentGame.id);
+                    if (myPlaying.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myPlaying = myPlaying.filter(id => id !== currentGame.id); document.getElementById("playingCheckbox").checked = false; }
+                    if (myLooking.includes(currentGame.id)) { await db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId).set({ status: "lfg", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); myLooking = myLooking.filter(id => id !== currentGame.id); document.getElementById("lookingCheckbox").checked = false; }
+                } else { await ref.delete(); myLFG = myLFG.filter(id => id !== currentGame.id); }
+                updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
+            } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
+        }
+
+        // --- SAVE FILES ---
+        function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
+        function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
+        function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
+        function handleFileSelect(e) { if (e.target.files.length) processFile(e.target.files[0]); }
+
+        async function processFile(file) {
+            if (!currentGame) return;
+            if (file.size > 500 * 1024) { showToast("File too large (max 500KB)", true); return; }
+            const gameId = currentGame.id;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    showToast("Uploading save...");
+                    const base64 = e.target.result.split(",")[1];
+                    const fileDoc = await db.collection("users").doc(currentUser.uid).collection("saveFiles").add({ gameId, name: file.name, data: base64, size: formatSize(file.size), uploadedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!mySaves[gameId]) mySaves[gameId] = [];
+                    mySaves[gameId].push({ id: fileDoc.id, gameId, name: file.name, data: base64, size: formatSize(file.size) });
+                    renderModalSaves(); updateStats(); showToast("Save uploaded!");
+                } catch (err) { showToast("Upload failed: " + err.message, true); }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderModalSaves() {
+            const container = document.getElementById("modalSaves");
+            const saves = mySaves[currentGame?.id] || [];
+            if (!saves.length) { container.innerHTML = '<p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.9rem;">No save files uploaded yet</p>'; return; }
+            container.innerHTML = saves.map(save => `<div class="save-item"><div><div class="save-name">${save.name}</div><div class="save-meta">${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join("");
+        }
+
+        function downloadSaveFromData(base64Data, name) {
+            try {
+                const byteString = atob(base64Data), ab = new ArrayBuffer(byteString.length), ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+                const blob = new Blob([ab]), url = URL.createObjectURL(blob), a = document.createElement("a");
+                a.href = url; a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                showToast("Download started!");
+            } catch (err) { showToast("Error downloading: " + err.message, true); }
+        }
+
+        async function loadFriendSavesForGame(gameId) {
+            const section = document.getElementById("friendSavesSection"), list = document.getElementById("friendSavesList");
+            if (!friendsList.length) { section.style.display = "none"; return; }
+            let has = false, html = "";
+            for (const friend of friendsList) {
+                try {
+                    const snap = await db.collection("users").doc(friend.uid).collection("saveFiles").where("gameId", "==", gameId).get();
+                    if (!snap.empty) {
+                        has = true;
+                        snap.docs.forEach(d => {
+                            const save = d.data();
+                            html += `<div class="friend-save-row"><div class="friend-save-avatar" style="background:${friend.avatarColor};${friend.photoData ? `background-image:url(${friend.photoData});background-size:cover;` : ''}">${friend.photoData ? '' : getInitials(friend.displayName)}</div><div style="flex:1;"><div class="save-name">${save.name}</div><div class="save-meta">${friend.displayName} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`;
+                        });
+                    }
+                } catch (err) { console.error(err); }
+            }
+            if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
+        }
+
+        // --- OPTIMIZED POSTS WITH REAL-TIME UPDATES ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
                 postsUnsubscribe = null;
             }
-            // Reset pagination
-            allPostDocs = [];
             currentPage = 0;
             posts = [];
             chatOpenState = {};
             document.getElementById('loadMorePostsBtn').style.display = 'none';
 
-            // Fetch first batch with limit
             const query = db.collection("posts")
                 .orderBy("createdAt", "desc")
                 .limit(postsPerPage);
 
             postsUnsubscribe = query.onSnapshot(async (snapshot) => {
                 const newPosts = [];
-                // Store all post IDs for pagination
-                allPostDocs = snapshot.docs.map(d => d.id);
                 for (const doc of snapshot.docs) {
                     const data = doc.data();
-                    // User data is already denormalized in the post
                     const user = {
                         displayName: data.userDisplayName || 'Unknown',
                         avatarColor: data.userAvatarColor || '#8b5cf6',
                         nameColor: data.userNameColor || '#f1f5f9',
                         photoData: data.userPhotoData || ''
                     };
-                    // Get user's vote for this post
                     let userVote = 0;
                     if (currentUser) {
                         try {
@@ -813,17 +1234,16 @@ service cloud.firestore {
                             if (voteDoc.exists) userVote = voteDoc.data().vote;
                         } catch (e) {}
                     }
-                    const postObj = {
+                    newPosts.push({
                         id: doc.id,
                         ...data,
                         user: user,
                         userVote: userVote,
                         _chatOpen: chatOpenState[doc.id] || false
-                    };
-                    newPosts.push(postObj);
+                    });
                 }
                 posts = newPosts;
-                // Show load more button if there are more posts
+                // Check if more posts exist
                 const totalCount = await db.collection("posts").count().get();
                 const total = totalCount.data().count;
                 if (total > postsPerPage) {
@@ -844,7 +1264,6 @@ service cloud.firestore {
             });
         }
 
-        // Load more posts (pagination)
         async function loadMorePosts() {
             if (isLoadingMore) return;
             isLoadingMore = true;
@@ -860,7 +1279,6 @@ service cloud.firestore {
 
                 const snapshot = await query.get();
                 const newPosts = [];
-                allPostDocs = snapshot.docs.map(d => d.id);
                 for (const doc of snapshot.docs) {
                     const data = doc.data();
                     const user = {
@@ -892,7 +1310,6 @@ service cloud.firestore {
                     document.getElementById("postTagFilter").value
                 );
 
-                // Check if we have all posts
                 const totalCount = await db.collection("posts").count().get();
                 const total = totalCount.data().count;
                 if (posts.length >= total) {
@@ -910,9 +1327,7 @@ service cloud.firestore {
             }
         }
 
-        // --- RENDER POSTS (optimized) ---
         function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
-            // Filter posts
             let filtered = posts.filter(p => {
                 const gameMatch = p.gameTitle.toLowerCase().includes(filter.toLowerCase());
                 const userMatch = p.user && p.user.displayName.toLowerCase().includes(filter.toLowerCase());
@@ -920,7 +1335,6 @@ service cloud.firestore {
                 return (gameMatch || userMatch) && tagMatch;
             });
 
-            // Sort
             switch (sort) {
                 case "new": filtered.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)); break;
                 case "top": filtered.sort((a, b) => (b.score || 0) - (a.score || 0)); break;
@@ -937,7 +1351,6 @@ service cloud.firestore {
                 return;
             }
 
-            // Build HTML efficiently
             let html = '';
             filtered.forEach(post => {
                 const isAuthor = post.userId === currentUser.uid;
@@ -983,26 +1396,171 @@ service cloud.firestore {
                 </div>`;
             });
             grid.innerHTML = html;
-            // Re-attach context menu listeners
             document.querySelectorAll('.chat-message').forEach(el => {
                 el.addEventListener('contextmenu', showContextMenu);
             });
         }
 
-        // --- POST FUNCTIONS (unchanged) ---
-        function toggleChat(postId) { /* ... */ }
-        async function sendChatMessage(postId) { /* ... */ }
-        function filterPosts() { /* ... */ }
-        function getTagLabel(tag) { /* ... */ }
-        function getTagClass(tag) { /* ... */ }
-        async function votePost(postId, newVote) { /* ... */ }
-        function setupGameCombobox() { /* ... */ }
-        function showGameDropdown() { /* ... */ }
-        function filterGameOptions() { /* ... */ }
-        function openPostModal() { /* ... */ }
-        function closePostModal(e) { /* ... */ }
+        function toggleChat(postId) {
+            chatOpenState[postId] = !chatOpenState[postId];
+            const post = posts.find(p => p.id === postId);
+            if (post) post._chatOpen = chatOpenState[postId];
+            renderPosts(
+                document.getElementById("postSearchInput").value,
+                document.getElementById("postSortFilter").value,
+                document.getElementById("postTagFilter").value
+            );
+        }
+
+        async function sendChatMessage(postId) {
+            const input = document.getElementById(`chatInput_${postId}`);
+            const msg = input.value.trim();
+            if (!msg) return;
+            input.value = "";
+            try {
+                const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                if (!postDoc.exists) {
+                    showToast("Post no longer exists", true);
+                    return;
+                }
+                const data = postDoc.data();
+                const messages = data.chatMessages || [];
+                const newMsg = {
+                    id: Date.now().toString(),
+                    userId: currentUser.uid,
+                    displayName: userProfile.displayName,
+                    nameColor: userProfile.nameColor || "#f1f5f9",
+                    avatarColor: userProfile.avatarColor || "#8b5cf6",
+                    photoData: userProfile.photoData || "",
+                    message: msg,
+                    timestamp: Date.now()
+                };
+                messages.push(newMsg);
+                await postRef.update({ chatMessages: messages, chatCount: messages.length });
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    if (!post.chatMessages) post.chatMessages = [];
+                    post.chatMessages.push(newMsg);
+                    post.chatCount = messages.length;
+                    chatOpenState[postId] = true;
+                    renderPosts(
+                        document.getElementById("postSearchInput").value,
+                        document.getElementById("postSortFilter").value,
+                        document.getElementById("postTagFilter").value
+                    );
+                }
+            } catch (err) {
+                console.error("Chat error:", err);
+                showToast("Error sending message: " + err.message, true);
+                const inp = document.getElementById(`chatInput_${postId}`);
+                if (inp) {
+                    inp.value = msg;
+                    inp.focus();
+                }
+                if (err.message && err.message.includes('permission')) {
+                    showToast("Permission denied. Make sure Firestore rules allow 'chatMessages' updates.", true);
+                }
+            }
+        }
+
+        // --- POST CRUD ---
+        function filterPosts() {
+            const search = document.getElementById("postSearchInput").value;
+            const sort = document.getElementById("postSortFilter").value;
+            const tag = document.getElementById("postTagFilter").value;
+            renderPosts(search, sort, tag);
+        }
+
+        function getTagLabel(tag) {
+            const map = { "lfg": "LFG", "player": "Looking", "tip": "Tip", "help": "Help", "rate": "Rate" };
+            return map[tag] || tag;
+        }
+
+        function getTagClass(tag) {
+            const map = { "lfg": "tag-lfg", "player": "tag-player", "tip": "tag-tip", "help": "tag-help", "rate": "tag-rate" };
+            return map[tag] || "";
+        }
+
+        async function votePost(postId, newVote) {
+            if (!currentUser) { showToast("Please login first", true); return; }
+            newVote = parseInt(newVote);
+            const postRef = db.collection("posts").doc(postId);
+            const voteRef = db.collection("posts").doc(postId).collection("votes").doc(currentUser.uid);
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const postDoc = await transaction.get(postRef);
+                    const voteDoc = await transaction.get(voteRef);
+                    if (!postDoc.exists) throw new Error("Post does not exist");
+                    const currentVote = voteDoc.exists ? voteDoc.data().vote : 0;
+                    let finalVote = newVote;
+                    if (newVote === currentVote) finalVote = 0;
+                    let upvoteInc = 0, downvoteInc = 0, scoreInc = 0;
+                    if (currentVote === 1) upvoteInc -= 1; else if (currentVote === -1) downvoteInc -= 1;
+                    scoreInc -= currentVote;
+                    if (finalVote === 1) upvoteInc += 1; else if (finalVote === -1) downvoteInc += 1;
+                    scoreInc += finalVote;
+                    if (finalVote === 0) { transaction.delete(voteRef); } else { transaction.set(voteRef, { vote: finalVote }); }
+                    transaction.update(postRef, { score: firebase.firestore.FieldValue.increment(scoreInc), upvotes: firebase.firestore.FieldValue.increment(upvoteInc), downvotes: firebase.firestore.FieldValue.increment(downvoteInc) });
+                    const post = posts.find(p => p.id === postId);
+                    if (post) { post.score += scoreInc; post.upvotes += upvoteInc; post.downvotes += downvoteInc; post.userVote = finalVote; }
+                });
+                filterPosts();
+                showToast("Vote updated!");
+            } catch (err) { console.error("Error voting:", err); showToast("Error voting: " + err.message, true); }
+        }
+
+        function setupGameCombobox() {
+            const input = document.getElementById("postGameSearch");
+            const dropdown = document.getElementById("gameDropdown");
+            const hidden = document.getElementById("postGameId");
+            input.addEventListener("focus", showGameDropdown);
+            input.addEventListener("blur", () => setTimeout(() => { dropdown.classList.remove("show"); }, 200));
+            dropdown.addEventListener("click", (e) => {
+                const item = e.target.closest(".dropdown-item");
+                if (item) {
+                    const gameId = parseInt(item.dataset.id);
+                    const title = item.textContent;
+                    input.value = title;
+                    hidden.value = gameId;
+                    dropdown.classList.remove("show");
+                }
+            });
+            filterGameOptions();
+        }
+
+        function showGameDropdown() { document.getElementById("gameDropdown").classList.add("show"); }
+
+        function filterGameOptions() {
+            const input = document.getElementById("postGameSearch");
+            const dropdown = document.getElementById("gameDropdown");
+            const query = input.value.toLowerCase().trim();
+            const filtered = games.filter(g => g.title.toLowerCase().includes(query));
+            if (!filtered.length) { dropdown.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);cursor:default;">No games found</div>'; } else { dropdown.innerHTML = filtered.map(g => `<div class="dropdown-item" data-id="${g.id}">${g.title}</div>`).join(""); }
+            dropdown.classList.add("show");
+        }
+
+        function openPostModal() {
+            editingPostId = null;
+            document.getElementById("postModalTitle").textContent = "Create Post";
+            document.getElementById("postSubmitBtn").textContent = "Create Post";
+            document.getElementById("postEditId").value = "";
+            document.getElementById("postTitle").value = "";
+            document.getElementById("postMessage").value = "";
+            document.getElementById("postGameSearch").value = "";
+            document.getElementById("postGameId").value = "";
+            document.getElementById("postTagSelect").value = "lfg";
+            document.getElementById("gameDropdown").classList.remove("show");
+            document.getElementById("postModal").classList.add("active");
+        }
+
+        function closePostModal(e) {
+            if (!e || e.target === document.getElementById("postModal")) { document.getElementById("postModal").classList.remove("active"); }
+        }
+
+        let editingPostId = null;
+
         async function submitPost() {
-            // Include user data in the post
             const title = document.getElementById("postTitle").value.trim();
             const gameId = parseInt(document.getElementById("postGameId").value);
             const message = document.getElementById("postMessage").value.trim();
@@ -1025,7 +1583,6 @@ service cloud.firestore {
                     score: 0,
                     upvotes: 0,
                     downvotes: 0,
-                    // Denormalize user data for fast reading
                     userDisplayName: userProfile.displayName,
                     userAvatarColor: userProfile.avatarColor || "#8b5cf6",
                     userNameColor: userProfile.nameColor || "#f1f5f9",
@@ -1042,56 +1599,398 @@ service cloud.firestore {
                 closePostModal();
             } catch (err) { console.error("Submit post error:", err); showToast("Error: " + err.message, true); }
         }
-        function editPost(postId) { /* ... */ }
-        async function deletePost(postId) { /* ... */ }
 
-        // --- CONTEXT MENU (unchanged) ---
+        function editPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) { showToast("Post not found", true); return; }
+            editingPostId = postId;
+            document.getElementById("postModalTitle").textContent = "Edit Post";
+            document.getElementById("postSubmitBtn").textContent = "Update Post";
+            document.getElementById("postEditId").value = postId;
+            document.getElementById("postTitle").value = post.title || "";
+            document.getElementById("postMessage").value = post.message || "";
+            document.getElementById("postGameSearch").value = post.gameTitle;
+            document.getElementById("postGameId").value = post.gameId;
+            document.getElementById("postTagSelect").value = post.tag || "lfg";
+            document.getElementById("gameDropdown").classList.remove("show");
+            document.getElementById("postModal").classList.add("active");
+        }
+
+        async function deletePost(postId) {
+            if (!confirm("Delete this post?")) return;
+            try { await db.collection("posts").doc(postId).delete(); showToast("Post deleted"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        // --- CONTEXT MENU ---
         let contextTarget = null;
-        function showContextMenu(e) { /* ... */ }
-        function hideContextMenu() { /* ... */ }
-        async function editChatMessage(postId, msgId) { /* ... */ }
-        async function deleteChatMessage(postId, msgId) { /* ... */ }
-        async function addFriendFromPost(userId) { /* ... */ }
 
-        // --- NAVIGATION & STATS (unchanged) ---
-        function showPosts() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "block"; loadPosts(); updateNav('posts'); }
-        function updateNav(tab) { /* ... */ }
-        function updateStats() { /* ... */ }
-        function showGames() { /* ... */ }
-        function showProfile() { /* ... */ }
-        function showFriends() { /* ... */ }
+        function showContextMenu(e) {
+            e.preventDefault();
+            const msgEl = e.currentTarget;
+            const msgId = msgEl.dataset.msgid;
+            const postId = msgEl.dataset.postid;
+            const userId = msgEl.dataset.userid;
+            const isOwn = userId === currentUser.uid;
+            contextTarget = { msgId, postId, element: msgEl };
+            const menu = document.getElementById("contextMenu");
+            const editItem = document.getElementById("ctxEdit");
+            const deleteItem = document.getElementById("ctxDelete");
+            editItem.style.display = isOwn ? "block" : "none";
+            deleteItem.style.display = isOwn ? "block" : "block";
+            menu.style.left = Math.min(e.pageX, window.innerWidth - 150) + "px";
+            menu.style.top = Math.min(e.pageY, window.innerHeight - 100) + "px";
+            menu.style.display = "block";
+            editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
+            deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
+        }
 
-        // --- PROFILE (unchanged) ---
-        function renderProfile() { /* ... */ }
-        async function removeGameFromList(gameId, listType) { /* ... */ }
+        function hideContextMenu() { document.getElementById("contextMenu").style.display = "none"; }
+        document.addEventListener("click", hideContextMenu);
 
-        // --- PROFILE SETTINGS (unchanged) ---
-        async function updateProfileName() { /* ... */ }
-        async function updateNameColor() { /* ... */ }
-        async function updateAvatarColor() { /* ... */ }
-        async function uploadProfilePhoto() { /* ... */ }
-        async function updateSocial(type) { /* ... */ }
+        async function editChatMessage(postId, msgId) {
+            const newMsg = prompt("Edit your message:");
+            if (newMsg === null || newMsg.trim() === "") return;
+            try {
+                const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                const data = postDoc.data();
+                let messages = data.chatMessages || [];
+                const idx = messages.findIndex(m => m.id === msgId);
+                if (idx === -1) { showToast("Message not found", true); return; }
+                messages[idx].message = newMsg.trim();
+                await postRef.update({ chatMessages: messages });
+                showToast("Message updated");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
 
-        // --- FRIENDS (unchanged) ---
-        async function loadFriends() { /* ... */ }
-        async function loadRequests() { /* ... */ }
-        function renderFriends() { /* ... */ }
-        function switchFriendsTab(tab) { /* ... */ }
-        function renderRequests() { /* ... */ }
-        async function sendFriendRequest(targetUid) { /* ... */ }
-        async function acceptRequest(requestId, fromUid) { /* ... */ }
-        async function declineRequest(requestId) { /* ... */ }
-        function openSearchModal() { /* ... */ }
-        function closeSearchModal(e) { /* ... */ }
+        async function deleteChatMessage(postId, msgId) {
+            if (!confirm("Delete this message?")) return;
+            try {
+                const postRef = db.collection("posts").doc(postId);
+                const postDoc = await postRef.get();
+                const data = postDoc.data();
+                let messages = data.chatMessages || [];
+                messages = messages.filter(m => m.id !== msgId);
+                await postRef.update({ chatMessages: messages, chatCount: messages.length });
+                showToast("Message deleted");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function addFriendFromPost(userId) {
+            if (userId === currentUser.uid) { showToast("That's you!", true); return; }
+            try {
+                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(userId).get();
+                if (friendDoc.exists) { showToast("Already friends!", true); return; }
+                const reqSnap = await db.collection("users").doc(userId).collection("requests").where("from", "==", currentUser.uid).get();
+                if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
+                await db.collection("users").doc(userId).collection("requests").add({ from: currentUser.uid, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast("Friend request sent!");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        // --- NAVIGATION ---
+        function showPosts() {
+            document.getElementById("gamesView").style.display = "none";
+            document.getElementById("profileView").classList.remove("active");
+            document.getElementById("friendsView").classList.remove("active");
+            document.getElementById("postsView").style.display = "block";
+            loadPosts();
+            updateNav('posts');
+        }
+
+        function updateNav(tab) {
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if(tab === 'games') document.getElementById('navGames').classList.add('active');
+            if(tab === 'friends') document.getElementById('navFriends').classList.add('active');
+            if(tab === 'posts') document.getElementById('navPosts').classList.add('active');
+            if(tab === 'profile') document.getElementById('navProfile').classList.add('active');
+        }
+
+        function updateStats() {
+            const count = myCompletions.length;
+            const playingCount = myPlaying.length;
+            const totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
+            document.getElementById("completedCount").textContent = count;
+            document.getElementById("playingCount").textContent = playingCount;
+            document.getElementById("totalGames").textContent = games.length;
+            document.getElementById("savesCount").textContent = totalSaves;
+            document.getElementById("friendsCount").textContent = friendsList.length;
+        }
+
+        function showGames() {
+            document.getElementById("gamesView").style.display = "block";
+            document.getElementById("profileView").classList.remove("active");
+            document.getElementById("friendsView").classList.remove("active");
+            document.getElementById("postsView").style.display = "none";
+            filterGames();
+            updateNav('games');
+        }
+
+        function showProfile() {
+            document.getElementById("gamesView").style.display = "none";
+            document.getElementById("profileView").classList.add("active");
+            document.getElementById("friendsView").classList.remove("active");
+            document.getElementById("postsView").style.display = "none";
+            renderProfile();
+            closeUserDropdown();
+            updateNav('profile');
+        }
+
+        function showFriends() {
+            document.getElementById("gamesView").style.display = "none";
+            document.getElementById("profileView").classList.remove("active");
+            document.getElementById("friendsView").classList.add("active");
+            document.getElementById("postsView").style.display = "none";
+            renderFriends();
+            updateNav('friends');
+        }
+
+        // --- PROFILE ---
+        function renderProfile() {
+            if (!userProfile) return;
+            const count = myCompletions.length, playingCount = myPlaying.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
+            const avatar = document.getElementById("profileAvatar");
+            if (avatar) setAvatarElement(avatar, userProfile);
+            document.getElementById("profileName").textContent = userProfile.displayName;
+            document.getElementById("profileName").style.color = userProfile.nameColor || "#f1f5f9";
+            document.getElementById("profileEmail").textContent = currentUser.email;
+            document.getElementById("profileCompleted").textContent = count;
+            document.getElementById("profilePlaying").textContent = playingCount;
+            document.getElementById("profileSaves").textContent = totalSaves;
+            document.getElementById("profileFriends").textContent = friendsList.length;
+
+            const grid = document.getElementById("completedGamesGrid");
+            grid.innerHTML = "";
+            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
+
+            const playingGrid = document.getElementById("playingGamesGrid");
+            playingGrid.innerHTML = "";
+            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
+
+            const savesList = document.getElementById("profileSavesList");
+            const allSaves = [];
+            Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
+            if (!allSaves.length) { savesList.innerHTML = '<div class="empty-state">No save files uploaded yet.</div>'; } else { savesList.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
+        }
+
+        async function removeGameFromList(gameId, listType) {
+            if (!confirm("Remove this game from your "+listType+" list?")) return;
+            const ref = listType === 'completed' ? db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString()) : db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
+            try {
+                await ref.delete();
+                if(listType === 'completed') myCompletions = myCompletions.filter(id => id !== gameId);
+                if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
+                showToast("Removed from list!");
+                renderProfile(); updateStats();
+            } catch(err) { showToast("Error removing: " + err.message, true); }
+        }
+
+        // --- PROFILE SETTINGS ---
+        async function updateProfileName() {
+            const name = document.getElementById("settingsName").value.trim();
+            if (!name) { showToast("Please enter a name", true); return; }
+            try { await db.collection("users").doc(currentUser.uid).update({ displayName: name, searchName: name.toLowerCase() }); userProfile.displayName = name; document.getElementById("headerName").textContent = name; document.getElementById("profileName").textContent = name; showToast("Name updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function updateNameColor() {
+            const color = document.getElementById("settingsNameColor").value;
+            try { await db.collection("users").doc(currentUser.uid).update({ nameColor: color }); userProfile.nameColor = color; document.getElementById("headerName").style.color = color; document.getElementById("profileName").style.color = color; showToast("Name color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function updateAvatarColor() {
+            const color = document.getElementById("settingsAvatarColor").value;
+            try { await db.collection("users").doc(currentUser.uid).update({ avatarColor: color }); userProfile.avatarColor = color; const headerAvatar = document.getElementById("headerAvatar"); const profileAvatar = document.getElementById("profileAvatar"); if (!userProfile.photoData) { if (headerAvatar) { headerAvatar.style.background = color; headerAvatar.style.backgroundImage = "none"; headerAvatar.textContent = getInitials(userProfile.displayName); } if (profileAvatar) { profileAvatar.style.background = color; profileAvatar.style.backgroundImage = "none"; profileAvatar.textContent = getInitials(userProfile.displayName); } } showToast("Avatar color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function uploadProfilePhoto() {
+            if (!userProfile) { showToast("Please wait for profile to load", true); return; }
+            const fileInput = document.getElementById("settingsPhotoFile");
+            const file = fileInput.files[0];
+            if (!file) { showToast("Please select an image", true); return; }
+            if (file.size > 500 * 1024) { showToast("Image too large (max 500KB)", true); return; }
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const base64 = e.target.result;
+                    await db.collection("users").doc(currentUser.uid).update({ photoData: base64 });
+                    userProfile.photoData = base64;
+                    const headerAvatar = document.getElementById("headerAvatar");
+                    const profileAvatar = document.getElementById("profileAvatar");
+                    if (headerAvatar) { headerAvatar.style.backgroundImage = `url(${base64})`; headerAvatar.style.backgroundSize = "cover"; headerAvatar.style.backgroundPosition = "center"; headerAvatar.textContent = ""; }
+                    if (profileAvatar) { profileAvatar.style.backgroundImage = `url(${base64})`; profileAvatar.style.backgroundSize = "cover"; profileAvatar.style.backgroundPosition = "center"; profileAvatar.textContent = ""; }
+                    showToast("Profile photo uploaded!");
+                } catch (err) { showToast("Upload failed: " + err.message, true); }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function updateSocial(type) {
+            const val = document.getElementById(type === "discord" ? "settingsDiscord" : "settingsReddit").value.trim();
+            try { await db.collection("users").doc(currentUser.uid).update({ [type]: val }); userProfile[type] = val; showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} updated!`); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        // --- FRIENDS ---
+        async function loadFriends() {
+            try {
+                const snap = await db.collection("users").doc(currentUser.uid).collection("friends").get();
+                friendsList = [];
+                for (const doc of snap.docs) { try { const userDoc = await db.collection("users").doc(doc.id).get(); if (userDoc.exists) friendsList.push({ uid: doc.id, ...userDoc.data() }); } catch (e) { console.error(e); } }
+                updateStats();
+            } catch (err) { console.error("loadFriends error:", err); }
+        }
+
+        async function loadRequests() {
+            try {
+                const snap = await db.collection("users").doc(currentUser.uid).collection("requests").get();
+                friendRequests = [];
+                for (const doc of snap.docs) {
+                    const data = doc.data();
+                    if (data.status === "pending") { try { const userDoc = await db.collection("users").doc(data.from).get(); if (userDoc.exists) friendRequests.push({ id: doc.id, from: data.from, ...userDoc.data() }); } catch (e) { console.error(e); } }
+                }
+                const badge = document.getElementById("requestBadge");
+                if (friendRequests.length) { badge.textContent = friendRequests.length; badge.style.display = "inline-flex"; } else badge.style.display = "none";
+            } catch (err) { console.error("loadRequests error:", err); }
+        }
+
+        function renderFriends() {
+            const grid = document.getElementById("friendsGrid");
+            if (!friendsList.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No friends yet. Click "Find Players" to add friends!</div>'; return; }
+            grid.innerHTML = friendsList.map(f => `<div class="friend-card" onclick="openFriendProfile('${f.uid}')"><div class="friend-avatar" style="background:${f.avatarColor};${f.photoData ? `background-image:url(${f.photoData});background-size:cover;` : ''}">${f.photoData ? '' : getInitials(f.displayName)}</div><div class="friend-info"><div class="friend-name" style="color:${f.nameColor || '#f1f5f9'}">${f.displayName}</div><div class="friend-meta">${f.email}</div></div></div>`).join("");
+        }
+
+        function switchFriendsTab(tab) {
+            document.getElementById("tabAll").classList.toggle("active", tab === "all");
+            document.getElementById("tabRequests").classList.toggle("active", tab === "requests");
+            document.getElementById("friendsListContainer").style.display = tab === "all" ? "block" : "none";
+            document.getElementById("requestsContainer").style.display = tab === "requests" ? "block" : "none";
+            if (tab === "requests") renderRequests();
+        }
+
+        function renderRequests() {
+            const list = document.getElementById("requestsList");
+            if (!friendRequests.length) { list.innerHTML = '<div class="empty-state">No pending friend requests</div>'; return; }
+            list.innerHTML = friendRequests.map(req => `<div class="user-result"><div class="user-result-avatar" style="background:${req.avatarColor};${req.photoData ? `background-image:url(${req.photoData});background-size:cover;` : ''}">${req.photoData ? '' : getInitials(req.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${req.nameColor || '#f1f5f9'}">${req.displayName}</div><div class="user-result-email">${req.email}</div></div><div class="request-actions"><button class="btn-success btn-small" onclick="acceptRequest('${req.id}','${req.from}')">Accept</button><button class="btn-danger btn-small" onclick="declineRequest('${req.id}')">Decline</button></div></div>`).join("");
+        }
+
+        async function sendFriendRequest(targetUid) {
+            try {
+                const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(targetUid).get();
+                if (friendDoc.exists) { showToast("Already friends!", true); return; }
+                const reqSnap = await db.collection("users").doc(targetUid).collection("requests").where("from", "==", currentUser.uid).get();
+                if (!reqSnap.empty) { showToast("Request already sent!", true); return; }
+                await db.collection("users").doc(targetUid).collection("requests").add({ from: currentUser.uid, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast("Friend request sent!");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function acceptRequest(requestId, fromUid) {
+            try {
+                const batch = db.batch();
+                batch.set(db.collection("users").doc(currentUser.uid).collection("friends").doc(fromUid), { since: firebase.firestore.FieldValue.serverTimestamp() });
+                batch.set(db.collection("users").doc(fromUid).collection("friends").doc(currentUser.uid), { since: firebase.firestore.FieldValue.serverTimestamp() });
+                batch.delete(db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId));
+                await batch.commit();
+                await loadFriends(); await loadRequests(); renderFriends(); updateStats(); showToast("Friend added!");
+            } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        async function declineRequest(requestId) {
+            try { await db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId).delete(); await loadRequests(); renderRequests(); showToast("Request declined"); } catch (err) { showToast("Error: " + err.message, true); }
+        }
+
+        function openSearchModal() {
+            document.getElementById("searchModal").classList.add("active");
+            document.getElementById("userSearchInput").value = "";
+            document.getElementById("searchResults").innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
+            document.getElementById("userSearchInput").focus();
+        }
+
+        function closeSearchModal(e) {
+            if (!e || e.target === document.getElementById("searchModal")) { document.getElementById("searchModal").classList.remove("active"); }
+        }
+
         let searchTimeout;
-        async function searchUsers() { /* ... */ }
-        async function openFriendProfile(friendUid) { /* ... */ }
-        function closeFriendProfile(e) { /* ... */ }
+        async function searchUsers() {
+            const term = document.getElementById("userSearchInput").value.trim().toLowerCase();
+            const resultsEl = document.getElementById("searchResults"), loadingEl = document.getElementById("searchLoading");
+            if (term.length < 2) { resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>'; return; }
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                loadingEl.style.display = "block";
+                resultsEl.innerHTML = "";
+                try {
+                    const nameSnap = await db.collection("users").where("searchName", ">=", term).where("searchName", "<=", term + "\uf8ff").limit(20).get();
+                    let users = [];
+                    nameSnap.docs.forEach(d => { if (d.id !== currentUser.uid) users.push({ uid: d.id, ...d.data() }); });
+                    const emailSnap = await db.collection("users").where("email", ">=", term).where("email", "<=", term + "\uf8ff").limit(20).get();
+                    emailSnap.docs.forEach(d => { if (d.id !== currentUser.uid && !users.find(u => u.uid === d.id)) users.push({ uid: d.id, ...d.data() }); });
+                    if (!users.length) { resultsEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No players found</p>'; } else { resultsEl.innerHTML = users.map(u => `<div class="user-result"><div class="user-result-avatar" style="background:${u.avatarColor};${u.photoData ? `background-image:url(${u.photoData});background-size:cover;` : ''}">${u.photoData ? '' : getInitials(u.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${u.nameColor || '#f1f5f9'}">${u.displayName}</div><div class="user-result-email">${u.email}</div></div><button class="btn-success btn-small" onclick="sendFriendRequest('${u.uid}')">Add Friend</button></div>`).join(""); }
+                } catch (err) { resultsEl.innerHTML = `<p style="color:var(--danger);text-align:center;padding:2rem;">Error: ${err.message}</p>`; }
+                loadingEl.style.display = "none";
+            }, 300);
+        }
+
+        async function openFriendProfile(friendUid) {
+            const userDoc = await db.collection("users").doc(friendUid).get();
+            if (!userDoc.exists) { showToast("User not found", true); return; }
+            const profile = userDoc.data();
+            const compSnap = await db.collection("users").doc(friendUid).collection("completions").get();
+            const friendCompletions = compSnap.docs.map(d => parseInt(d.id));
+            const playingSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "playing").get();
+            const friendPlaying = playingSnap.docs.map(d => parseInt(d.id));
+            const savesSnap = await db.collection("users").doc(friendUid).collection("saveFiles").get();
+            const friendSaves = {};
+            let totalFriendSaves = 0;
+            savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = []; friendSaves[gid].push(data); totalFriendSaves++; });
+            const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
+            friendPosts = [];
+            postSnap.docs.forEach(d => { friendPosts.push({ id: d.id, ...d.data() }); });
+            const avatar = document.getElementById("friendProfileAvatar");
+            if (profile.photoData) { avatar.style.backgroundImage = `url(${profile.photoData})`; avatar.style.backgroundSize = "cover"; avatar.style.backgroundPosition = "center"; avatar.textContent = ""; } else { avatar.style.backgroundImage = "none"; avatar.style.background = profile.avatarColor; avatar.textContent = getInitials(profile.displayName); }
+            document.getElementById("friendProfileName").textContent = profile.displayName;
+            document.getElementById("friendProfileName").style.color = profile.nameColor || "#f1f5f9";
+            document.getElementById("friendProfileEmail").textContent = profile.email;
+            document.getElementById("friendCompleted").textContent = friendCompletions.length;
+            document.getElementById("friendPlaying").textContent = friendPlaying.length;
+            document.getElementById("friendSavesCount").textContent = totalFriendSaves;
+            const socialDiv = document.getElementById("friendSocialLinks");
+            socialDiv.innerHTML = "";
+            if (profile.discord) socialDiv.innerHTML += `<span class="badge badge-info">Discord: ${profile.discord}</span>`;
+            if (profile.reddit) socialDiv.innerHTML += `<span class="badge badge-warning">Reddit: ${profile.reddit}</span>`;
+            if (!profile.discord && !profile.reddit) socialDiv.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
+            const postsSection = document.getElementById("friendPostsSection");
+            const postsList = document.getElementById("friendPostsList");
+            if (friendPosts.length) {
+                postsSection.style.display = "block";
+                postsList.innerHTML = friendPosts.map(p => `<div style="padding:0.5rem 0;border-bottom:1px solid #2d2d44;display:flex;justify-content:space-between;align-items:center;"><div><span class="post-tag ${getTagClass(p.tag)}" style="font-size:0.6rem;">${getTagLabel(p.tag)}</span><strong style="color:var(--accent);margin-left:0.5rem;">${p.gameTitle}</strong><div style="font-size:0.85rem;color:var(--text-muted);">${p.message || ''}</div></div><button class="btn-success btn-small" onclick="addFriendFromPost('${p.userId}')">Add Friend</button></div>`).join("");
+            } else { postsSection.style.display = "none"; }
+            const grid = document.getElementById("friendCompletedGrid");
+            grid.innerHTML = "";
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            const playingGrid = document.getElementById("friendPlayingGrid");
+            playingGrid.innerHTML = "";
+            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+            const savesContainer = document.getElementById("friendSavesContainer");
+            const allSaves = [];
+            Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
+            if (!allSaves.length) { savesContainer.innerHTML = '<div class="empty-state">No save files shared yet</div>'; } else { savesContainer.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
+            document.getElementById("friendProfileModal").classList.add("active");
+        }
+
+        function closeFriendProfile(e) {
+            if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
+        }
 
         // --- TOAST ---
-        function showToast(msg, isError) { /* ... */ }
+        function showToast(msg, isError) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.className = "toast" + (isError ? " error" : "");
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 4000);
+        }
 
-        // --- AUTH & INIT ---
+        // --- AUTH ---
         function init() {
             if (!isConfigValid()) {
                 document.getElementById("setupWizard").classList.add("active");
@@ -1138,21 +2037,77 @@ service cloud.firestore {
             });
         }
 
-        // --- AUTH HELPERS ---
         function toggleUserDropdown(e) { e.stopPropagation(); document.getElementById("userDropdownMenu").classList.toggle("show"); }
         function closeUserDropdown() { document.getElementById("userDropdownMenu").classList.remove("show"); }
         document.addEventListener("click", closeUserDropdown);
         function openSetupWizard() { document.getElementById("setupWizard").classList.toggle("active"); }
-        function switchAuthTab(tab) { /* ... */ }
-        async function handleLogin(e) { /* ... */ }
-        async function handleRegister(e) { /* ... */ }
+        function switchAuthTab(tab) {
+            document.getElementById("tabLogin").classList.toggle("active", tab === "login");
+            document.getElementById("tabRegister").classList.toggle("active", tab === "register");
+            document.getElementById("loginForm").style.display = tab === "login" ? "flex" : "none";
+            document.getElementById("registerForm").style.display = tab === "register" ? "flex" : "none";
+        }
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById("loginEmail").value, password = document.getElementById("loginPassword").value, errorEl = document.getElementById("loginError");
+            try { await auth.signInWithEmailAndPassword(email, password); } catch (err) { errorEl.textContent = err.message; errorEl.style.display = "block"; }
+        }
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById("regName").value.trim(), email = document.getElementById("regEmail").value, password = document.getElementById("regPassword").value, errorEl = document.getElementById("registerError");
+            try {
+                const cred = await auth.createUserWithEmailAndPassword(email, password);
+                await db.collection("users").doc(cred.user.uid).set({ displayName: name, email: email, searchName: name.toLowerCase(), avatarColor: "#8b5cf6", nameColor: "#f1f5f9", photoData: "", discord: "", reddit: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                await cred.user.updateProfile({ displayName: name });
+            } catch (err) { errorEl.textContent = err.message; errorEl.style.display = "block"; }
+        }
         async function logout() { await auth.signOut(); location.reload(); }
         function resetConfig() { localStorage.removeItem("gameVault_firebaseConfig"); location.reload(); }
-        async function loadUserProfile() { /* ... */ }
-        function setAvatarElement(el, profile) { /* ... */ }
-        async function loadMyData() { /* ... */ }
+        async function loadUserProfile() {
+            const doc = await db.collection("users").doc(currentUser.uid).get();
+            if (doc.exists) {
+                userProfile = doc.data();
+                document.getElementById("headerName").textContent = userProfile.displayName;
+                document.getElementById("headerName").style.color = userProfile.nameColor || "#f1f5f9";
+                const avatar = document.getElementById("headerAvatar");
+                if (avatar) setAvatarElement(avatar, userProfile);
+                document.getElementById("settingsName").value = userProfile.displayName || "";
+                document.getElementById("settingsNameColor").value = userProfile.nameColor || "#f1f5f9";
+                document.getElementById("settingsAvatarColor").value = userProfile.avatarColor || "#8b5cf6";
+                document.getElementById("settingsDiscord").value = userProfile.discord || "";
+                document.getElementById("settingsReddit").value = userProfile.reddit || "";
+            }
+        }
+        function setAvatarElement(el, profile) {
+            if (!el) return;
+            if (profile.photoData && profile.photoData.length > 50) {
+                el.style.backgroundImage = `url(${profile.photoData})`;
+                el.style.backgroundSize = "cover";
+                el.style.backgroundPosition = "center";
+                el.textContent = "";
+            } else {
+                el.style.backgroundImage = "none";
+                el.style.background = profile.avatarColor || "#8b5cf6";
+                el.textContent = getInitials(profile.displayName);
+            }
+        }
+        async function loadMyData() {
+            try {
+                const compSnap = await db.collection("users").doc(currentUser.uid).collection("completions").get();
+                myCompletions = compSnap.docs.map(d => parseInt(d.id));
+                const playingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "playing").get();
+                myPlaying = playingSnap.docs.map(d => parseInt(d.id));
+                const lookingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "looking").get();
+                myLooking = lookingSnap.docs.map(d => parseInt(d.id));
+                const lfgSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "lfg").get();
+                myLFG = lfgSnap.docs.map(d => parseInt(d.id));
+                mySaves = {};
+                const savesSnap = await db.collection("users").doc(currentUser.uid).collection("saveFiles").get();
+                savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!mySaves[gid]) mySaves[gid] = []; mySaves[gid].push({ id: d.id, ...data }); });
+                updateStats();
+            } catch (err) { console.error("loadMyData error:", err); showToast("Failed to load your data: " + err.message, true); }
+        }
 
-        // --- KEYBOARD SHORTCUTS ---
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
                 closeGameModal();
