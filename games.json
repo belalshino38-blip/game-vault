@@ -98,5 +98,7 @@
   {"id":97,"title":"Subnautica","genre":"Adventure","year":2018,"steamId":264710,"multiplayer":false},
   {"id":98,"title":"No Man's Sky","genre":"Adventure","year":2016,"steamId":275850,"multiplayer":true},
   {"id":99,"title":"Outer Wilds","genre":"Adventure","year":2019,"steamId":753640,"multiplayer":false},
-  {"id":100,"title":"Disco Elysium","genre":"RPG","year":2019,"steamId":632300,"multiplayer":false}
+  {"id":100,"title":"Dark Souls Remastered","genre":"Souls","year":2018,"steamId":570940,"multiplayer":true},
+  {"id":101,"title":"Disco Elysium","genre":"RPG","year":2019,"steamId":632300,"multiplayer":false}
 ]
+
