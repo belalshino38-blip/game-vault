@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* --- ROOT & RESET --- */
+        /* --- ROOT & RESET (unchanged) --- */
         :root {
             --bg: #0a0a0f;
             --surface: #151522;
@@ -34,7 +34,7 @@
         ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* --- UNIFIED BUTTON STYLES --- */
+        /* --- UNIFIED BUTTON STYLES (unchanged) --- */
         button, .btn, .btn-success, .btn-danger, .btn-secondary, .btn-warning, .btn-file, .btn-small, .nav-btn, .auth-tab, .tab, .clear-btn, .close-btn, .vote-btn, .action-btn, .post-chat-toggle, .checkbox-label, .upload-area, .friend-card, .game-card, .stat.clickable, .search-select {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -97,7 +97,7 @@
         .action-btn { background: none !important; border: none !important; color: var(--text-muted) !important; box-shadow: none !important; padding: 0.2rem 0.6rem; }
         .action-btn:hover { color: var(--text) !important; background: rgba(255, 255, 255, 0.05) !important; transform: scale(1.05); }
 
-        /* --- STATS BAR --- */
+        /* --- STATS BAR (unchanged) --- */
         .stats-bar { background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9)); padding: 0.7rem 2rem; display: flex; gap: 1.5rem; border-bottom: 1px solid #1e1e2e; flex-wrap: wrap; align-items: center; }
         .stat { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 1.2rem; border-radius: 50px; cursor: default; color: var(--text-muted); border: 1px solid transparent; background: transparent; }
         .stat.clickable { cursor: pointer; background: var(--surface); border: 1px solid #2d2d44; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -111,7 +111,7 @@
         .stat.playing { color: var(--info); }
         .stat.accent { color: var(--accent); }
 
-        /* --- SEARCH CONTAINER --- */
+        /* --- SEARCH CONTAINER (FIXED: search larger, filters smaller) --- */
         .search-container {
             padding: 1.5rem 2rem;
             display: flex;
@@ -122,22 +122,25 @@
         }
         .search-container .search-input-wrapper {
             display: flex;
-            flex: 0 1 280px;
-            min-width: 140px;
+            flex: 1 1 400px;   /* grows more */
+            min-width: 200px;   /* wider */
             align-items: center;
             gap: 0.5rem;
         }
         .search-container .search-input-wrapper input[type="text"] {
             flex: 1;
-            min-width: 80px;
+            min-width: 120px;
         }
         .search-container .search-select {
             flex-shrink: 0;
+            min-width: 80px;        /* smaller */
+            padding: 0.6rem 2rem 0.6rem 1rem; /* less padding */
+            font-size: 0.8rem;      /* smaller text */
         }
         .search-container .results-count {
             flex-shrink: 0;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             white-space: nowrap;
         }
         .search-container input[type="text"],
@@ -161,18 +164,15 @@
             background: var(--surface);
             border: 1px solid #2d2d44;
             color: var(--text);
-            padding: 0.75rem 2.5rem 0.75rem 1.5rem;
             border-radius: 50px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.9rem;
             font-weight: 500;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 12px;
-            min-width: 100px;
+            background-position: right 0.8rem center;
+            background-size: 10px;
         }
         .search-select:hover {
             transform: translateY(-2px);
@@ -226,7 +226,7 @@
             }
             .search-container .search-select {
                 flex: 1 1 auto;
-                min-width: 80px;
+                min-width: 70px;
             }
         }
 
@@ -560,7 +560,7 @@ service cloud.firestore {
                     <input type="text" id="searchInput" placeholder="Search 1000+ games..." oninput="filterGames()">
                     <button class="clear-btn" onclick="document.getElementById('searchInput').value='';document.getElementById('sortSelect').value='title-asc';filterGames();">Clear</button>
                 </div>
-                <select id="sortSelect" class="search-select" onchange="filterGames()" style="min-width:100px;">
+                <select id="sortSelect" class="search-select" onchange="filterGames()" style="min-width:80px;">
                     <option value="title-asc">A → Z</option>
                     <option value="title-desc">Z → A</option>
                     <option value="year-desc">Year (New)</option>
@@ -571,7 +571,7 @@ service cloud.firestore {
             <div class="games-grid" id="gamesGrid"></div>
         </div>
 
-        <!-- Posts View (with filters next to search bar) -->
+        <!-- Posts View -->
         <div id="postsView" style="display:none;padding:2rem;max-width:1200px;margin:0 auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
                 <h2 style="font-size:1.5rem;">📝 Community Posts</h2>
@@ -581,12 +581,12 @@ service cloud.firestore {
                 <div class="search-input-wrapper">
                     <input type="text" id="postSearchInput" placeholder="Search posts by game or user..." oninput="filterPosts()">
                 </div>
-                <select id="postSortFilter" class="search-select" onchange="filterPosts()" style="min-width:90px;">
+                <select id="postSortFilter" class="search-select" onchange="filterPosts()" style="min-width:80px;">
                     <option value="hot">🔥 Hot</option>
                     <option value="new">🕒 New</option>
                     <option value="top">🏆 Top</option>
                 </select>
-                <select id="postTagFilter" class="search-select" onchange="filterPosts()" style="min-width:120px;">
+                <select id="postTagFilter" class="search-select" onchange="filterPosts()" style="min-width:90px;">
                     <option value="all">All Tags</option>
                     <option value="lfg">👥 LFG</option>
                     <option value="player">🔍 Looking</option>
@@ -783,32 +783,69 @@ service cloud.firestore {
         };
         const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
 
+        // --- AUTO-FILL FIX ---
+        function autoParseConfig() {
+            const paste = document.getElementById("configPaste").value;
+            const errorEl = document.getElementById("setupError");
+            try {
+                let cleaned = paste.trim();
+                cleaned = cleaned.replace(/^(const|let|var)\s+firebaseConfig\s*=\s*/, '');
+                cleaned = cleaned.replace(/;$/, '');
+                try {
+                    const config = JSON.parse(cleaned);
+                    document.getElementById("cfgApiKey").value = config.apiKey || '';
+                    document.getElementById("cfgAuthDomain").value = config.authDomain || '';
+                    document.getElementById("cfgDatabaseURL").value = config.databaseURL || '';
+                    document.getElementById("cfgProjectId").value = config.projectId || '';
+                    document.getElementById("cfgStorageBucket").value = config.storageBucket || '';
+                    document.getElementById("cfgMessagingSenderId").value = config.messagingSenderId || '';
+                    document.getElementById("cfgAppId").value = config.appId || '';
+                    document.getElementById("cfgMeasurementId").value = config.measurementId || '';
+                    errorEl.textContent = "All fields auto-filled! Click 'Save & Launch App' below.";
+                    errorEl.style.color = "var(--success)";
+                    errorEl.style.display = "block";
+                    return;
+                } catch (jsonErr) {
+                    const extract = (k) => {
+                        const m = paste.match(new RegExp(k + '\\s*:\\s*["\']([^"\']+)["\']', 'i'));
+                        return m ? m[1].trim() : "";
+                    };
+                    const apiKey = extract("apiKey");
+                    const authDomain = extract("authDomain");
+                    const databaseURL = extract("databaseURL");
+                    const projectId = extract("projectId");
+                    const storageBucket = extract("storageBucket");
+                    const messagingSenderId = extract("messagingSenderId");
+                    const appId = extract("appId");
+                    const measurementId = extract("measurementId");
+                    if (!apiKey || !authDomain || !projectId) {
+                        errorEl.textContent = "Could not parse config. Make sure it's a valid firebaseConfig object.";
+                        errorEl.style.display = "block";
+                        return;
+                    }
+                    document.getElementById("cfgApiKey").value = apiKey;
+                    document.getElementById("cfgAuthDomain").value = authDomain;
+                    document.getElementById("cfgDatabaseURL").value = databaseURL;
+                    document.getElementById("cfgProjectId").value = projectId;
+                    document.getElementById("cfgStorageBucket").value = storageBucket;
+                    document.getElementById("cfgMessagingSenderId").value = messagingSenderId;
+                    document.getElementById("cfgAppId").value = appId;
+                    document.getElementById("cfgMeasurementId").value = measurementId;
+                    errorEl.textContent = "All fields auto-filled! Click 'Save & Launch App' below.";
+                    errorEl.style.color = "var(--success)";
+                    errorEl.style.display = "block";
+                }
+            } catch (e) {
+                errorEl.textContent = "Parse error: " + e.message;
+                errorEl.style.display = "block";
+            }
+        }
+
         function isConfigValid() {
             return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR") &&
                 firebaseConfig.authDomain && !firebaseConfig.authDomain.includes("YOUR") &&
                 firebaseConfig.projectId && !firebaseConfig.projectId.includes("YOUR") &&
                 firebaseConfig.appId && !firebaseConfig.appId.includes("YOUR");
-        }
-
-        function autoParseConfig() {
-            const paste = document.getElementById("configPaste").value;
-            const errorEl = document.getElementById("setupError");
-            try {
-                const extract = (k) => { const m = paste.match(new RegExp(k + '\\s*:\\s*["\']([^"\']+)["\']', 'i')); return m ? m[1].trim() : ""; };
-                const apiKey = extract("apiKey"), authDomain = extract("authDomain"), databaseURL = extract("databaseURL"), projectId = extract("projectId"), storageBucket = extract("storageBucket"), messagingSenderId = extract("messagingSenderId"), appId = extract("appId"), measurementId = extract("measurementId");
-                if (!apiKey || !authDomain || !projectId) { errorEl.textContent = "Could not parse config."; errorEl.style.display = "block"; return; }
-                document.getElementById("cfgApiKey").value = apiKey;
-                document.getElementById("cfgAuthDomain").value = authDomain;
-                document.getElementById("cfgDatabaseURL").value = databaseURL;
-                document.getElementById("cfgProjectId").value = projectId;
-                document.getElementById("cfgStorageBucket").value = storageBucket;
-                document.getElementById("cfgMessagingSenderId").value = messagingSenderId;
-                document.getElementById("cfgAppId").value = appId;
-                document.getElementById("cfgMeasurementId").value = measurementId;
-                errorEl.textContent = "All fields auto-filled! Click 'Save & Launch App' below.";
-                errorEl.style.color = "var(--success)";
-                errorEl.style.display = "block";
-            } catch (e) { errorEl.textContent = "Parse error: " + e.message; errorEl.style.display = "block"; }
         }
 
         function saveConfig() {
@@ -1540,6 +1577,8 @@ service cloud.firestore {
             dropdown.classList.add("show");
         }
 
+        let editingPostId = null;
+
         function openPostModal() {
             editingPostId = null;
             document.getElementById("postModalTitle").textContent = "Create Post";
@@ -1557,8 +1596,6 @@ service cloud.firestore {
         function closePostModal(e) {
             if (!e || e.target === document.getElementById("postModal")) { document.getElementById("postModal").classList.remove("active"); }
         }
-
-        let editingPostId = null;
 
         async function submitPost() {
             const title = document.getElementById("postTitle").value.trim();
