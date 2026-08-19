@@ -167,8 +167,8 @@
         }
         .search-container .search-input-wrapper {
             display: flex;
-            flex: 1 1 500px;    /* grows more */
-            min-width: 280px;   /* wider minimum */
+            flex: 1 1 500px;
+            min-width: 280px;
             align-items: center;
             gap: 0.5rem;
         }
@@ -178,13 +178,12 @@
             padding: 0.6rem 1rem;
             font-size: 0.95rem;
         }
-        /* SMALLER DROPDOWNS (A → Z, Hot, All Tags) */
         .search-container .search-select {
             flex-shrink: 0;
-            min-width: 60px;        /* narrower */
-            padding: 0.4rem 1.6rem 0.4rem 0.8rem; /* less padding */
-            font-size: 0.7rem;      /* smaller text */
-            background-size: 8px;   /* smaller arrow */
+            min-width: 60px;
+            padding: 0.4rem 1.6rem 0.4rem 0.8rem;
+            font-size: 0.7rem;
+            background-size: 8px;
         }
         .search-container .results-count {
             flex-shrink: 0;
@@ -588,7 +587,7 @@ service cloud.firestore {
             </div>
         </header>
 
-        <!-- Stats Bar (top filter buttons) -->
+        <!-- Stats Bar -->
         <div class="stats-bar">
             <div class="stat success clickable" onclick="filterByStatus('completed')" id="filterCompleted">
                 <span class="stat-icon">🏆</span><span class="stat-value" id="completedCount">0</span>
@@ -837,6 +836,9 @@ service cloud.firestore {
         };
         const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
 
+        // --- GLOBAL CACHE ---
+        const userCache = {};
+
         // --- AUTO-FILL FIX ---
         function autoParseConfig() {
             const paste = document.getElementById("configPaste").value;
@@ -942,7 +944,6 @@ service cloud.firestore {
             return (bytes / (1024 * 1024)).toFixed(1) + " MB";
         }
 
-        // --- FIXED COVER (library_600x900.jpg with solid background) ---
         function getCoverHTML(game) {
             const color = getColor(game.id);
             if (game.steamId) {
@@ -1335,7 +1336,7 @@ service cloud.firestore {
             if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
         }
 
-        // --- REAL-TIME POSTS LISTENER ---
+        // --- OPTIMIZED POSTS LISTENER WITH PERSISTENCE ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
@@ -1358,12 +1359,18 @@ service cloud.firestore {
                 const newPosts = [];
                 for (const doc of snapshot.docs) {
                     const data = doc.data();
-                    const user = {
-                        displayName: data.userDisplayName || 'Unknown',
-                        avatarColor: data.userAvatarColor || '#8b5cf6',
-                        nameColor: data.userNameColor || '#f1f5f9',
-                        photoData: data.userPhotoData || ''
-                    };
+                    // Use cached user data or fallback
+                    let user = userCache[data.userId];
+                    if (!user) {
+                        // If not cached, use the denormalized data (saved at post creation)
+                        user = {
+                            displayName: data.userDisplayName || 'Unknown',
+                            avatarColor: data.userAvatarColor || '#8b5cf6',
+                            nameColor: data.userNameColor || '#f1f5f9',
+                            photoData: data.userPhotoData || ''
+                        };
+                        userCache[data.userId] = user; // cache for later
+                    }
                     let userVote = 0;
                     if (currentUser) {
                         try {
@@ -1432,12 +1439,16 @@ service cloud.firestore {
                 const newPosts = [];
                 for (const doc of snapshot.docs) {
                     const data = doc.data();
-                    const user = {
-                        displayName: data.userDisplayName || 'Unknown',
-                        avatarColor: data.userAvatarColor || '#8b5cf6',
-                        nameColor: data.userNameColor || '#f1f5f9',
-                        photoData: data.userPhotoData || ''
-                    };
+                    let user = userCache[data.userId];
+                    if (!user) {
+                        user = {
+                            displayName: data.userDisplayName || 'Unknown',
+                            avatarColor: data.userAvatarColor || '#8b5cf6',
+                            nameColor: data.userNameColor || '#f1f5f9',
+                            photoData: data.userPhotoData || ''
+                        };
+                        userCache[data.userId] = user;
+                    }
                     let userVote = 0;
                     if (currentUser) {
                         try {
@@ -1482,6 +1493,7 @@ service cloud.firestore {
             }
         }
 
+        // --- RENDER POSTS ---
         function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
             let filtered = posts.filter(p => {
                 const gameMatch = p.gameTitle.toLowerCase().includes(filter.toLowerCase());
@@ -2144,7 +2156,7 @@ service cloud.firestore {
             setTimeout(() => toast.classList.remove("show"), 4000);
         }
 
-        // --- AUTH ---
+        // --- AUTH & INIT ---
         function init() {
             if (!isConfigValid()) {
                 document.getElementById("setupWizard").classList.add("active");
@@ -2165,6 +2177,20 @@ service cloud.firestore {
             }
             auth = firebase.auth();
             db = firebase.firestore();
+
+            // --- ENABLE OFFLINE PERSISTENCE ---
+            db.enablePersistence({
+                synchronizeTabs: true
+            }).catch((err) => {
+                if (err.code == 'failed-precondition') {
+                    console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+                } else if (err.code == 'unimplemented') {
+                    console.warn('The current browser does not support all of the features required to enable persistence');
+                } else {
+                    console.error('Persistence error:', err);
+                }
+            });
+
             auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             auth.onAuthStateChanged(user => {
                 if (user) {
@@ -2191,6 +2217,7 @@ service cloud.firestore {
             });
         }
 
+        // --- AUTH HELPERS ---
         function toggleUserDropdown(e) { e.stopPropagation(); document.getElementById("userDropdownMenu").classList.toggle("show"); }
         function closeUserDropdown() { document.getElementById("userDropdownMenu").classList.remove("show"); }
         document.addEventListener("click", closeUserDropdown);
@@ -2217,14 +2244,17 @@ service cloud.firestore {
         }
         async function logout() { await auth.signOut(); location.reload(); }
         function resetConfig() { localStorage.removeItem("gameVault_firebaseConfig"); location.reload(); }
+
         async function loadUserProfile() {
             const doc = await db.collection("users").doc(currentUser.uid).get();
             if (doc.exists) {
                 userProfile = doc.data();
+                // Update header immediately
                 document.getElementById("headerName").textContent = userProfile.displayName;
                 document.getElementById("headerName").style.color = userProfile.nameColor || "#f1f5f9";
                 const avatar = document.getElementById("headerAvatar");
                 if (avatar) setAvatarElement(avatar, userProfile);
+                // Prefill settings
                 document.getElementById("settingsName").value = userProfile.displayName || "";
                 document.getElementById("settingsNameColor").value = userProfile.nameColor || "#f1f5f9";
                 document.getElementById("settingsAvatarColor").value = userProfile.avatarColor || "#8b5cf6";
@@ -2232,6 +2262,7 @@ service cloud.firestore {
                 document.getElementById("settingsReddit").value = userProfile.reddit || "";
             }
         }
+
         function setAvatarElement(el, profile) {
             if (!el) return;
             if (profile.photoData && profile.photoData.length > 50) {
@@ -2245,6 +2276,7 @@ service cloud.firestore {
                 el.textContent = getInitials(profile.displayName);
             }
         }
+
         async function loadMyData() {
             try {
                 const compSnap = await db.collection("users").doc(currentUser.uid).collection("completions").get();
