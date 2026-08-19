@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* --- SAME STYLES AS BEFORE (unchanged) --- */
+        /* --- ROOT & RESET --- */
         :root {
             --bg: #0a0a0f;
             --surface: #151522;
@@ -60,7 +60,6 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Primary button style (applies to ALL buttons) */
         button,
         .btn,
         .btn-success,
@@ -123,7 +122,6 @@
             transform: scale(0.95);
         }
 
-        /* Secondary / outline style for less prominent actions */
         .btn-secondary,
         .clear-btn {
             background: var(--surface);
@@ -138,13 +136,8 @@
             box-shadow: none;
         }
 
-        /* Small button variant */
-        .btn-small {
-            padding: 0.35rem 0.8rem;
-            font-size: 0.75rem;
-        }
+        .btn-small { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
 
-        /* Nav buttons */
         .nav-btn.active {
             background: var(--primary);
             color: white;
@@ -161,7 +154,6 @@
             color: var(--text);
         }
 
-        /* Auth tabs */
         .auth-tab.active {
             background: var(--primary);
             color: white;
@@ -177,7 +169,6 @@
             color: var(--text);
         }
 
-        /* File input label */
         .btn-file {
             background: var(--primary);
             color: #fff;
@@ -197,7 +188,6 @@
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
 
-        /* Close button */
         .close-btn {
             background: none;
             border: none;
@@ -212,11 +202,8 @@
             color: var(--text);
             transform: rotate(90deg);
         }
-        .close-btn:active {
-            transform: scale(0.9);
-        }
+        .close-btn:active { transform: scale(0.9); }
 
-        /* Vote buttons */
         .vote-btn {
             background: none !important;
             border: none !important;
@@ -230,15 +217,12 @@
             color: var(--text) !important;
             transform: scale(1.05);
         }
-        .vote-btn:active {
-            transform: scale(0.9);
-        }
+        .vote-btn:active { transform: scale(0.9); }
         .vote-btn.upvote:hover { color: var(--vote-up) !important; transform: scale(1.1); }
         .vote-btn.downvote:hover { color: var(--vote-down) !important; transform: scale(1.1); }
         .vote-btn.upvote.active { color: var(--vote-up) !important; background: rgba(34, 197, 94, 0.1) !important; border-radius: 8px; }
         .vote-btn.downvote.active { color: var(--vote-down) !important; background: rgba(239, 68, 68, 0.1) !important; border-radius: 8px; }
 
-        /* Action buttons in posts */
         .action-btn {
             background: none !important;
             border: none !important;
@@ -252,48 +236,91 @@
             transform: scale(1.05);
         }
 
-        /* --- FILTER BUTTONS (now placed in search row) --- */
-        .filter-btn {
+        /* --- STATS BAR (with filter buttons) --- */
+        .stats-bar {
+            background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9));
+            padding: 0.7rem 2rem;
+            display: flex;
+            gap: 1.5rem;
+            border-bottom: 1px solid #1e1e2e;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            cursor: default;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            background: transparent;
+        }
+        .stat.clickable {
+            cursor: pointer;
             background: var(--surface);
             border: 1px solid #2d2d44;
-            border-radius: 50px;
-            padding: 0.5rem 1.2rem;
-            cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-muted);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            font-family: inherit;
         }
-        .filter-btn:hover {
+        .stat.clickable:hover {
             transform: translateY(-2px);
             background: var(--surface-hover);
             color: var(--text);
             border-color: var(--primary);
         }
-        .filter-btn:active {
-            transform: scale(0.95);
-        }
-        .filter-btn.active {
+        .stat.clickable:active { transform: scale(0.95); }
+        .stat.clickable.active {
             background: var(--primary);
             color: #fff;
             border-color: var(--primary);
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
-        .filter-btn.active .stat-icon,
-        .filter-btn.active .stat-value {
-            color: #fff;
+        .stat.clickable.active .stat-icon,
+        .stat.clickable.active .stat-value { color: #fff; }
+        .stat .stat-value { font-size: 1.2rem; font-weight: 800; }
+        .stat .stat-icon { font-size: 1.3rem; }
+        .stat.success { color: var(--success); }
+        .stat.playing { color: var(--info); }
+        .stat.accent { color: var(--accent); }
+
+        /* --- SEARCH CONTAINER (games & posts) --- */
+        .search-container {
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .filter-btn .stat-value {
-            font-size: 1.1rem;
-            font-weight: 800;
+        .search-container .search-input-wrapper {
+            display: flex;
+            flex: 1;
+            min-width: 200px;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .filter-btn .stat-icon {
-            font-size: 1.2rem;
+        .search-container .search-input-wrapper input[type="text"] { flex: 1; }
+        .search-container .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
+        .search-container input[type="text"],
+        .search-container select,
+        .search-container button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-container input[type="text"] { flex: 1; min-width: 200px; }
+        .search-container input:focus,
+        .search-container select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+            transform: scale(1.02);
+        }
+        .search-container button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .search-container button:active { transform: scale(0.95); }
 
         /* --- CUSTOM DROPDOWN SELECTS --- */
         .search-select {
@@ -348,9 +375,7 @@
             background: var(--surface-hover);
             color: var(--text);
         }
-        .tab:active {
-            transform: scale(0.95);
-        }
+        .tab:active { transform: scale(0.95); }
         .tab.active {
             background: var(--primary);
             color: white;
@@ -358,7 +383,7 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
-        /* --- REST OF THE STYLES (same as before) --- */
+        /* --- REST OF STYLES (unchanged) --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -386,85 +411,6 @@
         .user-dropdown-menu a.danger:hover { background: rgba(239, 68, 68, 0.15); }
         .admin-gear { cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem; opacity: 0.6; transition: opacity 0.2s; }
         .admin-gear:hover { opacity: 1; }
-
-        /* Stats row now only shows Saves and Friends (non‑clickable) */
-        .stats-bar {
-            background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9));
-            padding: 0.5rem 2rem;
-            display: flex;
-            gap: 1.5rem;
-            border-bottom: 1px solid #1e1e2e;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            cursor: default;
-            color: var(--text-muted);
-            border: 1px solid transparent;
-            background: transparent;
-        }
-        .stat .stat-value {
-            font-size: 1.1rem;
-            font-weight: 800;
-        }
-        .stat .stat-icon {
-            font-size: 1.2rem;
-        }
-        .stat.success { color: var(--success); }
-        .stat.playing { color: var(--info); }
-        .stat.accent { color: var(--accent); }
-
-        /* Search container with filter buttons */
-        .search-container {
-            padding: 1.5rem 2rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .search-container .search-input-wrapper {
-            display: flex;
-            flex: 1;
-            min-width: 200px;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .search-container .search-input-wrapper input[type="text"] {
-            flex: 1;
-        }
-        .search-container .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .search-container input[type="text"],
-        .search-container select,
-        .search-container button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .search-container input[type="text"] {
-            flex: 1;
-            min-width: 200px;
-        }
-        .search-container input:focus,
-        .search-container select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-            transform: scale(1.02);
-        }
-        .search-container button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .search-container button:active {
-            transform: scale(0.95);
-        }
 
         input[type="text"], input[type="email"], input[type="password"], input[type="color"], textarea, select { background: var(--surface); border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem 1rem; border-radius: 50px; width: 100%; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); transform: scale(1.02); }
@@ -626,7 +572,22 @@
         .game-combobox .dropdown-item { padding: 0.6rem 1rem; cursor: pointer; transition: background 0.15s; }
         .game-combobox .dropdown-item:hover { background: var(--surface-hover); }
         .game-combobox .dropdown-item.selected { background: var(--primary); }
-        @media (max-width: 640px) { .games-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 0 1rem 1rem; } .search-container { padding: 1rem; flex-direction: column; align-items: stretch; } .search-container .filter-group { justify-content: center; } .stats-bar { padding: 0.5rem 1rem; gap: 0.5rem; } .stat { padding: 0.2rem 0.5rem; font-size: 0.75rem; } .stat-value { font-size: 1rem; } header { padding: 0.5rem 1rem; flex-wrap: wrap; } .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; } .profile-header { flex-direction: column; text-align: center; } .friends-grid { grid-template-columns: 1fr; } .posts-grid { grid-template-columns: 1fr; } .modal { max-width: 100%; margin: 0.5rem; } .post-card { flex-direction: column; align-items: stretch; } .post-vote-area { flex-direction: row; justify-content: flex-start; padding: 0.2rem 0; } }
+        @media (max-width: 640px) {
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 0 1rem 1rem; }
+            .stats-bar { padding: 0.5rem 1rem; gap: 0.75rem; }
+            .stat { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+            .stat .stat-value { font-size: 1rem; }
+            .search-container { padding: 1rem; flex-direction: column; align-items: stretch; }
+            .search-container .search-input-wrapper { flex-wrap: wrap; }
+            header { padding: 0.5rem 1rem; flex-wrap: wrap; }
+            .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+            .profile-header { flex-direction: column; text-align: center; }
+            .friends-grid { grid-template-columns: 1fr; }
+            .posts-grid { grid-template-columns: 1fr; }
+            .modal { max-width: 100%; margin: 0.5rem; }
+            .post-card { flex-direction: column; align-items: stretch; }
+            .post-vote-area { flex-direction: row; justify-content: flex-start; padding: 0.2rem 0; }
+        }
     </style>
 </head>
 <body>
@@ -736,38 +697,38 @@ service cloud.firestore {
             </div>
         </header>
 
-        <!-- Stats Bar (only Saves and Friends) -->
+        <!-- Stats Bar with Filter Buttons -->
         <div class="stats-bar">
-            <div class="stat" style="cursor:default;border-color:transparent;">
-                <span class="stat-icon">💾</span><span class="stat-value" id="savesCount">0</span>
+            <div class="stat success clickable" onclick="filterByStatus('completed')" id="filterCompleted">
+                <span class="stat-icon">🏆</span>
+                <span class="stat-value" id="completedCount">0</span>
+            </div>
+            <div class="stat playing clickable" onclick="filterByStatus('playing')" id="filterPlaying">
+                <span class="stat-icon">▶</span>
+                <span class="stat-value" id="playingCount">0</span>
+            </div>
+            <div class="stat accent clickable active" onclick="filterByStatus('all')" id="filterAll">
+                <span class="stat-icon">🎮</span>
+                <span class="stat-value" id="totalGames">1000+</span>
             </div>
             <div class="stat" style="cursor:default;border-color:transparent;">
-                <span class="stat-icon">👥</span><span class="stat-value" id="friendsCount">0</span>
+                <span class="stat-icon">💾</span>
+                <span class="stat-value" id="savesCount">0</span>
+            </div>
+            <div class="stat" style="cursor:default;border-color:transparent;">
+                <span class="stat-icon">👥</span>
+                <span class="stat-value" id="friendsCount">0</span>
             </div>
         </div>
 
-        <!-- Games View with Filters -->
+        <!-- Games View -->
         <div id="gamesView">
             <div class="search-container">
                 <div class="search-input-wrapper">
                     <input type="text" id="searchInput" placeholder="Search 1000+ games..." oninput="filterGames()">
                     <button class="clear-btn" onclick="document.getElementById('searchInput').value='';document.getElementById('sortSelect').value='title-asc';filterGames();">Clear</button>
                 </div>
-                <div class="filter-group">
-                    <button class="filter-btn" onclick="filterByStatus('completed')" id="filterCompleted">
-                        <span class="stat-icon">🏆</span>
-                        <span class="stat-value" id="completedCount">0</span>
-                    </button>
-                    <button class="filter-btn" onclick="filterByStatus('playing')" id="filterPlaying">
-                        <span class="stat-icon">▶</span>
-                        <span class="stat-value" id="playingCount">0</span>
-                    </button>
-                    <button class="filter-btn active" onclick="filterByStatus('all')" id="filterAll">
-                        <span class="stat-icon">🎮</span>
-                        <span class="stat-value" id="totalGames">1000+</span>
-                    </button>
-                </div>
-                <select id="sortSelect" class="search-select" onchange="filterGames()">
+                <select id="sortSelect" class="search-select" onchange="filterGames()" style="min-width:100px;">
                     <option value="title-asc">A → Z</option>
                     <option value="title-desc">Z → A</option>
                     <option value="year-desc">Year (New)</option>
@@ -785,16 +746,18 @@ service cloud.firestore {
                 <button onclick="openPostModal()">+ Create Post</button>
             </div>
             <div class="search-container" style="padding:0 0 1rem 0;">
-                <input type="text" id="postSearchInput" placeholder="Search posts by game or user..." oninput="filterPosts()">
-                <select id="postSortFilter" class="search-select" onchange="filterPosts()">
+                <div class="search-input-wrapper">
+                    <input type="text" id="postSearchInput" placeholder="Search posts by game or user..." oninput="filterPosts()">
+                </div>
+                <select id="postSortFilter" class="search-select" onchange="filterPosts()" style="min-width:100px;">
                     <option value="hot">🔥 Hot</option>
                     <option value="new">🕒 New</option>
                     <option value="top">🏆 Top</option>
                 </select>
-                <select id="postTagFilter" class="search-select" onchange="filterPosts()">
+                <select id="postTagFilter" class="search-select" onchange="filterPosts()" style="min-width:140px;">
                     <option value="all">All Tags</option>
-                    <option value="lfg">👥 Looking for Group</option>
-                    <option value="player">🔍 Looking for Player</option>
+                    <option value="lfg">👥 LFG</option>
+                    <option value="player">🔍 Looking</option>
                     <option value="tip">💡 Tip</option>
                     <option value="help">🆘 Help</option>
                     <option value="rate">⭐ Rate</option>
@@ -972,7 +935,7 @@ service cloud.firestore {
     <div class="toast" id="toast">Action completed!</div>
 
     <script>
-        // --- FIREBASE CONFIG (unchanged) ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyAP2LzTvtVVb0_eTH_4kSwF6GtuBvZlFqA",
             authDomain: "game-vault1.firebaseapp.com",
@@ -984,12 +947,14 @@ service cloud.firestore {
             measurementId: "G-K21DZ70JQM"
         };
         const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
+
         function isConfigValid() {
             return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR") &&
                 firebaseConfig.authDomain && !firebaseConfig.authDomain.includes("YOUR") &&
                 firebaseConfig.projectId && !firebaseConfig.projectId.includes("YOUR") &&
                 firebaseConfig.appId && !firebaseConfig.appId.includes("YOUR");
         }
+
         function autoParseConfig() {
             const paste = document.getElementById("configPaste").value;
             const errorEl = document.getElementById("setupError");
@@ -1010,6 +975,7 @@ service cloud.firestore {
                 errorEl.style.display = "block";
             } catch (e) { errorEl.textContent = "Parse error: " + e.message; errorEl.style.display = "block"; }
         }
+
         function saveConfig() {
             const apiKey = document.getElementById("cfgApiKey").value.trim();
             const authDomain = document.getElementById("cfgAuthDomain").value.trim();
@@ -1028,6 +994,7 @@ service cloud.firestore {
             localStorage.setItem("gameVault_firebaseConfig", JSON.stringify({ apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId }));
             location.reload();
         }
+
         const savedCfg = localStorage.getItem("gameVault_firebaseConfig");
         if (savedCfg) { try { Object.assign(firebaseConfig, JSON.parse(savedCfg)); } catch (e) { console.error(e); } }
 
@@ -1052,24 +1019,25 @@ service cloud.firestore {
         let userCache = {};
         let chatOpenState = {};
 
-        // --- HELPER FUNCTIONS ---
+        // --- HELPERS ---
         function getInitials(title) {
             const words = title.split(/[ \t:]+/).filter(w => w.length > 0 && !w.match(/^[0-9]$/));
             if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
             return title.substring(0, 2).toUpperCase();
         }
+
         function getColor(id) {
             const colors = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#6366f1", "#14b8a6", "#f97316", "#84cc16"];
             return colors[(id - 1) % colors.length];
         }
+
         function formatSize(bytes) {
             if (bytes < 1024) return bytes + " B";
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
             return (bytes / (1024 * 1024)).toFixed(1) + " MB";
         }
 
-        // --- GENERATE COVER HTML (used in both main grid and profile) ---
-        function getCoverHTML(game, heightClass = '') {
+        function getCoverHTML(game) {
             const color = getColor(game.id);
             if (game.steamId) {
                 return `
@@ -1103,6 +1071,7 @@ service cloud.firestore {
             }
             filterGames();
         }
+
         function generateMissingGames() {
             const genres = ["Action", "RPG", "Adventure", "Shooter", "Strategy", "Sports", "Racing", "Simulation", "Puzzle", "Fighting", "MMO", "MOBA", "Battle Royale", "Survival", "Horror"];
             const years = Array.from({ length: 30 }, (_, i) => 1994 + i);
@@ -1123,7 +1092,7 @@ service cloud.firestore {
         // --- FILTERS ---
         function filterByStatus(status) {
             currentFilterStatus = status;
-            document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
             if (status === 'all') {
                 document.getElementById('filterAll').classList.add('active');
             } else {
@@ -1190,7 +1159,7 @@ service cloud.firestore {
             });
         }
 
-        // --- OPEN GAME MODAL (unchanged) ---
+        // --- OPEN GAME MODAL ---
         async function openGameModal(game) {
             currentGame = game;
             document.getElementById("modalTitle").textContent = game.title;
@@ -1267,6 +1236,7 @@ service cloud.firestore {
             document.getElementById("gameModal").classList.add("active");
             document.body.style.overflow = "hidden";
         }
+
         function closeGameModal(e) {
             if (!e || e.target === document.getElementById("gameModal")) {
                 document.getElementById("gameModal").classList.remove("active");
@@ -1274,6 +1244,7 @@ service cloud.firestore {
                 currentGame = null;
             }
         }
+
         function updateStatusLabels() {
             document.getElementById("completeLabel").classList.toggle("checked", document.getElementById("completeCheckbox").checked);
             document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
@@ -1281,7 +1252,7 @@ service cloud.firestore {
             document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
         }
 
-        // --- TOGGLE STATUSES (unchanged) ---
+        // --- TOGGLE STATUSES ---
         async function toggleComplete() {
             if (!currentGame) return;
             if (currentGame.multiplayer) { showToast("Cannot mark multiplayer games as completed", true); document.getElementById("completeCheckbox").checked = false; return; }
@@ -1291,6 +1262,7 @@ service cloud.firestore {
                 updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Game marked as completed!" : "Unmarked");
             } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
         }
+
         async function togglePlaying() {
             if (!currentGame) return;
             const cb = document.getElementById("playingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
@@ -1304,6 +1276,7 @@ service cloud.firestore {
                 updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Marked as playing!" : "Removed from playing");
             } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
         }
+
         async function toggleLooking() {
             if (!currentGame) return;
             const cb = document.getElementById("lookingCheckbox"), gameId = currentGame.id.toString(), ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId);
@@ -1317,6 +1290,7 @@ service cloud.firestore {
                 updateStatusLabels(); filterGames(); updateStats(); showToast(cb.checked ? "Looking for players!" : "Removed from looking");
             } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
         }
+
         async function toggleLFG() {
             if (!currentGame) return;
             if (!currentGame.multiplayer) { showToast("This game doesn't support multiplayer!", true); document.getElementById("lfgCheckbox").checked = false; return; }
@@ -1332,11 +1306,12 @@ service cloud.firestore {
             } catch (err) { showToast("Error: " + err.message, true); cb.checked = !cb.checked; }
         }
 
-        // --- SAVE FILE FUNCTIONS (unchanged) ---
+        // --- SAVE FILES ---
         function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
         function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
         function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
         function handleFileSelect(e) { if (e.target.files.length) processFile(e.target.files[0]); }
+
         async function processFile(file) {
             if (!currentGame) return;
             if (file.size > 500 * 1024) { showToast("File too large (max 500KB)", true); return; }
@@ -1354,12 +1329,14 @@ service cloud.firestore {
             };
             reader.readAsDataURL(file);
         }
+
         function renderModalSaves() {
             const container = document.getElementById("modalSaves");
             const saves = mySaves[currentGame?.id] || [];
             if (!saves.length) { container.innerHTML = '<p style="color:var(--text-muted);margin-top:0.5rem;font-size:0.9rem;">No save files uploaded yet</p>'; return; }
             container.innerHTML = saves.map(save => `<div class="save-item"><div><div class="save-name">${save.name}</div><div class="save-meta">${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join("");
         }
+
         function downloadSaveFromData(base64Data, name) {
             try {
                 const byteString = atob(base64Data), ab = new ArrayBuffer(byteString.length), ia = new Uint8Array(ab);
@@ -1369,6 +1346,7 @@ service cloud.firestore {
                 showToast("Download started!");
             } catch (err) { showToast("Error downloading: " + err.message, true); }
         }
+
         async function loadFriendSavesForGame(gameId) {
             const section = document.getElementById("friendSavesSection"), list = document.getElementById("friendSavesList");
             if (!friendsList.length) { section.style.display = "none"; return; }
@@ -1388,7 +1366,7 @@ service cloud.firestore {
             if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
         }
 
-        // --- POSTS: REAL-TIME LISTENER (unchanged) ---
+        // --- POSTS: REAL-TIME LISTENER ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
@@ -1536,21 +1514,24 @@ service cloud.firestore {
             } catch (err) { console.error("Chat error:", err); showToast("Error sending message: " + err.message, true); }
         }
 
-        // --- POST CRUD (unchanged) ---
+        // --- POST CRUD ---
         function filterPosts() {
             const search = document.getElementById("postSearchInput").value;
             const sort = document.getElementById("postSortFilter").value;
             const tag = document.getElementById("postTagFilter").value;
             renderPosts(search, sort, tag);
         }
+
         function getTagLabel(tag) {
             const map = { "lfg": "LFG", "player": "Looking", "tip": "Tip", "help": "Help", "rate": "Rate" };
             return map[tag] || tag;
         }
+
         function getTagClass(tag) {
             const map = { "lfg": "tag-lfg", "player": "tag-player", "tip": "tag-tip", "help": "tag-help", "rate": "tag-rate" };
             return map[tag] || "";
         }
+
         async function votePost(postId, newVote) {
             if (!currentUser) { showToast("Please login first", true); return; }
             newVote = parseInt(newVote);
@@ -1578,6 +1559,7 @@ service cloud.firestore {
                 showToast("Vote updated!");
             } catch (err) { console.error("Error voting:", err); showToast("Error voting: " + err.message, true); }
         }
+
         function setupGameCombobox() {
             const input = document.getElementById("postGameSearch");
             const dropdown = document.getElementById("gameDropdown");
@@ -1596,7 +1578,9 @@ service cloud.firestore {
             });
             filterGameOptions();
         }
+
         function showGameDropdown() { document.getElementById("gameDropdown").classList.add("show"); }
+
         function filterGameOptions() {
             const input = document.getElementById("postGameSearch");
             const dropdown = document.getElementById("gameDropdown");
@@ -1605,6 +1589,7 @@ service cloud.firestore {
             if (!filtered.length) { dropdown.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);cursor:default;">No games found</div>'; } else { dropdown.innerHTML = filtered.map(g => `<div class="dropdown-item" data-id="${g.id}">${g.title}</div>`).join(""); }
             dropdown.classList.add("show");
         }
+
         function openPostModal() {
             editingPostId = null;
             document.getElementById("postModalTitle").textContent = "Create Post";
@@ -1618,9 +1603,11 @@ service cloud.firestore {
             document.getElementById("gameDropdown").classList.remove("show");
             document.getElementById("postModal").classList.add("active");
         }
+
         function closePostModal(e) {
             if (!e || e.target === document.getElementById("postModal")) { document.getElementById("postModal").classList.remove("active"); }
         }
+
         async function submitPost() {
             const title = document.getElementById("postTitle").value.trim();
             const gameId = parseInt(document.getElementById("postGameId").value);
@@ -1641,6 +1628,7 @@ service cloud.firestore {
                 }
             } catch (err) { console.error("Submit post error:", err); showToast("Error: " + err.message, true); }
         }
+
         function editPost(postId) {
             const post = posts.find(p => p.id === postId);
             if (!post) { showToast("Post not found", true); return; }
@@ -1656,10 +1644,13 @@ service cloud.firestore {
             document.getElementById("gameDropdown").classList.remove("show");
             document.getElementById("postModal").classList.add("active");
         }
+
         async function deletePost(postId) {
             if (!confirm("Delete this post?")) return;
             try { await db.collection("posts").doc(postId).delete(); showToast("Post deleted"); } catch (err) { showToast("Error: " + err.message, true); }
         }
+
+        // --- CONTEXT MENU FOR CHAT ---
         let contextTarget = null;
         function showContextMenu(e) {
             e.preventDefault();
@@ -1680,8 +1671,10 @@ service cloud.firestore {
             editItem.onclick = () => { editChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
             deleteItem.onclick = () => { deleteChatMessage(contextTarget.postId, contextTarget.msgId); hideContextMenu(); };
         }
+
         function hideContextMenu() { document.getElementById("contextMenu").style.display = "none"; }
         document.addEventListener("click", hideContextMenu);
+
         async function editChatMessage(postId, msgId) {
             const newMsg = prompt("Edit your message:");
             if (newMsg === null || newMsg.trim() === "") return;
@@ -1697,6 +1690,7 @@ service cloud.firestore {
                 showToast("Message updated");
             } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function deleteChatMessage(postId, msgId) {
             if (!confirm("Delete this message?")) return;
             try {
@@ -1709,6 +1703,7 @@ service cloud.firestore {
                 showToast("Message deleted");
             } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function addFriendFromPost(userId) {
             if (userId === currentUser.uid) { showToast("That's you!", true); return; }
             try {
@@ -1730,6 +1725,7 @@ service cloud.firestore {
             loadPosts();
             updateNav('posts');
         }
+
         function updateNav(tab) {
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             if(tab === 'games') document.getElementById('navGames').classList.add('active');
@@ -1737,6 +1733,7 @@ service cloud.firestore {
             if(tab === 'posts') document.getElementById('navPosts').classList.add('active');
             if(tab === 'profile') document.getElementById('navProfile').classList.add('active');
         }
+
         function updateStats() {
             const count = myCompletions.length;
             const playingCount = myPlaying.length;
@@ -1747,11 +1744,12 @@ service cloud.firestore {
             document.getElementById("savesCount").textContent = totalSaves;
             document.getElementById("friendsCount").textContent = friendsList.length;
         }
+
         function showGames() { document.getElementById("gamesView").style.display = "block"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "none"; filterGames(); updateNav('games'); }
         function showProfile() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.add("active"); document.getElementById("friendsView").classList.remove("active"); document.getElementById("postsView").style.display = "none"; renderProfile(); closeUserDropdown(); updateNav('profile'); }
         function showFriends() { document.getElementById("gamesView").style.display = "none"; document.getElementById("profileView").classList.remove("active"); document.getElementById("friendsView").classList.add("active"); document.getElementById("postsView").style.display = "none"; renderFriends(); updateNav('friends'); }
 
-        // --- PROFILE (with covers) ---
+        // --- PROFILE ---
         function renderProfile() {
             if (!userProfile) return;
             const count = myCompletions.length, playingCount = myPlaying.length, lookingCount = myLooking.length, lfgCount = myLFG.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
@@ -1765,17 +1763,14 @@ service cloud.firestore {
             document.getElementById("profileSaves").textContent = totalSaves;
             document.getElementById("profileFriends").textContent = friendsList.length;
 
-            // Completed games with covers
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
-            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
+            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
 
-            // Playing games with covers
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
-            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
+            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
 
-            // Saves
             const savesList = document.getElementById("profileSavesList");
             const allSaves = [];
             Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
@@ -1794,20 +1789,23 @@ service cloud.firestore {
             } catch(err) { showToast("Error removing: " + err.message, true); }
         }
 
-        // --- PROFILE SETTINGS (unchanged) ---
+        // --- PROFILE SETTINGS ---
         async function updateProfileName() {
             const name = document.getElementById("settingsName").value.trim();
             if (!name) { showToast("Please enter a name", true); return; }
             try { await db.collection("users").doc(currentUser.uid).update({ displayName: name, searchName: name.toLowerCase() }); userProfile.displayName = name; document.getElementById("headerName").textContent = name; document.getElementById("profileName").textContent = name; showToast("Name updated!"); } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function updateNameColor() {
             const color = document.getElementById("settingsNameColor").value;
             try { await db.collection("users").doc(currentUser.uid).update({ nameColor: color }); userProfile.nameColor = color; document.getElementById("headerName").style.color = color; document.getElementById("profileName").style.color = color; showToast("Name color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function updateAvatarColor() {
             const color = document.getElementById("settingsAvatarColor").value;
             try { await db.collection("users").doc(currentUser.uid).update({ avatarColor: color }); userProfile.avatarColor = color; const headerAvatar = document.getElementById("headerAvatar"); const profileAvatar = document.getElementById("profileAvatar"); if (!userProfile.photoData) { if (headerAvatar) { headerAvatar.style.background = color; headerAvatar.style.backgroundImage = "none"; headerAvatar.textContent = getInitials(userProfile.displayName); } if (profileAvatar) { profileAvatar.style.background = color; profileAvatar.style.backgroundImage = "none"; profileAvatar.textContent = getInitials(userProfile.displayName); } } showToast("Avatar color updated!"); } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function uploadProfilePhoto() {
             if (!userProfile) { showToast("Please wait for profile to load", true); return; }
             const fileInput = document.getElementById("settingsPhotoFile");
@@ -1829,12 +1827,13 @@ service cloud.firestore {
             };
             reader.readAsDataURL(file);
         }
+
         async function updateSocial(type) {
             const val = document.getElementById(type === "discord" ? "settingsDiscord" : "settingsReddit").value.trim();
             try { await db.collection("users").doc(currentUser.uid).update({ [type]: val }); userProfile[type] = val; showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} updated!`); } catch (err) { showToast("Error: " + err.message, true); }
         }
 
-        // --- FRIENDS (unchanged) ---
+        // --- FRIENDS ---
         async function loadFriends() {
             try {
                 const snap = await db.collection("users").doc(currentUser.uid).collection("friends").get();
@@ -1843,6 +1842,7 @@ service cloud.firestore {
                 updateStats();
             } catch (err) { console.error("loadFriends error:", err); }
         }
+
         async function loadRequests() {
             try {
                 const snap = await db.collection("users").doc(currentUser.uid).collection("requests").get();
@@ -1855,11 +1855,13 @@ service cloud.firestore {
                 if (friendRequests.length) { badge.textContent = friendRequests.length; badge.style.display = "inline-flex"; } else badge.style.display = "none";
             } catch (err) { console.error("loadRequests error:", err); }
         }
+
         function renderFriends() {
             const grid = document.getElementById("friendsGrid");
             if (!friendsList.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No friends yet. Click "Find Players" to add friends!</div>'; return; }
             grid.innerHTML = friendsList.map(f => `<div class="friend-card" onclick="openFriendProfile('${f.uid}')"><div class="friend-avatar" style="background:${f.avatarColor};${f.photoData ? `background-image:url(${f.photoData});background-size:cover;` : ''}">${f.photoData ? '' : getInitials(f.displayName)}</div><div class="friend-info"><div class="friend-name" style="color:${f.nameColor || '#f1f5f9'}">${f.displayName}</div><div class="friend-meta">${f.email}</div></div></div>`).join("");
         }
+
         function switchFriendsTab(tab) {
             document.getElementById("tabAll").classList.toggle("active", tab === "all");
             document.getElementById("tabRequests").classList.toggle("active", tab === "requests");
@@ -1867,11 +1869,13 @@ service cloud.firestore {
             document.getElementById("requestsContainer").style.display = tab === "requests" ? "block" : "none";
             if (tab === "requests") renderRequests();
         }
+
         function renderRequests() {
             const list = document.getElementById("requestsList");
             if (!friendRequests.length) { list.innerHTML = '<div class="empty-state">No pending friend requests</div>'; return; }
             list.innerHTML = friendRequests.map(req => `<div class="user-result"><div class="user-result-avatar" style="background:${req.avatarColor};${req.photoData ? `background-image:url(${req.photoData});background-size:cover;` : ''}">${req.photoData ? '' : getInitials(req.displayName)}</div><div class="user-result-info"><div class="user-result-name" style="color:${req.nameColor || '#f1f5f9'}">${req.displayName}</div><div class="user-result-email">${req.email}</div></div><div class="request-actions"><button class="btn-success btn-small" onclick="acceptRequest('${req.id}','${req.from}')">Accept</button><button class="btn-danger btn-small" onclick="declineRequest('${req.id}')">Decline</button></div></div>`).join("");
         }
+
         async function sendFriendRequest(targetUid) {
             try {
                 const friendDoc = await db.collection("users").doc(currentUser.uid).collection("friends").doc(targetUid).get();
@@ -1882,6 +1886,7 @@ service cloud.firestore {
                 showToast("Friend request sent!");
             } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function acceptRequest(requestId, fromUid) {
             try {
                 const batch = db.batch();
@@ -1892,20 +1897,23 @@ service cloud.firestore {
                 await loadFriends(); await loadRequests(); renderFriends(); updateStats(); showToast("Friend added!");
             } catch (err) { showToast("Error: " + err.message, true); }
         }
+
         async function declineRequest(requestId) {
             try { await db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId).delete(); await loadRequests(); renderRequests(); showToast("Request declined"); } catch (err) { showToast("Error: " + err.message, true); }
         }
 
-        // --- SEARCH USERS (unchanged) ---
+        // --- SEARCH USERS ---
         function openSearchModal() {
             document.getElementById("searchModal").classList.add("active");
             document.getElementById("userSearchInput").value = "";
             document.getElementById("searchResults").innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Type at least 2 characters</p>';
             document.getElementById("userSearchInput").focus();
         }
+
         function closeSearchModal(e) {
             if (!e || e.target === document.getElementById("searchModal")) { document.getElementById("searchModal").classList.remove("active"); }
         }
+
         let searchTimeout;
         async function searchUsers() {
             const term = document.getElementById("userSearchInput").value.trim().toLowerCase();
@@ -1927,7 +1935,7 @@ service cloud.firestore {
             }, 300);
         }
 
-        // --- FRIEND PROFILE (unchanged) ---
+        // --- FRIEND PROFILE ---
         async function openFriendProfile(friendUid) {
             const userDoc = await db.collection("users").doc(friendUid).get();
             if (!userDoc.exists) { showToast("User not found", true); return; }
@@ -1964,16 +1972,17 @@ service cloud.firestore {
             } else { postsSection.style.display = "none"; }
             const grid = document.getElementById("friendCompletedGrid");
             grid.innerHTML = "";
-            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
             const playingGrid = document.getElementById("friendPlayingGrid");
             playingGrid.innerHTML = "";
-            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const color = getColor(game.id); const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+            if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
             const savesContainer = document.getElementById("friendSavesContainer");
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
             if (!allSaves.length) { savesContainer.innerHTML = '<div class="empty-state">No save files shared yet</div>'; } else { savesContainer.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
             document.getElementById("friendProfileModal").classList.add("active");
         }
+
         function closeFriendProfile(e) {
             if (!e || e.target === document.getElementById("friendProfileModal")) { document.getElementById("friendProfileModal").classList.remove("active"); }
         }
@@ -1987,7 +1996,7 @@ service cloud.firestore {
             setTimeout(() => toast.classList.remove("show"), 3000);
         }
 
-        // --- AUTH & INIT (unchanged) ---
+        // --- AUTH & INIT ---
         function init() {
             if (!isConfigValid()) {
                 document.getElementById("setupWizard").classList.add("active");
