@@ -236,7 +236,7 @@
             transform: scale(1.05);
         }
 
-        /* --- STATS BAR (with filter buttons) --- */
+        /* --- STATS BAR --- */
         .stats-bar {
             background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9));
             padding: 0.7rem 2rem;
@@ -285,7 +285,7 @@
         .stat.playing { color: var(--info); }
         .stat.accent { color: var(--accent); }
 
-        /* --- SEARCH CONTAINER (games & posts) --- */
+        /* --- SEARCH CONTAINER --- */
         .search-container {
             padding: 1.5rem 2rem;
             display: flex;
@@ -301,11 +301,6 @@
             gap: 0.5rem;
         }
         .search-container .search-input-wrapper input[type="text"] { flex: 1; }
-        .search-container .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
         .search-container input[type="text"],
         .search-container select,
         .search-container button {
@@ -322,7 +317,7 @@
         .search-container button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .search-container button:active { transform: scale(0.95); }
 
-        /* --- CUSTOM DROPDOWN SELECTS --- */
+        /* --- CUSTOM DROPDOWN --- */
         .search-select {
             appearance: none;
             -webkit-appearance: none;
@@ -383,7 +378,7 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
-        /* --- REST OF STYLES (unchanged) --- */
+        /* --- REST OF STYLES --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -620,6 +615,7 @@
         </div>
         <div class="setup-step">
             <h3>6. Set Firestore Rules</h3>
+            <p><strong>IMPORTANT:</strong> Copy and paste these rules into your Firestore Rules panel.</p>
             <div class="code-block">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -636,7 +632,9 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update: if request.auth != null && (
         request.auth.uid == resource.data.userId ||
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['score', 'upvotes', 'downvotes'])
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'score', 'upvotes', 'downvotes', 'chatMessages', 'chatCount'
+        ])
       );
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
@@ -646,6 +644,7 @@ service cloud.firestore {
     }
   }
 }</div>
+            <p style="color:var(--success);margin-top:0.5rem;">✅ This allows users to send chat messages in real-time.</p>
         </div>
     </div>
 
@@ -697,7 +696,7 @@ service cloud.firestore {
             </div>
         </header>
 
-        <!-- Stats Bar with Filter Buttons -->
+        <!-- Stats Bar -->
         <div class="stats-bar">
             <div class="stat success clickable" onclick="filterByStatus('completed')" id="filterCompleted">
                 <span class="stat-icon">🏆</span>
@@ -1018,6 +1017,8 @@ service cloud.firestore {
         let postsUnsubscribe = null;
         let userCache = {};
         let chatOpenState = {};
+        let postsListenerRetryCount = 0;
+        const MAX_RETRIES = 5;
 
         // --- HELPERS ---
         function getInitials(title) {
@@ -1366,15 +1367,22 @@ service cloud.firestore {
             if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
         }
 
-        // --- POSTS: REAL-TIME LISTENER ---
+        // --- POSTS: REAL-TIME LISTENER (with retry logic) ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
                 postsUnsubscribe = null;
             }
+            postsListenerRetryCount = 0;
+            setupPostsListener();
+        }
+
+        function setupPostsListener() {
             postsUnsubscribe = db.collection("posts")
                 .orderBy("createdAt", "desc")
                 .onSnapshot(async (snapshot) => {
+                    // Reset retry count on successful connection
+                    postsListenerRetryCount = 0;
                     const newPosts = [];
                     for (const doc of snapshot.docs) {
                         const data = doc.data();
@@ -1417,7 +1425,19 @@ service cloud.firestore {
                     );
                 }, (error) => {
                     console.error("Post listener error:", error);
-                    showToast("Failed to load posts: " + error.message, true);
+                    // Don't show a toast for every error, but retry
+                    if (error.code === 'permission-denied') {
+                        showToast("Permission denied. Please check Firestore rules.", true);
+                    } else if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+                        // Network issue - retry
+                        if (postsListenerRetryCount < MAX_RETRIES) {
+                            postsListenerRetryCount++;
+                            setTimeout(setupPostsListener, 3000 * postsListenerRetryCount);
+                            console.log(`Retrying posts listener (attempt ${postsListenerRetryCount})...`);
+                        } else {
+                            showToast("Network connection issue. Please refresh the page.", true);
+                        }
+                    }
                 });
         }
 
@@ -1486,6 +1506,7 @@ service cloud.firestore {
             );
         }
 
+        // --- FIXED: sendChatMessage with better error handling ---
         async function sendChatMessage(postId) {
             const input = document.getElementById(`chatInput_${postId}`);
             const msg = input.value.trim();
@@ -1494,11 +1515,26 @@ service cloud.firestore {
             try {
                 const postRef = db.collection("posts").doc(postId);
                 const postDoc = await postRef.get();
+                if (!postDoc.exists) {
+                    showToast("Post no longer exists", true);
+                    return;
+                }
                 const data = postDoc.data();
                 const messages = data.chatMessages || [];
-                const newMsg = { id: Date.now().toString(), userId: currentUser.uid, displayName: userProfile.displayName, nameColor: userProfile.nameColor || "#f1f5f9", avatarColor: userProfile.avatarColor || "#8b5cf6", photoData: userProfile.photoData || "", message: msg, timestamp: Date.now() };
+                const newMsg = { 
+                    id: Date.now().toString(), 
+                    userId: currentUser.uid, 
+                    displayName: userProfile.displayName, 
+                    nameColor: userProfile.nameColor || "#f1f5f9", 
+                    avatarColor: userProfile.avatarColor || "#8b5cf6", 
+                    photoData: userProfile.photoData || "", 
+                    message: msg, 
+                    timestamp: Date.now() 
+                };
                 messages.push(newMsg);
                 await postRef.update({ chatMessages: messages, chatCount: messages.length });
+                // The listener will update all clients automatically
+                // But we also update locally for instant feedback
                 const post = posts.find(p => p.id === postId);
                 if (post) {
                     if (!post.chatMessages) post.chatMessages = [];
@@ -1511,7 +1547,20 @@ service cloud.firestore {
                         document.getElementById("postTagFilter").value
                     );
                 }
-            } catch (err) { console.error("Chat error:", err); showToast("Error sending message: " + err.message, true); }
+            } catch (err) { 
+                console.error("Chat error:", err); 
+                showToast("Error sending message: " + err.message, true);
+                // Re-focus the input and keep the message for retry
+                const inp = document.getElementById(`chatInput_${postId}`);
+                if (inp) {
+                    inp.value = msg;
+                    inp.focus();
+                }
+                // If permission error, show the rule fix hint
+                if (err.message && err.message.includes('permission')) {
+                    showToast("Permission denied. Make sure Firestore rules allow 'chatMessages' updates.", true);
+                }
+            }
         }
 
         // --- POST CRUD ---
@@ -1993,7 +2042,7 @@ service cloud.firestore {
             toast.textContent = msg;
             toast.className = "toast" + (isError ? " error" : "");
             toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
+            setTimeout(() => toast.classList.remove("show"), 4000);
         }
 
         // --- AUTH & INIT ---
