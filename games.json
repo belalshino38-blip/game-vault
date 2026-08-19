@@ -82,7 +82,6 @@
   {"id":81,"title":"World of Warcraft","genre":"MMO","year":2004,"steamId":null,"multiplayer":true},
   {"id":82,"title":"Lost Ark","genre":"MMO","year":2022,"steamId":1599340,"multiplayer":true},
   {"id":83,"title":"New World","genre":"MMO","year":2021,"steamId":1063730,"multiplayer":true},
-  {"id":84,"title":"Genshin Impact","genre":"RPG","year":2020,"steamId":null,"multiplayer":true},
   {"id":85,"title":"Honkai Star Rail","genre":"RPG","year":2023,"steamId":1951830,"multiplayer":false},
   {"id":86,"title":"Persona 5","genre":"RPG","year":2016,"steamId":1687950,"multiplayer":false},
   {"id":87,"title":"Dead Cells","genre":"Action","year":2018,"steamId":588650,"multiplayer":false},
