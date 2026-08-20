@@ -566,21 +566,21 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
-    // Friend requests - allow ANY authenticated user to CREATE a request
+    // Friend requests
     match /users/{uid}/requests/{requestId} {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid != uid;
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if false;
     }
-    // Friends list - users can manage their own friends
+    // Friends list
     match /users/{uid}/friends/{friendId} {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid == uid;
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if false;
     }
-    // Game ratings & reviews - anyone can read, only owner can write
+    // Game ratings & reviews – anyone can read, only owner can write
     match /users/{uid}/gameRatings/{gameId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
@@ -605,6 +605,7 @@ service cloud.firestore {
   }
 }</div>
             <p style="color:var(--success);margin-top:0.5rem;">✅ Allows friend requests, real‑time chat, ratings, reviews, and post interactions.</p>
+            <p style="color:var(--warning);margin-top:0.5rem;"><strong>For community ratings:</strong> Create a composite index on collection <code>gameRatings</code> with fields <code>gameId</code> (asc) and <code>rating</code> (desc).</p>
         </div>
     </div>
 
@@ -849,6 +850,11 @@ service cloud.firestore {
                                 </div>
                                 <div id="userReviewDisplay" style="color:var(--text-muted);font-size:0.85rem;margin-top:0.3rem;"></div>
                             </div>
+                        </div>
+                        <!-- NEW: Community Ratings Section -->
+                        <div id="communityRatingsSection" style="margin-top:1.5rem;border-top:1px solid #2d2d44;padding-top:1rem;">
+                            <h4 style="margin-bottom:0.5rem;">🌟 Community Ratings & Reviews</h4>
+                            <div id="communityRatingsList"></div>
                         </div>
                     </div>
                 </div>
@@ -1298,7 +1304,6 @@ service cloud.firestore {
             const dateContainer = document.getElementById("completionDateContainer");
             if (myCompletions.includes(game.id)) {
                 dateContainer.style.display = "block";
-                // Load existing completion date
                 const dateDoc = await db.collection("users").doc(currentUser.uid).collection("completions").doc(game.id.toString()).get();
                 if (dateDoc.exists && dateDoc.data().completedDate) {
                     document.getElementById("completionDate").value = dateDoc.data().completedDate;
@@ -1309,8 +1314,12 @@ service cloud.firestore {
                 dateContainer.style.display = "none";
             }
 
-            // Load user's rating & review
+            // Load user's own rating
             await loadUserRating(game.id);
+
+            // Load community ratings (NEW)
+            const communityRatings = await loadCommunityRatings(game.id);
+            renderCommunityRatings(communityRatings);
 
             renderModalSaves();
             await loadFriendSavesForGame(game.id);
@@ -1368,7 +1377,6 @@ service cloud.firestore {
                     document.getElementById("userRatingStarsDisplay").innerHTML = renderStars(data.rating || 0);
                     document.getElementById("userRatingText").textContent = `${data.rating || 0}/10`;
                     document.getElementById("userReviewDisplay").textContent = data.review || '';
-                    // Pre-fill the rating stars
                     if (data.rating) {
                         selectedRating = data.rating;
                         const stars = document.querySelectorAll('#ratingStars .star');
@@ -1396,14 +1404,85 @@ service cloud.firestore {
                     rating: selectedRating,
                     review: review,
                     gameTitle: currentGame.title,
-                    gameId: currentGame.id,
+                    gameId: currentGame.id,                // <-- ADDED gameId
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showToast("Rating & review saved!");
                 await loadUserRating(currentGame.id);
+                // Refresh community ratings
+                const communityRatings = await loadCommunityRatings(currentGame.id);
+                renderCommunityRatings(communityRatings);
             } catch (err) {
                 showToast("Error: " + err.message, true);
             }
+        }
+
+        // --- COMMUNITY RATINGS (NEW) ---
+        async function loadCommunityRatings(gameId) {
+            try {
+                const snapshot = await db
+                    .collectionGroup('gameRatings')
+                    .where('gameId', '==', gameId)
+                    .orderBy('rating', 'desc')
+                    .limit(20)
+                    .get();
+
+                const ratings = [];
+                for (const doc of snapshot.docs) {
+                    const data = doc.data();
+                    let userDisplayName = 'Anonymous';
+                    let userAvatarColor = '#8b5cf6';
+                    let userNameColor = '#f1f5f9';
+                    let photoData = '';
+                    try {
+                        const userDoc = await db.collection('users').doc(doc.ref.parent.parent.id).get();
+                        if (userDoc.exists) {
+                            const user = userDoc.data();
+                            userDisplayName = user.displayName || 'Anonymous';
+                            userAvatarColor = user.avatarColor || '#8b5cf6';
+                            userNameColor = user.nameColor || '#f1f5f9';
+                            photoData = user.photoData || '';
+                        }
+                    } catch (e) { /* ignore */ }
+                    ratings.push({
+                        ...data,
+                        userId: doc.ref.parent.parent.id,
+                        displayName: userDisplayName,
+                        avatarColor: userAvatarColor,
+                        nameColor: userNameColor,
+                        photoData: photoData
+                    });
+                }
+                return ratings;
+            } catch (err) {
+                console.error("Error loading community ratings:", err);
+                return [];
+            }
+        }
+
+        function renderCommunityRatings(ratings) {
+            const container = document.getElementById('communityRatingsList');
+            if (!ratings || ratings.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);">No community ratings yet. Be the first to rate!</p>';
+                return;
+            }
+            let html = '';
+            ratings.forEach(r => {
+                const stars = renderStars(r.rating);
+                const avatarStyle = `background:${r.avatarColor || '#8b5cf6'};${r.photoData ? `background-image:url(${r.photoData});background-size:cover;` : ''}`;
+                const avatarText = r.photoData ? '' : getInitials(r.displayName);
+                html += `
+                    <div class="rating-review-item" style="padding:0.75rem;margin-bottom:0.5rem;">
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;">
+                            <div class="friend-avatar" style="width:28px;height:28px;font-size:0.7rem;${avatarStyle}">${avatarText}</div>
+                            <span style="font-weight:600;color:${r.nameColor || '#f1f5f9'}">${r.displayName}</span>
+                        </div>
+                        <div class="rating-display">${stars} <span style="color:var(--text-muted);font-size:0.85rem;">${r.rating}/10</span></div>
+                        ${r.review ? `<div class="review-text" style="margin-top:0.2rem;">"${r.review}"</div>` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         // --- TOGGLE STATUSES ---
@@ -2717,6 +2796,26 @@ service cloud.firestore {
                 updateStats();
             } catch (err) { console.error("loadMyData error:", err); showToast("Failed to load your data: " + err.message, true); }
         }
+
+        // --- MIGRATION SCRIPT (optional, run once) ---
+        // To migrate existing ratings to include gameId, uncomment and run in console:
+        /*
+        async function migrateRatings() {
+            const allUsers = await db.collection('users').get();
+            for (const userDoc of allUsers.docs) {
+                const ratingsSnap = await userDoc.ref.collection('gameRatings').get();
+                for (const ratingDoc of ratingsSnap.docs) {
+                    const data = ratingDoc.data();
+                    if (!data.gameId) {
+                        await ratingDoc.ref.update({ gameId: parseInt(ratingDoc.id) });
+                        console.log(`Updated rating for user ${userDoc.id}, game ${ratingDoc.id}`);
+                    }
+                }
+            }
+            console.log('Migration complete');
+        }
+        // migrateRatings();
+        */
 
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
