@@ -54,7 +54,7 @@
   {"id":53,"title":"Deus Ex Mankind Divided","genre":"Action","year":2016,"steamId":337000,"multiplayer":false},
   {"id":54,"title":"Hitman 3","genre":"Action","year":2021,"steamId":1659040,"multiplayer":false},
   {"id":55,"title":"Control","genre":"Action","year":2019,"steamId":870780,"multiplayer":false},
-  {"id":56,"title":"Alan Wake ","genre":"Horror","year"2012:,"steamId":108710,"multiplayer":false},
+  {"id":56,"title":"Alan Wake ","genre":"Horror","year":2012,"steamId":108710,"multiplayer":false},
   {"id":57,"title":"Dead Space","genre":"Horror","year":2023,"steamId":1693980,"multiplayer":false},
   {"id":58,"title":"Armored Core 6","genre":"Action","year":2023,"steamId":1888160,"multiplayer":false},
   {"id":59,"title":"Starfield","genre":"RPG","year":2023,"steamId":1716740,"multiplayer":false},
