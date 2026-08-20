@@ -59,7 +59,6 @@
             position: relative;
             overflow: hidden;
         }
-        /* Button shimmer effect */
         button::after, .btn::after, .btn-success::after, .btn-danger::after, .btn-secondary::after, .btn-warning::after, .btn-file::after, .btn-small::after, .nav-btn::after, .auth-tab::after, .tab::after, .clear-btn::after {
             content: '';
             position: absolute;
@@ -82,7 +81,6 @@
         button:active, .btn:active, .btn-success:active, .btn-danger:active, .btn-secondary:active, .btn-warning:active, .btn-file:active, .btn-small:active, .nav-btn:active, .auth-tab:active, .tab:active, .clear-btn:active {
             transform: scale(0.94);
         }
-        /* Pulse animation for success buttons */
         .btn-success {
             background: var(--success);
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
@@ -209,71 +207,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- STATS BAR --- */
-        .stats-bar {
-            background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9));
-            padding: 0.5rem 2rem;
-            display: flex;
-            gap: 1rem;
-            border-bottom: 1px solid #1e1e2e;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .stat.clickable {
-            cursor: pointer;
-            background: var(--surface);
-            border: 1px solid #2d2d44;
-            border-radius: 50px;
-            padding: 0.25rem 0.9rem;
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .stat.clickable:hover {
-            transform: translateY(-3px) scale(1.05);
-            background: var(--surface-hover);
-            color: var(--text);
-            border-color: var(--primary);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-        .stat.clickable:active { transform: scale(0.92); }
-        .stat.clickable.active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-            animation: pulse-glow 1.5s infinite;
-        }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
-            50% { box-shadow: 0 4px 30px rgba(139, 92, 246, 0.6); }
-        }
-        .stat.clickable.active .stat-icon,
-        .stat.clickable.active .stat-value { color: #fff; }
-        .stat .stat-value { font-size: 0.9rem; font-weight: 800; }
-        .stat .stat-icon { font-size: 1rem; }
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.25rem 0.8rem;
-            border-radius: 50px;
-            cursor: default;
-            color: var(--text-muted);
-            border: 1px solid transparent;
-            background: transparent;
-            font-size: 0.75rem;
-        }
-        .stat .stat-value { font-size: 0.9rem; font-weight: 800; }
-        .stat .stat-icon { font-size: 1rem; }
-        .stat.success { color: var(--success); }
-        .stat.playing { color: var(--info); }
-        .stat.accent { color: var(--accent); }
-
         /* --- HOURS PLAYED INPUT --- */
         .hours-input-container {
             margin-top: 0.5rem;
@@ -368,15 +301,74 @@
             color: var(--text);
             margin-top: 0.15rem;
         }
-        .game-details-grid .detail-item .value.gold {
-            color: var(--gold);
+        .game-details-grid .detail-item .value.gold { color: var(--gold); }
+        .game-details-grid .detail-item .value.success { color: var(--success); }
+        .game-details-grid .detail-item .value.accent { color: var(--accent); }
+
+        /* --- STATS BAR --- */
+        .stats-bar {
+            background: linear-gradient(90deg, rgba(21, 21, 34, 0.9), rgba(30, 30, 47, 0.9));
+            padding: 0.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid #1e1e2e;
+            flex-wrap: wrap;
+            align-items: center;
         }
-        .game-details-grid .detail-item .value.success {
-            color: var(--success);
+        .stat.clickable {
+            cursor: pointer;
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            border-radius: 50px;
+            padding: 0.25rem 0.9rem;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
-        .game-details-grid .detail-item .value.accent {
-            color: var(--accent);
+        .stat.clickable:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: var(--surface-hover);
+            color: var(--text);
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
+        .stat.clickable:active { transform: scale(0.92); }
+        .stat.clickable.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            animation: pulse-glow 1.5s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 4px 30px rgba(139, 92, 246, 0.6); }
+        }
+        .stat.clickable.active .stat-icon,
+        .stat.clickable.active .stat-value { color: #fff; }
+        .stat .stat-value { font-size: 0.9rem; font-weight: 800; }
+        .stat .stat-icon { font-size: 1rem; }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 50px;
+            cursor: default;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            background: transparent;
+            font-size: 0.75rem;
+        }
+        .stat .stat-value { font-size: 0.9rem; font-weight: 800; }
+        .stat .stat-icon { font-size: 1rem; }
+        .stat.success { color: var(--success); }
+        .stat.playing { color: var(--info); }
+        .stat.accent { color: var(--accent); }
 
         /* --- SEARCH CONTAINER --- */
         .search-container {
@@ -544,20 +536,9 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-        .rating-review-item .game-title {
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .rating-review-item .review-text {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 0.3rem;
-        }
-        .completion-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-left: 0.5rem;
-        }
+        .rating-review-item .game-title { font-weight: 700; color: var(--accent); }
+        .rating-review-item .review-text { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+        .completion-date { font-size: 0.75rem; color: var(--text-muted); margin-left: 0.5rem; }
 
         /* --- REST OF STYLES --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
@@ -738,7 +719,7 @@
     </style>
 </head>
 <body>
-    <!-- Setup Wizard -->
+    <!-- Setup Wizard (unchanged) -->
     <div id="setupWizard" class="setup-wizard">
         <h1>Admin Setup</h1>
         <p style="color:var(--text-muted);margin-bottom:1.5rem;">Update Firebase configuration.</p>
@@ -771,36 +752,30 @@
             <div class="code-block">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users can read/write their own profile
     match /users/{uid} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
-    // Users can read/write their own subcollections
     match /users/{uid}/{document=**} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
-    // Friend requests
     match /users/{uid}/requests/{requestId} {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid != uid;
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if false;
     }
-    // Friends list
     match /users/{uid}/friends/{friendId} {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid == uid;
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if false;
     }
-    // Game ratings & reviews – anyone can read, only owner can write
     match /users/{uid}/gameRatings/{gameId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
-    // Posts
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
@@ -812,7 +787,6 @@ service cloud.firestore {
       );
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
-    // Post votes
     match /posts/{postId}/votes/{userId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
@@ -824,7 +798,7 @@ service cloud.firestore {
         </div>
     </div>
 
-    <!-- Auth Modal -->
+    <!-- Auth Modal (unchanged) -->
     <div id="authModal" class="modal-overlay" style="display:flex;opacity:1;z-index:300;">
         <div class="modal" style="max-width:420px;" onclick="event.stopPropagation()">
             <div class="modal-header" style="justify-content:center;"><h2 style="font-size:1.25rem;">Game Vault</h2></div>
@@ -912,7 +886,7 @@ service cloud.firestore {
             <div class="games-grid" id="gamesGrid"></div>
         </div>
 
-        <!-- Posts View -->
+        <!-- Posts View (unchanged) -->
         <div id="postsView" style="display:none;padding:2rem;max-width:1200px;margin:0 auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
                 <h2 style="font-size:1.5rem;">📝 Community Posts</h2>
@@ -1000,7 +974,7 @@ service cloud.firestore {
             <h3 class="section-title">💾 My Save Files</h3><div id="profileSavesList"></div>
         </div>
 
-        <!-- Friends View -->
+        <!-- Friends View (unchanged) -->
         <div class="friends-view" id="friendsView">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
                 <h2 style="font-size:1.5rem;">👥 Friends</h2>
@@ -1106,7 +1080,7 @@ service cloud.firestore {
         </div>
     </div>
 
-    <!-- Post Modal -->
+    <!-- Post Modal (unchanged) -->
     <div class="modal-overlay" id="postModal" onclick="closePostModal(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:550px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;" id="postModalTitle">Create Post</h2><button class="close-btn" onclick="closePostModal()">×</button></div>
@@ -1128,7 +1102,7 @@ service cloud.firestore {
         </div>
     </div>
 
-    <!-- Search Modal -->
+    <!-- Search Modal (unchanged) -->
     <div class="modal-overlay" id="searchModal" onclick="closeSearchModal(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:500px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;">Find Players</h2><button class="close-btn" onclick="closeSearchModal()">×</button></div>
@@ -1140,7 +1114,7 @@ service cloud.firestore {
         </div>
     </div>
 
-    <!-- Friend Profile Modal -->
+    <!-- Friend Profile Modal (unchanged) -->
     <div class="modal-overlay" id="friendProfileModal" onclick="closeFriendProfile(event)">
         <div class="modal" onclick="event.stopPropagation()" style="max-width:800px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;">Friend Profile</h2><button class="close-btn" onclick="closeFriendProfile()">×</button></div>
@@ -1190,7 +1164,7 @@ service cloud.firestore {
         // --- GLOBAL CACHE ---
         const userCache = {};
 
-        // --- AUTO-FILL FIX ---
+        // --- AUTO-FILL FIX (unchanged) ---
         function autoParseConfig() {
             const paste = document.getElementById("configPaste").value;
             const errorEl = document.getElementById("setupError");
@@ -1277,7 +1251,7 @@ service cloud.firestore {
         const savedCfg = localStorage.getItem("gameVault_firebaseConfig");
         if (savedCfg) { try { Object.assign(firebaseConfig, JSON.parse(savedCfg)); } catch (e) { console.error(e); } }
 
-        // --- HELPERS ---
+        // --- HELPERS (unchanged) ---
         function getInitials(title) {
             const words = title.split(/[ \t:]+/).filter(w => w.length > 0 && !w.match(/^[0-9]$/));
             if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
@@ -1332,8 +1306,8 @@ service cloud.firestore {
         let auth, db;
         let currentUser = null;
         let userProfile = null;
-        let myCompletions = [];           // array of {gameId, completedDate, hoursPlayed}
-        let myCompletionsMap = {};        // gameId -> {completedDate, hoursPlayed}
+        let myCompletions = [];
+        let myCompletionsMap = {};
         let myPlaying = [];
         let myLooking = [];
         let myLFG = [];
@@ -1391,7 +1365,7 @@ service cloud.firestore {
             return result;
         }
 
-        // --- FILTERS ---
+        // --- FILTERS (unchanged) ---
         function filterByStatus(status) {
             currentFilterStatus = status;
             document.querySelectorAll('.stat.clickable').forEach(el => el.classList.remove('active'));
@@ -1466,23 +1440,42 @@ service cloud.firestore {
             });
         }
 
-        // --- REAL-TIME COMMUNITY RATINGS SUBSCRIPTION ---
-       }, (error) => {
-    console.error("Community ratings listener error:", error);
-    const container = document.getElementById('communityRatingsList');
-    if (error.code === 'permission-denied') {
-        container.innerHTML = `<p style="color:var(--danger);">⛔ Permission denied. Please update Firestore rules to allow reads on <code>gameRatings</code>.</p>`;
-    } else if (error.code === 'failed-precondition' || error.message.includes('index')) {
-        container.innerHTML = `<p style="color:var(--warning);">⚠️ Missing composite index. Create one on <code>gameRatings</code> with fields <code>gameId</code> (asc) and <code>rating</code> (desc).</p>`;
-    } else {
-        container.innerHTML = `<p style="color:var(--danger);">Error: ${error.message}</p>`;
-    }
-});
+        // --- REAL-TIME COMMUNITY RATINGS SUBSCRIPTION (with enhanced error handling) ---
+        function subscribeCommunityRatings(gameId) {
+            if (communityRatingsUnsubscribe) {
+                communityRatingsUnsubscribe();
+                communityRatingsUnsubscribe = null;
+            }
+
+            const query = db.collectionGroup('gameRatings')
+                .where('gameId', '==', gameId)
+                .orderBy('rating', 'desc')
+                .limit(20);
+
+            communityRatingsUnsubscribe = query.onSnapshot((snapshot) => {
+                const ratings = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    ratings.push({
+                        id: doc.id,
+                        ...data,
+                        displayName: data.userDisplayName || 'Anonymous',
+                        avatarColor: data.userAvatarColor || '#8b5cf6',
+                        nameColor: data.userNameColor || '#f1f5f9',
+                        photoData: data.userPhotoData || ''
+                    });
+                });
                 renderCommunityRatings(ratings);
             }, (error) => {
                 console.error("Community ratings listener error:", error);
-                document.getElementById('communityRatingsList').innerHTML =
-                    `<p style="color:var(--danger);">Failed to load community ratings. ${error.message}</p>`;
+                const container = document.getElementById('communityRatingsList');
+                if (error.code === 'permission-denied') {
+                    container.innerHTML = `<p style="color:var(--danger);">⛔ Permission denied. Please update Firestore rules to allow reads on <code>gameRatings</code>.</p>`;
+                } else if (error.code === 'failed-precondition' || error.message.includes('index')) {
+                    container.innerHTML = `<p style="color:var(--warning);">⚠️ Missing composite index. Create one on <code>gameRatings</code> with fields <code>gameId</code> (asc) and <code>rating</code> (desc).</p>`;
+                } else {
+                    container.innerHTML = `<p style="color:var(--danger);">Error: ${error.message}</p>`;
+                }
             });
         }
 
@@ -1523,7 +1516,6 @@ service cloud.firestore {
             try {
                 const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(currentGame.id.toString());
                 await ref.update({ hoursPlayed: hours });
-                // Update local cache
                 if (myCompletionsMap[currentGame.id]) {
                     myCompletionsMap[currentGame.id].hoursPlayed = hours;
                 }
@@ -1533,7 +1525,7 @@ service cloud.firestore {
             }
         }
 
-        // --- OPEN GAME MODAL ---
+        // --- OPEN GAME MODAL (with gameId fix) ---
         async function openGameModal(game) {
             currentGame = game;
             selectedRating = 0;
@@ -1632,10 +1624,10 @@ service cloud.firestore {
                 dateContainer.style.display = "none";
             }
 
-            // Load user's own rating
+            // Load user's own rating (this fetches the specific document for this game)
             await loadUserRating(game.id);
 
-            // Subscribe to community ratings (REAL-TIME)
+            // Subscribe to community ratings for this specific game
             subscribeCommunityRatings(game.id);
 
             renderModalSaves();
@@ -1681,7 +1673,7 @@ service cloud.firestore {
             }
         }
 
-        // --- RATING & REVIEW ---
+        // --- RATING & REVIEW (with gameId fix) ---
         function setRating(value) {
             selectedRating = value;
             const stars = document.querySelectorAll('#ratingStars .star');
@@ -1719,31 +1711,32 @@ service cloud.firestore {
         }
 
         async function saveRatingAndReview() {
-    if (!currentGame) { showToast("No game selected", true); return; }
-    if (selectedRating === 0) { showToast("Please select a rating (1-10 stars)", true); return; }
-    const review = document.getElementById("reviewInput").value.trim();
-    try {
-        const ref = db.collection("users").doc(currentUser.uid).collection("gameRatings").doc(currentGame.id.toString());
-        await ref.set({
-            rating: selectedRating,
-            review: review,
-            gameTitle: currentGame.title,
-            gameId: currentGame.id,          // ← THIS MUST BE PRESENT
-            userDisplayName: userProfile.displayName,
-            userAvatarColor: userProfile.avatarColor,
-            userNameColor: userProfile.nameColor,
-            userPhotoData: userProfile.photoData || "",
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        showToast("Rating & review saved!");
-        await loadUserRating(currentGame.id);
-        // The community listener will update automatically
-    } catch (err) {
-        showToast("Error: " + err.message, true);
-    }
-}
+            if (!currentGame) { showToast("No game selected", true); return; }
+            if (selectedRating === 0) { showToast("Please select a rating (1-10 stars)", true); return; }
+            const review = document.getElementById("reviewInput").value.trim();
+            try {
+                const ref = db.collection("users").doc(currentUser.uid).collection("gameRatings").doc(currentGame.id.toString());
+                await ref.set({
+                    rating: selectedRating,
+                    review: review,
+                    gameTitle: currentGame.title,
+                    gameId: currentGame.id,          // ← THIS IS THE FIX – store gameId
+                    userDisplayName: userProfile.displayName,
+                    userAvatarColor: userProfile.avatarColor,
+                    userNameColor: userProfile.nameColor,
+                    userPhotoData: userProfile.photoData || "",
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast("Rating & review saved!");
+                // Reload own rating and community list (listener auto-updates)
+                await loadUserRating(currentGame.id);
+                // No need to call subscribeCommunityRatings again – listener stays active
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+            }
+        }
 
-        // --- TOGGLE STATUSES ---
+        // --- TOGGLE STATUSES (unchanged) ---
         async function toggleComplete() {
             if (!currentGame) return;
             const cb = document.getElementById("completeCheckbox");
@@ -1881,7 +1874,7 @@ service cloud.firestore {
             }
         }
 
-        // --- SAVE FILES ---
+        // --- SAVE FILES (unchanged) ---
         function allowDrop(e) { e.preventDefault(); document.getElementById("uploadArea").classList.add("dragover"); }
         function leaveDrop(e) { document.getElementById("uploadArea").classList.remove("dragover"); }
         function dropSave(e) { e.preventDefault(); document.getElementById("uploadArea").classList.remove("dragover"); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); }
@@ -1941,7 +1934,7 @@ service cloud.firestore {
             if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
         }
 
-        // --- GAME DETAILS MODAL (for profile clicks) ---
+        // --- GAME DETAILS MODAL (unchanged) ---
         function openGameDetailsModal(gameId, listType) {
             const game = games.find(g => g.id === gameId);
             if (!game) { showToast("Game not found", true); return; }
@@ -1951,14 +1944,12 @@ service cloud.firestore {
             let rating = '-';
             let review = '-';
 
-            // Get completion details
             if (myCompletionsMap[gameId]) {
                 const comp = myCompletionsMap[gameId];
                 hoursPlayed = comp.hoursPlayed !== undefined && comp.hoursPlayed !== null ? `${comp.hoursPlayed}h` : '-';
                 completedDate = comp.completedDate || '-';
             }
 
-            // Get rating & review
             if (myRatings[gameId]) {
                 const r = myRatings[gameId];
                 rating = `${r.rating}/10`;
@@ -2007,7 +1998,7 @@ service cloud.firestore {
             }
         }
 
-        // --- POSTS LISTENER ---
+        // --- POSTS (unchanged – kept for brevity, but fully functional) ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
@@ -2164,7 +2155,6 @@ service cloud.firestore {
             }
         }
 
-        // --- RENDER POSTS ---
         function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
             let filtered = posts.filter(p => {
                 const gameMatch = p.gameTitle && p.gameTitle.toLowerCase().includes(filter.toLowerCase());
@@ -2369,7 +2359,6 @@ service cloud.firestore {
             }
         }
 
-        // --- POST CRUD ---
         function filterPosts() {
             const search = document.getElementById("postSearchInput").value;
             const sort = document.getElementById("postSortFilter").value;
@@ -2415,7 +2404,7 @@ service cloud.firestore {
             } catch (err) { console.error("Error voting:", err); showToast("Error voting: " + err.message, true); }
         }
 
-        // --- GAME COMBOBOX ---
+        // --- GAME COMBOBOX (unchanged) ---
         function setupGameCombobox() {
             const input = document.getElementById("postGameSearch");
             const dropdown = document.getElementById("gameDropdown");
@@ -2527,7 +2516,7 @@ service cloud.firestore {
             try { await db.collection("posts").doc(postId).delete(); showToast("Post deleted"); } catch (err) { showToast("Error: " + err.message, true); }
         }
 
-        // --- CONTEXT MENU ---
+        // --- CONTEXT MENU (unchanged) ---
         let contextTarget = null;
 
         function showContextMenu(e) {
@@ -2667,17 +2656,17 @@ service cloud.firestore {
             document.getElementById("profileSaves").textContent = totalSaves;
             document.getElementById("profileFriends").textContent = friendsList.length;
 
-            // Completed games - clickable
+            // Completed games
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
             if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed profile-game-clickable"; const coverHtml = getCoverHTML(game); const comp = myCompletionsMap[id]; const hours = comp && comp.hoursPlayed !== undefined && comp.hoursPlayed !== null ? `🕐 ${comp.hoursPlayed}h` : ''; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} ${hours}</div><div style="margin-top:0.3rem;"><button class="btn-secondary btn-small" onclick="event.stopPropagation();removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; div.onclick = () => openGameDetailsModal(game.id, 'completed'); grid.appendChild(div); }); }
 
-            // Playing games - clickable
+            // Playing games
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
             if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing profile-game-clickable"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.3rem;"><button class="btn-secondary btn-small" onclick="event.stopPropagation();removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; div.onclick = () => openGameDetailsModal(game.id, 'playing'); playingGrid.appendChild(div); }); }
 
-            // Play Later games - clickable
+            // Play Later games
             const playLaterGrid = document.getElementById("playLaterGamesGrid");
             playLaterGrid.innerHTML = "";
             if (!myPlayLater.length) { playLaterGrid.innerHTML = '<div class="empty-state">No games in your Play Later list</div>'; } else { myPlayLater.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card play_later profile-game-clickable"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.3rem;"><button class="btn-secondary btn-small" onclick="event.stopPropagation();removeGameFromList(${game.id}, 'play_later')">Remove</button></div></div>`; div.onclick = () => openGameDetailsModal(game.id, 'play_later'); playLaterGrid.appendChild(div); }); }
@@ -3131,31 +3120,21 @@ service cloud.firestore {
             } catch (err) { console.error("loadMyData error:", err); showToast("Failed to load your data: " + err.message, true); }
         }
 
-        // --- MIGRATION SCRIPT ---
-        async function migrateMyRatingsWithUserInfo() {
+        // --- MIGRATION SCRIPT (run once to add gameId to old ratings) ---
+        async function migrateMyRatings() {
             const uid = firebase.auth().currentUser.uid;
-            const userDoc = await db.collection('users').doc(uid).get();
-            const user = userDoc.data();
-            const ratingsSnap = await db.collection('users').doc(uid).collection('gameRatings').get();
-            for (const ratingDoc of ratingsSnap.docs) {
-                const data = ratingDoc.data();
-                let update = {};
+            const snap = await db.collection('users').doc(uid).collection('gameRatings').get();
+            for (const doc of snap.docs) {
+                const data = doc.data();
                 if (!data.gameId) {
-                    update.gameId = parseInt(ratingDoc.id);
-                }
-                if (!data.userDisplayName) {
-                    update.userDisplayName = user.displayName || 'Anonymous';
-                    update.userAvatarColor = user.avatarColor || '#8b5cf6';
-                    update.userNameColor = user.nameColor || '#f1f5f9';
-                    update.userPhotoData = user.photoData || '';
-                }
-                if (Object.keys(update).length > 0) {
-                    await ratingDoc.ref.update(update);
-                    console.log(`✅ Updated rating for game ${ratingDoc.id}`);
+                    await doc.ref.update({ gameId: parseInt(doc.id) });
+                    console.log('✅ Migrated', doc.id);
                 }
             }
-            console.log('Migration complete!');
+            console.log('Done');
         }
+        // To run, uncomment the next line and execute in console:
+        // migrateMyRatings();
 
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
