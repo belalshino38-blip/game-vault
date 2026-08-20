@@ -26,6 +26,7 @@
             --vote-down: #ef4444;
             --radius: 16px;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --gold: #fbbf24;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased; }
@@ -261,6 +262,61 @@
         .chat-message .reply-btn { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; cursor: pointer; padding: 0 0.3rem; }
         .chat-message .reply-btn:hover { color: var(--text); text-decoration: underline; }
 
+        /* --- RATING STARS --- */
+        .rating-stars {
+            display: flex;
+            gap: 0.1rem;
+            cursor: pointer;
+            flex-wrap: wrap;
+        }
+        .rating-stars .star {
+            font-size: 1.5rem;
+            color: #4a4a5a;
+            transition: color 0.15s;
+            cursor: pointer;
+            line-height: 1.2;
+        }
+        .rating-stars .star.filled {
+            color: var(--gold);
+        }
+        .rating-stars .star:hover {
+            transform: scale(1.1);
+        }
+        .rating-display .star {
+            font-size: 1.2rem;
+            color: #4a4a5a;
+        }
+        .rating-display .star.filled {
+            color: var(--gold);
+        }
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .rating-review-item {
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border: 1px solid #2d2d44;
+            margin-bottom: 0.75rem;
+        }
+        .rating-review-item .game-title {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .rating-review-item .review-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+        .completion-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
         /* --- REST OF STYLES --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
@@ -298,10 +354,12 @@
         .game-card.playing { border-color: var(--info); }
         .game-card.looking_for_players { border-color: var(--warning); }
         .game-card.lfg { border-color: var(--danger); }
+        .game-card.play_later { border-color: var(--accent); }
         .game-card.completed::after { content: '✓'; position: absolute; top: 10px; right: 10px; background: var(--success); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         .game-card.playing::after { content: '▶'; position: absolute; top: 10px; right: 10px; background: var(--info); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         .game-card.looking_for_players::after { content: '🔍'; position: absolute; top: 10px; right: 10px; background: var(--warning); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         .game-card.lfg::after { content: '👥'; position: absolute; top: 10px; right: 10px; background: var(--danger); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.play_later::after { content: '📅'; position: absolute; top: 10px; right: 10px; background: var(--accent); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: var(--radius) var(--radius) 0 0; flex-shrink: 0; }
         .cover .cover-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 0; }
@@ -329,6 +387,7 @@
         .checkbox-label.playing-checked { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: var(--info); }
         .checkbox-label.looking-checked { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: var(--warning); }
         .checkbox-label.lfg-checked { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger); }
+        .checkbox-label.play_later-checked { background: rgba(6, 182, 212, 0.1); border-color: var(--accent); color: var(--accent); }
         .upload-area { border: 2px dashed #2d2d44; border-radius: var(--radius); padding: 2rem; text-align: center; margin-top: 1rem; transition: all 0.2s; cursor: pointer; }
         .upload-area:hover { border-color: var(--primary); background: rgba(139, 92, 246, 0.03); transform: scale(1.02); }
         .upload-area:active { transform: scale(0.98); }
@@ -508,7 +567,6 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == uid;
     }
     // Friend requests - allow ANY authenticated user to CREATE a request
-    // Only the target user can READ or DELETE their own requests
     match /users/{uid}/requests/{requestId} {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid != uid;
@@ -521,6 +579,11 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == uid;
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if false;
+    }
+    // Game ratings & reviews - anyone can read, only owner can write
+    match /users/{uid}/gameRatings/{gameId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
     }
     // Posts
     match /posts/{postId} {
@@ -541,7 +604,7 @@ service cloud.firestore {
     }
   }
 }</div>
-            <p style="color:var(--success);margin-top:0.5rem;">✅ Allows friend requests, real‑time chat, and post interactions.</p>
+            <p style="color:var(--success);margin-top:0.5rem;">✅ Allows friend requests, real‑time chat, ratings, reviews, and post interactions.</p>
         </div>
     </div>
 
@@ -600,6 +663,9 @@ service cloud.firestore {
             </div>
             <div class="stat playing clickable" onclick="filterByStatus('playing')" id="filterPlaying">
                 <span class="stat-icon">▶</span><span class="stat-value" id="playingCount">0</span>
+            </div>
+            <div class="stat accent clickable" onclick="filterByStatus('play_later')" id="filterPlayLater">
+                <span class="stat-icon">📅</span><span class="stat-value" id="playLaterCount">0</span>
             </div>
             <div class="stat accent clickable active" onclick="filterByStatus('all')" id="filterAll">
                 <span class="stat-icon">🎮</span><span class="stat-value" id="totalGames">1000+</span>
@@ -670,6 +736,7 @@ service cloud.firestore {
                     <div class="profile-stats">
                         <div class="profile-stat"><span class="profile-stat-value" id="profileCompleted">0</span><span class="profile-stat-label">Completed</span></div>
                         <div class="profile-stat"><span class="profile-stat-value" id="profilePlaying">0</span><span class="profile-stat-label">Playing</span></div>
+                        <div class="profile-stat"><span class="profile-stat-value" id="profilePlayLater">0</span><span class="profile-stat-label">Play Later</span></div>
                         <div class="profile-stat"><span class="profile-stat-value" id="profileSaves">0</span><span class="profile-stat-label">Saves</span></div>
                         <div class="profile-stat"><span class="profile-stat-value" id="profileFriends">0</span><span class="profile-stat-label">Friends</span></div>
                     </div>
@@ -712,6 +779,8 @@ service cloud.firestore {
             </div>
             <h3 class="section-title">🏆 Completed</h3><div class="profile-games-grid" id="completedGamesGrid"></div>
             <h3 class="section-title">▶ Playing</h3><div class="profile-games-grid" id="playingGamesGrid"></div>
+            <h3 class="section-title">📅 Play Later</h3><div class="profile-games-grid" id="playLaterGamesGrid"></div>
+            <h3 class="section-title">⭐ My Ratings & Reviews</h3><div id="profileRatingsList"></div>
             <h3 class="section-title">💾 My Save Files</h3><div id="profileSavesList"></div>
         </div>
 
@@ -744,6 +813,42 @@ service cloud.firestore {
                             <label class="checkbox-label" id="playingLabel"><input type="checkbox" id="playingCheckbox" onchange="togglePlaying()"><span>▶ Playing</span></label>
                             <label class="checkbox-label" id="lookingLabel"><input type="checkbox" id="lookingCheckbox" onchange="toggleLooking()"><span>🔍 Looking for Players</span></label>
                             <label class="checkbox-label" id="lfgLabel" style="display:none;"><input type="checkbox" id="lfgCheckbox" onchange="toggleLFG()"><span>👥 LFG</span></label>
+                            <label class="checkbox-label" id="playLaterLabel"><input type="checkbox" id="playLaterCheckbox" onchange="togglePlayLater()"><span>📅 Play Later</span></label>
+                        </div>
+                        <div id="completionDateContainer" style="margin-top:0.75rem;display:none;">
+                            <label style="color:var(--text-muted);font-size:0.85rem;">Finished on:</label>
+                            <input type="date" id="completionDate" style="width:auto;display:inline-block;margin-left:0.5rem;padding:0.3rem 0.6rem;">
+                            <button class="btn-small btn-success" onclick="saveCompletionDate()" style="margin-left:0.5rem;">Save Date</button>
+                        </div>
+                        <div id="ratingContainer" style="margin-top:1rem;border-top:1px solid #2d2d44;padding-top:1rem;">
+                            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                                <span style="color:var(--text-muted);font-size:0.85rem;">Rate this game:</span>
+                                <div class="rating-stars" id="ratingStars">
+                                    <span class="star" data-value="1" onclick="setRating(1)">★</span>
+                                    <span class="star" data-value="2" onclick="setRating(2)">★</span>
+                                    <span class="star" data-value="3" onclick="setRating(3)">★</span>
+                                    <span class="star" data-value="4" onclick="setRating(4)">★</span>
+                                    <span class="star" data-value="5" onclick="setRating(5)">★</span>
+                                    <span class="star" data-value="6" onclick="setRating(6)">★</span>
+                                    <span class="star" data-value="7" onclick="setRating(7)">★</span>
+                                    <span class="star" data-value="8" onclick="setRating(8)">★</span>
+                                    <span class="star" data-value="9" onclick="setRating(9)">★</span>
+                                    <span class="star" data-value="10" onclick="setRating(10)">★</span>
+                                </div>
+                                <span id="ratingDisplay" style="color:var(--text-muted);font-size:0.85rem;">Not rated</span>
+                            </div>
+                            <div style="margin-top:0.5rem;">
+                                <textarea id="reviewInput" placeholder="Write your review..." rows="2" style="width:100%;padding:0.5rem;border-radius:var(--radius);background:var(--surface);border:1px solid #2d2d44;color:var(--text);font-family:inherit;resize:vertical;"></textarea>
+                            </div>
+                            <button class="btn-small btn-success" onclick="saveRatingAndReview()" style="margin-top:0.5rem;">Save Rating & Review</button>
+                            <div id="userRatingDisplay" style="margin-top:0.5rem;display:none;">
+                                <div class="rating-display">
+                                    <span style="color:var(--text-muted);font-size:0.85rem;">Your rating:</span>
+                                    <span id="userRatingStarsDisplay"></span>
+                                    <span id="userRatingText" style="color:var(--text-muted);font-size:0.85rem;"></span>
+                                </div>
+                                <div id="userReviewDisplay" style="color:var(--text-muted);font-size:0.85rem;margin-top:0.3rem;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -800,7 +905,7 @@ service cloud.firestore {
 
     <!-- Friend Profile Modal -->
     <div class="modal-overlay" id="friendProfileModal" onclick="closeFriendProfile(event)">
-        <div class="modal" onclick="event.stopPropagation()" style="max-width:700px;">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width:800px;">
             <div class="modal-header"><h2 style="font-size:1.25rem;">Friend Profile</h2><button class="close-btn" onclick="closeFriendProfile()">×</button></div>
             <div class="modal-body">
                 <div class="profile-header" style="margin-bottom:1.5rem;padding:1rem;">
@@ -809,6 +914,7 @@ service cloud.firestore {
                         <div class="profile-stats">
                             <div class="profile-stat"><span class="profile-stat-value" id="friendCompleted">0</span><span class="profile-stat-label">Completed</span></div>
                             <div class="profile-stat"><span class="profile-stat-value" id="friendPlaying">0</span><span class="profile-stat-label">Playing</span></div>
+                            <div class="profile-stat"><span class="profile-stat-value" id="friendPlayLater">0</span><span class="profile-stat-label">Play Later</span></div>
                             <div class="profile-stat"><span class="profile-stat-value" id="friendSavesCount">0</span><span class="profile-stat-label">Saves</span></div>
                         </div>
                     </div>
@@ -816,6 +922,8 @@ service cloud.firestore {
                 <div id="friendPostsSection" style="margin-bottom:1.5rem;padding:1rem;background:var(--surface);border-radius:var(--radius);border:1px solid #2d2d44;"><h4 style="margin-bottom:0.5rem;">📝 Their Posts</h4><div id="friendPostsList"></div></div>
                 <h3 class="section-title">🏆 Completed</h3><div class="profile-games-grid" id="friendCompletedGrid"></div>
                 <h3 class="section-title">▶ Playing</h3><div class="profile-games-grid" id="friendPlayingGrid"></div>
+                <h3 class="section-title">📅 Play Later</h3><div class="profile-games-grid" id="friendPlayLaterGrid"></div>
+                <h3 class="section-title">⭐ Ratings & Reviews</h3><div id="friendRatingsList"></div>
                 <h3 class="section-title">💾 Saves</h3><div id="friendSavesContainer"></div>
             </div>
         </div>
@@ -973,6 +1081,14 @@ service cloud.firestore {
             }
         }
 
+        function renderStars(rating) {
+            let html = '';
+            for (let i = 1; i <= 10; i++) {
+                html += `<span class="star ${i <= rating ? 'filled' : ''}">★</span>`;
+            }
+            return html;
+        }
+
         // --- GLOBAL VARIABLES ---
         let currentFilterStatus = 'all';
         let games = [];
@@ -983,7 +1099,9 @@ service cloud.firestore {
         let myPlaying = [];
         let myLooking = [];
         let myLFG = [];
+        let myPlayLater = [];
         let mySaves = {};
+        let myRatings = {};
         let friendsList = [];
         let friendRequests = [];
         let currentGame = null;
@@ -998,6 +1116,8 @@ service cloud.firestore {
 
         // --- REPLY STATE ---
         let replyTarget = null;
+        // --- RATING STATE ---
+        let selectedRating = 0;
 
         // --- LOAD GAMES ---
         async function loadGames() {
@@ -1041,7 +1161,8 @@ service cloud.firestore {
                     'completed': 'filterCompleted',
                     'playing': 'filterPlaying',
                     'looking': 'filterLooking',
-                    'lfg': 'filterLfg'
+                    'lfg': 'filterLfg',
+                    'play_later': 'filterPlayLater'
                 };
                 const target = document.getElementById(filterMap[status]);
                 if (target) target.classList.add('active');
@@ -1059,6 +1180,7 @@ service cloud.firestore {
                 else if (currentFilterStatus === 'playing') statusMatch = myPlaying.includes(g.id);
                 else if (currentFilterStatus === 'looking') statusMatch = myLooking.includes(g.id);
                 else if (currentFilterStatus === 'lfg') statusMatch = myLFG.includes(g.id);
+                else if (currentFilterStatus === 'play_later') statusMatch = myPlayLater.includes(g.id);
                 return titleMatch && statusMatch;
             });
             switch(sort) {
@@ -1081,12 +1203,14 @@ service cloud.firestore {
                 const isPlaying = myPlaying.includes(game.id);
                 const isLooking = myLooking.includes(game.id);
                 const isLFG = myLFG.includes(game.id);
+                const isPlayLater = myPlayLater.includes(game.id);
                 const card = document.createElement("div");
                 let cls = "game-card";
                 if (isCompleted) cls += " completed";
                 if (isPlaying) cls += " playing";
                 if (isLooking) cls += " looking_for_players";
                 if (isLFG) cls += " lfg";
+                if (isPlayLater) cls += " play_later";
                 card.className = cls;
                 card.onclick = () => openGameModal(game);
                 let coverHtml = getCoverHTML(game);
@@ -1095,6 +1219,7 @@ service cloud.firestore {
                 else if (isPlaying) badge = `<span class="game-status-badge" style="background:rgba(59,130,246,0.2);color:var(--info);">Playing</span>`;
                 else if (isLooking) badge = `<span class="game-status-badge" style="background:rgba(245,158,11,0.2);color:var(--warning);">Looking</span>`;
                 else if (isLFG) badge = `<span class="game-status-badge" style="background:rgba(239,68,68,0.2);color:var(--danger);">LFG</span>`;
+                else if (isPlayLater) badge = `<span class="game-status-badge" style="background:rgba(6,182,212,0.2);color:var(--accent);">Play Later</span>`;
                 card.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} • ${game.year}${badge}</div></div>`;
                 grid.appendChild(card);
             });
@@ -1103,6 +1228,7 @@ service cloud.firestore {
         // --- OPEN GAME MODAL ---
         async function openGameModal(game) {
             currentGame = game;
+            selectedRating = 0;
             document.getElementById("modalTitle").textContent = game.title;
             document.getElementById("modalBadge").textContent = `${game.genre} • ${game.year}`;
             document.getElementById("modalDesc").textContent = game.desc || `${game.title} is a ${game.genre} game released in ${game.year}.`;
@@ -1165,7 +1291,27 @@ service cloud.firestore {
             document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
             document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
             document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
+            document.getElementById("playLaterCheckbox").checked = myPlayLater.includes(game.id);
             updateStatusLabels();
+
+            // Show/hide completion date
+            const dateContainer = document.getElementById("completionDateContainer");
+            if (myCompletions.includes(game.id)) {
+                dateContainer.style.display = "block";
+                // Load existing completion date
+                const dateDoc = await db.collection("users").doc(currentUser.uid).collection("completions").doc(game.id.toString()).get();
+                if (dateDoc.exists && dateDoc.data().completedDate) {
+                    document.getElementById("completionDate").value = dateDoc.data().completedDate;
+                } else {
+                    document.getElementById("completionDate").value = new Date().toISOString().split('T')[0];
+                }
+            } else {
+                dateContainer.style.display = "none";
+            }
+
+            // Load user's rating & review
+            await loadUserRating(game.id);
+
             renderModalSaves();
             await loadFriendSavesForGame(game.id);
             document.getElementById("gameModal").classList.add("active");
@@ -1185,9 +1331,82 @@ service cloud.firestore {
             document.getElementById("playingLabel").classList.toggle("playing-checked", document.getElementById("playingCheckbox").checked);
             document.getElementById("lookingLabel").classList.toggle("looking-checked", document.getElementById("lookingCheckbox").checked);
             document.getElementById("lfgLabel").classList.toggle("lfg-checked", document.getElementById("lfgCheckbox").checked);
+            document.getElementById("playLaterLabel").classList.toggle("play_later-checked", document.getElementById("playLaterCheckbox").checked);
         }
 
-        // --- INDEPENDENT TOGGLES ---
+        // --- COMPLETION DATE ---
+        async function saveCompletionDate() {
+            if (!currentGame) return;
+            const date = document.getElementById("completionDate").value;
+            if (!date) { showToast("Please select a date", true); return; }
+            try {
+                const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(currentGame.id.toString());
+                await ref.update({ completedDate: date });
+                showToast("Completion date saved!");
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+            }
+        }
+
+        // --- RATING & REVIEW ---
+        function setRating(value) {
+            selectedRating = value;
+            const stars = document.querySelectorAll('#ratingStars .star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('filled', index < value);
+            });
+            document.getElementById("ratingDisplay").textContent = value > 0 ? `${value}/10` : 'Not rated';
+        }
+
+        async function loadUserRating(gameId) {
+            try {
+                const doc = await db.collection("users").doc(currentUser.uid).collection("gameRatings").doc(gameId.toString()).get();
+                const container = document.getElementById("userRatingDisplay");
+                if (doc.exists) {
+                    const data = doc.data();
+                    container.style.display = "block";
+                    document.getElementById("userRatingStarsDisplay").innerHTML = renderStars(data.rating || 0);
+                    document.getElementById("userRatingText").textContent = `${data.rating || 0}/10`;
+                    document.getElementById("userReviewDisplay").textContent = data.review || '';
+                    // Pre-fill the rating stars
+                    if (data.rating) {
+                        selectedRating = data.rating;
+                        const stars = document.querySelectorAll('#ratingStars .star');
+                        stars.forEach((star, index) => {
+                            star.classList.toggle('filled', index < data.rating);
+                        });
+                        document.getElementById("ratingDisplay").textContent = `${data.rating}/10`;
+                    }
+                    document.getElementById("reviewInput").value = data.review || '';
+                } else {
+                    container.style.display = "none";
+                }
+            } catch (err) {
+                console.error("Error loading rating:", err);
+            }
+        }
+
+        async function saveRatingAndReview() {
+            if (!currentGame) { showToast("No game selected", true); return; }
+            if (selectedRating === 0) { showToast("Please select a rating (1-10 stars)", true); return; }
+            const review = document.getElementById("reviewInput").value.trim();
+            try {
+                const ref = db.collection("users").doc(currentUser.uid).collection("gameRatings").doc(currentGame.id.toString());
+                await ref.set({
+                    rating: selectedRating,
+                    review: review,
+                    gameTitle: currentGame.title,
+                    gameId: currentGame.id,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast("Rating & review saved!");
+                await loadUserRating(currentGame.id);
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+            }
+        }
+
+        // --- TOGGLE STATUSES ---
         async function toggleComplete() {
             if (!currentGame) return;
             const cb = document.getElementById("completeCheckbox");
@@ -1195,11 +1414,18 @@ service cloud.firestore {
             const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString());
             try {
                 if (cb.checked) {
-                    await ref.set({ completedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    const date = new Date().toISOString().split('T')[0];
+                    await ref.set({ 
+                        completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        completedDate: date
+                    });
                     if (!myCompletions.includes(gameId)) myCompletions.push(gameId);
+                    document.getElementById("completionDateContainer").style.display = "block";
+                    document.getElementById("completionDate").value = date;
                 } else {
                     await ref.delete();
                     myCompletions = myCompletions.filter(id => id !== gameId);
+                    document.getElementById("completionDateContainer").style.display = "none";
                 }
                 updateStatusLabels();
                 filterGames();
@@ -1279,6 +1505,29 @@ service cloud.firestore {
                 filterGames();
                 updateStats();
                 showToast(cb.checked ? "Looking for group!" : "Removed from LFG");
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+                cb.checked = !cb.checked;
+            }
+        }
+
+        async function togglePlayLater() {
+            if (!currentGame) return;
+            const cb = document.getElementById("playLaterCheckbox");
+            const gameId = currentGame.id;
+            const ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
+            try {
+                if (cb.checked) {
+                    await ref.set({ status: "play_later", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    if (!myPlayLater.includes(gameId)) myPlayLater.push(gameId);
+                } else {
+                    await ref.delete();
+                    myPlayLater = myPlayLater.filter(id => id !== gameId);
+                }
+                updateStatusLabels();
+                filterGames();
+                updateStats();
+                showToast(cb.checked ? "Added to Play Later!" : "Removed from Play Later");
             } catch (err) {
                 showToast("Error: " + err.message, true);
                 cb.checked = !cb.checked;
@@ -1502,7 +1751,7 @@ service cloud.firestore {
             }
         }
 
-        // --- RENDER POSTS (with chat toggle defined) ---
+        // --- RENDER POSTS ---
         function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
             let filtered = posts.filter(p => {
                 const gameMatch = p.gameTitle && p.gameTitle.toLowerCase().includes(filter.toLowerCase());
@@ -1600,7 +1849,6 @@ service cloud.firestore {
             });
         }
 
-        // --- TOGGLE CHAT (FIXED - function is now defined) ---
         function toggleChat(postId) {
             chatOpenState[postId] = !chatOpenState[postId];
             renderPosts(
@@ -1610,7 +1858,6 @@ service cloud.firestore {
             );
         }
 
-        // --- REPLY FUNCTIONS ---
         function setReplyTarget(postId, msgId, displayName) {
             replyTarget = { postId, msgId, displayName };
             const indicator = document.getElementById(`replyIndicator_${postId}`);
@@ -1636,7 +1883,6 @@ service cloud.firestore {
             }
         }
 
-        // --- SEND CHAT MESSAGE ---
         async function sendChatMessage(postId) {
             const input = document.getElementById(`chatInput_${postId}`);
             const msg = input.value.trim();
@@ -1950,15 +2196,16 @@ service cloud.firestore {
             if(tab === 'games') document.getElementById('navGames').classList.add('active');
             if(tab === 'friends') document.getElementById('navFriends').classList.add('active');
             if(tab === 'posts') document.getElementById('navPosts').classList.add('active');
-            // navProfile not a header button – removed
         }
 
         function updateStats() {
             const count = myCompletions.length;
             const playingCount = myPlaying.length;
+            const playLaterCount = myPlayLater.length;
             const totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
             document.getElementById("completedCount").textContent = count;
             document.getElementById("playingCount").textContent = playingCount;
+            document.getElementById("playLaterCount").textContent = playLaterCount;
             document.getElementById("totalGames").textContent = games.length;
             document.getElementById("savesCount").textContent = totalSaves;
             document.getElementById("friendsCount").textContent = friendsList.length;
@@ -1995,7 +2242,7 @@ service cloud.firestore {
         // --- PROFILE ---
         function renderProfile() {
             if (!userProfile) return;
-            const count = myCompletions.length, playingCount = myPlaying.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
+            const count = myCompletions.length, playingCount = myPlaying.length, playLaterCount = myPlayLater.length, totalSaves = Object.values(mySaves).reduce((acc, arr) => acc + arr.length, 0);
             const avatar = document.getElementById("profileAvatar");
             if (avatar) setAvatarElement(avatar, userProfile);
             document.getElementById("profileName").textContent = userProfile.displayName;
@@ -2003,30 +2250,71 @@ service cloud.firestore {
             document.getElementById("profileEmail").textContent = currentUser.email;
             document.getElementById("profileCompleted").textContent = count;
             document.getElementById("profilePlaying").textContent = playingCount;
+            document.getElementById("profilePlayLater").textContent = playLaterCount;
             document.getElementById("profileSaves").textContent = totalSaves;
             document.getElementById("profileFriends").textContent = friendsList.length;
 
+            // Completed games
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
             if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
 
+            // Playing games
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
             if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
 
+            // Play Later games
+            const playLaterGrid = document.getElementById("playLaterGamesGrid");
+            playLaterGrid.innerHTML = "";
+            if (!myPlayLater.length) { playLaterGrid.innerHTML = '<div class="empty-state">No games in your Play Later list</div>'; } else { myPlayLater.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card play_later"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'play_later')">Remove</button></div></div>`; playLaterGrid.appendChild(div); }); }
+
+            // Ratings & Reviews
+            const ratingsList = document.getElementById("profileRatingsList");
+            renderRatingsList(ratingsList, myRatings, true);
+
+            // Saves
             const savesList = document.getElementById("profileSavesList");
             const allSaves = [];
             Object.keys(mySaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { mySaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
             if (!allSaves.length) { savesList.innerHTML = '<div class="empty-state">No save files uploaded yet.</div>'; } else { savesList.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
         }
 
+        function renderRatingsList(container, ratings, isOwn) {
+            if (!ratings || Object.keys(ratings).length === 0) {
+                container.innerHTML = '<div class="empty-state">No ratings yet.</div>';
+                return;
+            }
+            let html = '';
+            Object.keys(ratings).forEach(gameId => {
+                const rating = ratings[gameId];
+                const game = games.find(g => g.id == gameId);
+                if (!game) return;
+                html += `<div class="rating-review-item">
+                    <div class="game-title">${game.title}</div>
+                    <div class="rating-display">${renderStars(rating.rating)} <span style="color:var(--text-muted);font-size:0.85rem;">${rating.rating}/10</span></div>
+                    ${rating.review ? `<div class="review-text">"${rating.review}"</div>` : ''}
+                    ${rating.updatedAt ? `<div style="font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Updated: ${new Date(rating.updatedAt.toMillis()).toLocaleDateString()}</div>` : ''}
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
         async function removeGameFromList(gameId, listType) {
             if (!confirm("Remove this game from your "+listType+" list?")) return;
-            const ref = listType === 'completed' ? db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString()) : db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
+            let ref;
+            if (listType === 'completed') {
+                ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString());
+            } else if (listType === 'play_later') {
+                ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
+            } else {
+                ref = db.collection("users").doc(currentUser.uid).collection("gameStatus").doc(gameId.toString());
+            }
             try {
                 await ref.delete();
                 if(listType === 'completed') myCompletions = myCompletions.filter(id => id !== gameId);
-                if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
+                else if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
+                else if(listType === 'play_later') myPlayLater = myPlayLater.filter(id => id !== gameId);
                 showToast("Removed from list!");
                 renderProfile(); updateStats();
             } catch(err) { showToast("Error removing: " + err.message, true); }
@@ -2177,21 +2465,42 @@ service cloud.firestore {
             }, 300);
         }
 
+        // --- FRIEND PROFILE ---
         async function openFriendProfile(friendUid) {
             const userDoc = await db.collection("users").doc(friendUid).get();
             if (!userDoc.exists) { showToast("User not found", true); return; }
             const profile = userDoc.data();
+
+            // Get friend's games
             const compSnap = await db.collection("users").doc(friendUid).collection("completions").get();
-            const friendCompletions = compSnap.docs.map(d => parseInt(d.id));
+            const friendCompletions = compSnap.docs.map(d => ({ id: parseInt(d.id), ...d.data() }));
+            
             const playingSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "playing").get();
             const friendPlaying = playingSnap.docs.map(d => parseInt(d.id));
+            
+            const playLaterSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "play_later").get();
+            const friendPlayLater = playLaterSnap.docs.map(d => parseInt(d.id));
+
+            // Get friend's ratings & reviews
+            const ratingsSnap = await db.collection("users").doc(friendUid).collection("gameRatings").get();
+            const friendRatings = {};
+            ratingsSnap.docs.forEach(d => {
+                const data = d.data();
+                friendRatings[parseInt(d.id)] = data;
+            });
+
+            // Get friend's saves
             const savesSnap = await db.collection("users").doc(friendUid).collection("saveFiles").get();
             const friendSaves = {};
             let totalFriendSaves = 0;
             savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = []; friendSaves[gid].push(data); totalFriendSaves++; });
+
+            // Get friend's posts
             const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
             friendPosts = [];
             postSnap.docs.forEach(d => { friendPosts.push({ id: d.id, ...d.data() }); });
+
+            // Update UI
             const avatar = document.getElementById("friendProfileAvatar");
             if (profile.photoData) { avatar.style.backgroundImage = `url(${profile.photoData})`; avatar.style.backgroundSize = "cover"; avatar.style.backgroundPosition = "center"; avatar.textContent = ""; } else { avatar.style.backgroundImage = "none"; avatar.style.background = profile.avatarColor; avatar.textContent = getInitials(profile.displayName); }
             document.getElementById("friendProfileName").textContent = profile.displayName;
@@ -2199,28 +2508,49 @@ service cloud.firestore {
             document.getElementById("friendProfileEmail").textContent = profile.email;
             document.getElementById("friendCompleted").textContent = friendCompletions.length;
             document.getElementById("friendPlaying").textContent = friendPlaying.length;
+            document.getElementById("friendPlayLater").textContent = friendPlayLater.length;
             document.getElementById("friendSavesCount").textContent = totalFriendSaves;
+
+            // Social links
             const socialDiv = document.getElementById("friendSocialLinks");
             socialDiv.innerHTML = "";
             if (profile.discord) socialDiv.innerHTML += `<span class="badge badge-info">Discord: ${profile.discord}</span>`;
             if (profile.reddit) socialDiv.innerHTML += `<span class="badge badge-warning">Reddit: ${profile.reddit}</span>`;
             if (!profile.discord && !profile.reddit) socialDiv.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
+
+            // Posts
             const postsSection = document.getElementById("friendPostsSection");
             const postsList = document.getElementById("friendPostsList");
             if (friendPosts.length) {
                 postsSection.style.display = "block";
                 postsList.innerHTML = friendPosts.map(p => `<div style="padding:0.5rem 0;border-bottom:1px solid #2d2d44;display:flex;justify-content:space-between;align-items:center;"><div><span class="post-tag ${getTagClass(p.tag)}" style="font-size:0.6rem;">${getTagLabel(p.tag)}</span><strong style="color:var(--accent);margin-left:0.5rem;">${p.gameTitle}</strong><div style="font-size:0.85rem;color:var(--text-muted);">${p.message || ''}</div></div><button class="btn-success btn-small" onclick="addFriendFromPost('${p.userId}')">Add Friend</button></div>`).join("");
             } else { postsSection.style.display = "none"; }
+
+            // Completed games
             const grid = document.getElementById("friendCompletedGrid");
             grid.innerHTML = "";
-            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; grid.appendChild(div); }); }
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(item => { const game = games.find(g => g.id === item.id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); const dateStr = item.completedDate ? ` 📅 ${item.completedDate}` : ''; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}${dateStr}</div></div>`; grid.appendChild(div); }); }
+
+            // Playing games
             const playingGrid = document.getElementById("friendPlayingGrid");
             playingGrid.innerHTML = "";
             if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
+
+            // Play Later games
+            const playLaterGrid = document.getElementById("friendPlayLaterGrid");
+            playLaterGrid.innerHTML = "";
+            if (!friendPlayLater.length) { playLaterGrid.innerHTML = '<div class="empty-state">No games in Play Later</div>'; } else { friendPlayLater.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card play_later"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playLaterGrid.appendChild(div); }); }
+
+            // Ratings & Reviews
+            const ratingsContainer = document.getElementById("friendRatingsList");
+            renderRatingsList(ratingsContainer, friendRatings, false);
+
+            // Saves
             const savesContainer = document.getElementById("friendSavesContainer");
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
             if (!allSaves.length) { savesContainer.innerHTML = '<div class="empty-state">No save files shared yet</div>'; } else { savesContainer.innerHTML = allSaves.map(save => `<div class="save-item" style="margin-bottom:0.5rem;"><div><div class="save-name">${save.gameTitle}</div><div class="save-meta">${save.name} • ${save.size}</div></div><button class="btn-secondary btn-small" onclick="downloadSaveFromData('${save.data}','${save.name}')">Download</button></div>`).join(""); }
+
             document.getElementById("friendProfileModal").classList.add("active");
         }
 
@@ -2235,6 +2565,20 @@ service cloud.firestore {
             toast.className = "toast" + (isError ? " error" : "");
             toast.classList.add("show");
             setTimeout(() => toast.classList.remove("show"), 4000);
+        }
+
+        // --- LOAD RATINGS ---
+        async function loadMyRatings() {
+            try {
+                const snap = await db.collection("users").doc(currentUser.uid).collection("gameRatings").get();
+                myRatings = {};
+                snap.docs.forEach(d => {
+                    const data = d.data();
+                    myRatings[parseInt(d.id)] = data;
+                });
+            } catch (err) {
+                console.error("Error loading ratings:", err);
+            }
         }
 
         // --- AUTH & INIT ---
@@ -2281,6 +2625,7 @@ service cloud.firestore {
                     loadGames();
                     loadUserProfile();
                     loadMyData();
+                    loadMyRatings();
                     loadFriends();
                     loadRequests();
                     loadPosts();
@@ -2364,6 +2709,8 @@ service cloud.firestore {
                 myLooking = lookingSnap.docs.map(d => parseInt(d.id));
                 const lfgSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "lfg").get();
                 myLFG = lfgSnap.docs.map(d => parseInt(d.id));
+                const playLaterSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "play_later").get();
+                myPlayLater = playLaterSnap.docs.map(d => parseInt(d.id));
                 mySaves = {};
                 const savesSnap = await db.collection("users").doc(currentUser.uid).collection("saveFiles").get();
                 savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!mySaves[gid]) mySaves[gid] = []; mySaves[gid].push({ id: d.id, ...data }); });
