@@ -35,9 +35,9 @@
         ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* --- UNIFIED BUTTON STYLES --- */
+        /* --- UNIFIED BUTTON STYLES WITH ANIMATIONS --- */
         button, .btn, .btn-success, .btn-danger, .btn-secondary, .btn-warning, .btn-file, .btn-small, .nav-btn, .auth-tab, .tab, .clear-btn, .close-btn, .vote-btn, .action-btn, .post-chat-toggle, .checkbox-label, .upload-area, .friend-card, .game-card, .search-select {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         button, .btn, .btn-success, .btn-danger, .btn-secondary, .btn-warning, .btn-file, .btn-small, .nav-btn, .auth-tab, .tab, .clear-btn {
             background: var(--primary);
@@ -56,14 +56,54 @@
             justify-content: center;
             gap: 0.4rem;
             line-height: 1.2;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Button shimmer effect */
+        button::after, .btn::after, .btn-success::after, .btn-danger::after, .btn-secondary::after, .btn-warning::after, .btn-file::after, .btn-small::after, .nav-btn::after, .auth-tab::after, .tab::after, .clear-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        button:hover::after, .btn:hover::after, .btn-success:hover::after, .btn-danger:hover::after, .btn-secondary:hover::after, .btn-warning:hover::after, .btn-file:hover::after, .btn-small:hover::after, .nav-btn:hover::after, .auth-tab:hover::after, .tab:hover::after, .clear-btn:hover::after {
+            opacity: 1;
         }
         button:hover, .btn:hover, .btn-success:hover, .btn-danger:hover, .btn-secondary:hover, .btn-warning:hover, .btn-file:hover, .btn-small:hover, .nav-btn:hover, .auth-tab:hover, .tab:hover, .clear-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
         }
         button:active, .btn:active, .btn-success:active, .btn-danger:active, .btn-secondary:active, .btn-warning:active, .btn-file:active, .btn-small:active, .nav-btn:active, .auth-tab:active, .tab:active, .clear-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.94);
+        }
+        /* Pulse animation for success buttons */
+        .btn-success {
+            background: var(--success);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            animation: pulse-green 2s infinite;
+        }
+        .btn-success:hover {
+            background: #059669;
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.6);
+            animation: none;
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(16, 185, 129, 0.6); }
+        }
+        .btn-danger {
+            background: var(--danger);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.6);
         }
         .btn-secondary, .clear-btn {
             background: var(--surface);
@@ -74,7 +114,8 @@
         .btn-secondary:hover, .clear-btn:hover {
             background: var(--surface-hover);
             color: var(--text);
-            box-shadow: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
         }
         .btn-small { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
         .nav-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
@@ -84,19 +125,89 @@
         .auth-tab { background: var(--surface); border: 1px solid #2d2d44; color: var(--text-muted); }
         .auth-tab:hover { background: var(--surface-hover); color: var(--text); }
         .btn-file { background: var(--primary); color: #fff; border: none; padding: 0.5rem 1.25rem; border-radius: 50px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 0.9rem; display: inline-block; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25); }
-        .btn-file:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); }
+        .btn-file:hover { background: var(--primary-hover); transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); }
         .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.75rem; padding: 0.5rem; border-radius: 50%; box-shadow: none; }
-        .close-btn:hover { background: var(--surface-hover); color: var(--text); transform: rotate(90deg); }
+        .close-btn:hover { background: var(--surface-hover); color: var(--text); transform: rotate(90deg) scale(1.1); }
         .close-btn:active { transform: scale(0.9); }
         .vote-btn { background: none !important; border: none !important; color: var(--text-muted) !important; font-size: 1.4rem; padding: 0.1rem 0.3rem; box-shadow: none !important; }
-        .vote-btn:hover { background: rgba(255, 255, 255, 0.05) !important; color: var(--text) !important; transform: scale(1.05); }
-        .vote-btn:active { transform: scale(0.9); }
-        .vote-btn.upvote:hover { color: var(--vote-up) !important; transform: scale(1.1); }
-        .vote-btn.downvote:hover { color: var(--vote-down) !important; transform: scale(1.1); }
-        .vote-btn.upvote.active { color: var(--vote-up) !important; background: rgba(34, 197, 94, 0.1) !important; border-radius: 8px; }
-        .vote-btn.downvote.active { color: var(--vote-down) !important; background: rgba(239, 68, 68, 0.1) !important; border-radius: 8px; }
+        .vote-btn:hover { background: rgba(255, 255, 255, 0.05) !important; color: var(--text) !important; transform: scale(1.15); }
+        .vote-btn:active { transform: scale(0.85); }
+        .vote-btn.upvote:hover { color: var(--vote-up) !important; transform: scale(1.2); }
+        .vote-btn.downvote:hover { color: var(--vote-down) !important; transform: scale(1.2); }
+        .vote-btn.upvote.active { color: var(--vote-up) !important; background: rgba(34, 197, 94, 0.15) !important; border-radius: 8px; }
+        .vote-btn.downvote.active { color: var(--vote-down) !important; background: rgba(239, 68, 68, 0.15) !important; border-radius: 8px; }
         .action-btn { background: none !important; border: none !important; color: var(--text-muted) !important; box-shadow: none !important; padding: 0.2rem 0.6rem; }
         .action-btn:hover { color: var(--text) !important; background: rgba(255, 255, 255, 0.05) !important; transform: scale(1.05); }
+
+        /* --- STATUS LABELS WITH ANIMATION --- */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            cursor: pointer;
+            padding: 0.75rem 1.25rem;
+            background: var(--surface);
+            border-radius: 50px;
+            user-select: none;
+            border: 2px solid transparent;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .checkbox-label:hover {
+            background: var(--surface-hover);
+            transform: translateY(-3px) scale(1.02);
+        }
+        .checkbox-label:active {
+            transform: scale(0.95);
+        }
+        .checkbox-label input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+        .checkbox-label.checked {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--success);
+            color: var(--success);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+            animation: pop-glow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .checkbox-label.playing-checked {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--info);
+            color: var(--info);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+            animation: pop-glow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .checkbox-label.looking-checked {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--warning);
+            color: var(--warning);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+            animation: pop-glow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .checkbox-label.lfg-checked {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+            animation: pop-glow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .checkbox-label.play_later-checked {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+            animation: pop-glow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes pop-glow {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
         /* --- STATS BAR --- */
         .stats-bar {
@@ -114,7 +225,7 @@
             border: 1px solid #2d2d44;
             border-radius: 50px;
             padding: 0.25rem 0.9rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -123,17 +234,23 @@
             font-weight: 600;
         }
         .stat.clickable:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
             background: var(--surface-hover);
             color: var(--text);
             border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
-        .stat.clickable:active { transform: scale(0.95); }
+        .stat.clickable:active { transform: scale(0.92); }
         .stat.clickable.active {
             background: var(--primary);
             color: #fff;
             border-color: var(--primary);
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            animation: pulse-glow 1.5s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 4px 30px rgba(139, 92, 246, 0.6); }
         }
         .stat.clickable.active .stat-icon,
         .stat.clickable.active .stat-value { color: #fff; }
@@ -156,6 +273,110 @@
         .stat.success { color: var(--success); }
         .stat.playing { color: var(--info); }
         .stat.accent { color: var(--accent); }
+
+        /* --- HOURS PLAYED INPUT --- */
+        .hours-input-container {
+            margin-top: 0.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hours-input-container.show {
+            display: flex;
+        }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .hours-input-container label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .hours-input-container input {
+            width: 80px;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            background: var(--surface);
+            border: 1px solid #2d2d44;
+            color: var(--text);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .hours-input-container input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .hours-input-container .hours-save-btn {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            background: var(--success);
+            border-radius: 50px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hours-input-container .hours-save-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        .hours-input-container .hours-save-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* --- PROFILE GAME CARD CLICKABLE --- */
+        .profile-game-clickable {
+            cursor: pointer !important;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+        .profile-game-clickable:hover {
+            transform: translateY(-6px) scale(1.03) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3) !important;
+        }
+        .profile-game-clickable:active {
+            transform: scale(0.95) !important;
+        }
+
+        /* --- GAME DETAILS MODAL --- */
+        .game-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .game-details-grid .detail-item {
+            background: var(--surface);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid #2d2d44;
+        }
+        .game-details-grid .detail-item .label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .game-details-grid .detail-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-top: 0.15rem;
+        }
+        .game-details-grid .detail-item .value.gold {
+            color: var(--gold);
+        }
+        .game-details-grid .detail-item .value.success {
+            color: var(--success);
+        }
+        .game-details-grid .detail-item .value.accent {
+            color: var(--accent);
+        }
 
         /* --- SEARCH CONTAINER --- */
         .search-container {
@@ -192,7 +413,7 @@
             cursor: pointer;
             font-family: inherit;
             font-weight: 500;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             appearance: none;
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
@@ -201,7 +422,7 @@
             background-size: 12px;
         }
         .search-container .search-select:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             background-color: var(--surface-hover);
             border-color: var(--primary);
             color: var(--text);
@@ -231,6 +452,7 @@
             .stat.clickable { padding: 0.2rem 0.6rem; font-size: 0.65rem; }
             .stat .stat-value { font-size: 0.75rem; }
             .stat .stat-icon { font-size: 0.8rem; }
+            .game-details-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 640px) {
             .search-container { padding: 0.8rem 1rem; flex-wrap: wrap; }
@@ -240,6 +462,17 @@
             .stat.clickable { padding: 0.15rem 0.5rem; font-size: 0.6rem; }
             .stat .stat-value { font-size: 0.7rem; }
             .stat .stat-icon { font-size: 0.7rem; }
+            header { padding: 0.4rem 0.8rem; flex-wrap: wrap; }
+            .nav-btn { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .profile-header { flex-direction: column; text-align: center; }
+            .friends-grid { grid-template-columns: 1fr; }
+            .posts-grid { grid-template-columns: 1fr; }
+            .modal { max-width: 100%; margin: 0.5rem; }
+            .post-card { flex-direction: column; align-items: stretch; }
+            .post-vote-area { flex-direction: row; justify-content: flex-start; padding: 0.2rem 0; }
+            .chat-input-row { flex-direction: column; align-items: stretch; }
+            .chat-input-row .chat-input-wrapper { width: 100%; }
+            .chat-input-row button { width: 100%; }
         }
 
         /* --- CHAT REPLY INDICATOR --- */
@@ -272,7 +505,7 @@
         .rating-stars .star {
             font-size: 1.5rem;
             color: #4a4a5a;
-            transition: color 0.15s;
+            transition: all 0.15s;
             cursor: pointer;
             line-height: 1.2;
         }
@@ -280,7 +513,10 @@
             color: var(--gold);
         }
         .rating-stars .star:hover {
-            transform: scale(1.1);
+            transform: scale(1.2);
+        }
+        .rating-stars .star:active {
+            transform: scale(0.8);
         }
         .rating-display .star {
             font-size: 1.2rem;
@@ -301,6 +537,12 @@
             border-radius: var(--radius);
             border: 1px solid #2d2d44;
             margin-bottom: 0.75rem;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .rating-review-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
         .rating-review-item .game-title {
             font-weight: 700;
@@ -328,39 +570,40 @@
         .config-input { width: 100%; background: #0a0a0f; border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.85rem; margin-top: 0.5rem; }
         .config-input:focus { outline: none; border-color: var(--primary); }
         header { background: rgba(21, 21, 34, 0.85); backdrop-filter: blur(12px); padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d2d44; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; transition: transform 0.25s; }
+        .logo:hover { transform: scale(1.05); }
         .nav-buttons { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
         .user-dropdown { position: relative; display: inline-block; }
-        .user-dropdown-btn { display: flex; align-items: center; gap: 0.75rem; background: var(--surface); padding: 0.3rem 0.5rem 0.3rem 0.3rem; border-radius: 50px; border: 1px solid #2d2d44; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text); font-family: inherit; font-size: 0.9rem; font-weight: 600; }
-        .user-dropdown-btn:hover { border-color: var(--primary); background: var(--surface-hover); transform: translateY(-2px); }
+        .user-dropdown-btn { display: flex; align-items: center; gap: 0.75rem; background: var(--surface); padding: 0.3rem 0.5rem 0.3rem 0.3rem; border-radius: 50px; border: 1px solid #2d2d44; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--text); font-family: inherit; font-size: 0.9rem; font-weight: 600; }
+        .user-dropdown-btn:hover { border-color: var(--primary); background: var(--surface-hover); transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
         .user-dropdown-btn:active { transform: scale(0.95); }
         .user-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; color: white; background-size: cover !important; background-position: center !important; flex-shrink: 0; }
         .user-dropdown-menu { display: none; position: absolute; right: 0; top: calc(100% + 10px); background: var(--surface); border: 1px solid #2d2d44; border-radius: var(--radius); min-width: 160px; padding: 0.4rem 0; box-shadow: var(--shadow); z-index: 200; overflow: hidden; }
-        .user-dropdown-menu.show { display: block; }
+        .user-dropdown-menu.show { display: block; animation: slideDown 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .user-dropdown-menu a { display: block; padding: 0.6rem 1.2rem; color: var(--text); text-decoration: none; transition: background 0.15s; cursor: pointer; font-size: 0.9rem; }
         .user-dropdown-menu a:hover { background: var(--surface-hover); }
         .user-dropdown-menu a.danger { color: var(--danger); }
         .user-dropdown-menu a.danger:hover { background: rgba(239, 68, 68, 0.15); }
-        .admin-gear { cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem; opacity: 0.6; transition: opacity 0.2s; }
-        .admin-gear:hover { opacity: 1; }
-        input[type="text"], input[type="email"], input[type="password"], input[type="color"], textarea, select { background: var(--surface); border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem 1rem; border-radius: 50px; width: 100%; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); transform: scale(1.02); }
+        .admin-gear { cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem; opacity: 0.6; transition: all 0.25s; }
+        .admin-gear:hover { opacity: 1; transform: rotate(180deg) scale(1.2); }
+        input[type="text"], input[type="email"], input[type="password"], input[type="color"], input[type="number"], textarea, select { background: var(--surface); border: 1px solid #2d2d44; color: var(--text); padding: 0.75rem 1rem; border-radius: 50px; width: 100%; font-size: 0.95rem; font-family: inherit; transition: all 0.25s; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); transform: scale(1.02); }
         input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active { -webkit-box-shadow: 0 0 0 30px var(--surface) inset !important; -webkit-text-fill-color: var(--text) !important; transition: background-color 5000s ease-in-out 0s; }
         .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1.25rem; padding: 0 2rem 2rem; }
-        .game-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative; display: flex; flex-direction: column; }
-        .game-card:hover { transform: translateY(-6px); border-color: rgba(139, 92, 246, 0.3); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); }
-        .game-card:active { transform: scale(0.98); }
+        .game-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 2px solid transparent; position: relative; display: flex; flex-direction: column; }
+        .game-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6); }
+        .game-card:active { transform: scale(0.96); }
         .game-card.completed { border-color: var(--success); }
         .game-card.playing { border-color: var(--info); }
         .game-card.looking_for_players { border-color: var(--warning); }
         .game-card.lfg { border-color: var(--danger); }
         .game-card.play_later { border-color: var(--accent); }
-        .game-card.completed::after { content: '✓'; position: absolute; top: 10px; right: 10px; background: var(--success); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
-        .game-card.playing::after { content: '▶'; position: absolute; top: 10px; right: 10px; background: var(--info); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
-        .game-card.looking_for_players::after { content: '🔍'; position: absolute; top: 10px; right: 10px; background: var(--warning); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
-        .game-card.lfg::after { content: '👥'; position: absolute; top: 10px; right: 10px; background: var(--danger); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
-        .game-card.play_later::after { content: '📅'; position: absolute; top: 10px; right: 10px; background: var(--accent); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .game-card.completed::after { content: '✓'; position: absolute; top: 10px; right: 10px; background: var(--success); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.playing::after { content: '▶'; position: absolute; top: 10px; right: 10px; background: var(--info); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.looking_for_players::after { content: '🔍'; position: absolute; top: 10px; right: 10px; background: var(--warning); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.lfg::after { content: '👥'; position: absolute; top: 10px; right: 10px; background: var(--danger); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .game-card.play_later::after { content: '📅'; position: absolute; top: 10px; right: 10px; background: var(--accent); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        @keyframes popIn { from { transform: scale(0) rotate(-30deg); } to { transform: scale(1) rotate(0); } }
         .cover { width: 100%; aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: var(--radius) var(--radius) 0 0; flex-shrink: 0; }
         .cover .cover-image { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 0; }
         .cover .fallback { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-weight: 600; font-size: 0.9rem; text-align: center; padding: 0.5rem; word-break: break-word; color: rgba(255,255,255,0.9); z-index: 2; text-shadow: 0 2px 8px rgba(0,0,0,0.6); background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); }
@@ -379,30 +622,21 @@
         .auth-form { display: flex; flex-direction: column; gap: 1rem; }
         .auth-form button { margin-top: 0.5rem; }
         .auth-error { color: var(--danger); font-size: 0.85rem; display: none; }
-        .checkbox-label { display: flex; align-items: center; gap: 0.625rem; cursor: pointer; padding: 0.75rem 1.25rem; background: var(--surface); border-radius: 50px; user-select: none; border: 2px solid transparent; transition: all 0.2s; font-weight: 600; font-size: 0.9rem; }
-        .checkbox-label:hover { background: var(--surface-hover); transform: translateY(-2px); }
-        .checkbox-label:active { transform: scale(0.95); }
-        .checkbox-label input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
-        .checkbox-label.checked { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success); }
-        .checkbox-label.playing-checked { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: var(--info); }
-        .checkbox-label.looking-checked { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: var(--warning); }
-        .checkbox-label.lfg-checked { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger); }
-        .checkbox-label.play_later-checked { background: rgba(6, 182, 212, 0.1); border-color: var(--accent); color: var(--accent); }
-        .upload-area { border: 2px dashed #2d2d44; border-radius: var(--radius); padding: 2rem; text-align: center; margin-top: 1rem; transition: all 0.2s; cursor: pointer; }
-        .upload-area:hover { border-color: var(--primary); background: rgba(139, 92, 246, 0.03); transform: scale(1.02); }
-        .upload-area:active { transform: scale(0.98); }
-        .upload-area.dragover { border-color: var(--primary); background: rgba(139, 92, 246, 0.08); transform: scale(1.01); }
+        .upload-area { border: 2px dashed #2d2d44; border-radius: var(--radius); padding: 2rem; text-align: center; margin-top: 1rem; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
+        .upload-area:hover { border-color: var(--primary); background: rgba(139, 92, 246, 0.05); transform: scale(1.02); }
+        .upload-area:active { transform: scale(0.96); }
+        .upload-area.dragover { border-color: var(--primary); background: rgba(139, 92, 246, 0.1); transform: scale(1.01); }
         .upload-area p { color: var(--text-muted); margin-bottom: 0.75rem; }
         .upload-area strong { color: var(--text); }
         .saves-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .save-item { background: var(--surface); padding: 0.875rem; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid #2d2d44; transition: all 0.2s; }
-        .save-item:hover { border-color: var(--primary); background: var(--surface-hover); transform: translateY(-2px); }
-        .save-item:active { transform: scale(0.98); }
+        .save-item { background: var(--surface); padding: 0.875rem; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid #2d2d44; transition: all 0.25s; }
+        .save-item:hover { border-color: var(--primary); background: var(--surface-hover); transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+        .save-item:active { transform: scale(0.97); }
         .save-name { font-weight: 700; font-size: 0.9rem; }
         .save-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
         .profile-view { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
         .profile-view.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .profile-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem; padding: 1.5rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; flex-wrap: wrap; }
         .avatar { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.25rem; font-weight: 900; color: white; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); background-size: cover !important; background-position: center !important; }
         .profile-info h2 { font-size: 1.75rem; margin-bottom: 0.25rem; }
@@ -417,16 +651,17 @@
         .friends-view { display: none; padding: 2rem; max-width: 1000px; margin: 0 auto; }
         .friends-view.active { display: block; animation: fadeIn 0.4s ease; }
         .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-        .friend-card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; border: 1px solid #2d2d44; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.2s; }
-        .friend-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
-        .friend-card:active { transform: scale(0.98); }
+        .friend-card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; border: 1px solid #2d2d44; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .friend-card:hover { border-color: var(--primary); transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3); }
+        .friend-card:active { transform: scale(0.95); }
         .friend-avatar { width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 1.1rem; background-size: cover !important; background-position: center !important; }
         .friend-info { flex: 1; }
         .friend-name { font-weight: 700; font-size: 1rem; }
         .friend-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
         .request-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
         .search-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .user-result { background: var(--surface); padding: 1rem; border-radius: var(--radius); display: flex; align-items: center; gap: 1rem; border: 1px solid #2d2d44; }
+        .user-result { background: var(--surface); padding: 1rem; border-radius: var(--radius); display: flex; align-items: center; gap: 1rem; border: 1px solid #2d2d44; transition: all 0.25s; }
+        .user-result:hover { border-color: var(--primary); transform: scale(1.01); }
         .user-result-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 1rem; flex-shrink: 0; background-size: cover !important; background-position: center !important; }
         .user-result-info { flex: 1; }
         .user-result-name { font-weight: 700; }
@@ -439,12 +674,13 @@
         .loading { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255, 255, 255, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .friend-saves-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #2d2d44; }
-        .friend-save-row { background: var(--surface); padding: 0.75rem 1rem; border-radius: var(--radius); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #2d2d44; }
+        .friend-save-row { background: var(--surface); padding: 0.75rem 1rem; border-radius: var(--radius); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #2d2d44; transition: all 0.25s; }
+        .friend-save-row:hover { border-color: var(--primary); transform: scale(1.01); }
         .friend-save-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: white; flex-shrink: 0; background-size: cover !important; background-position: center !important; }
         .posts-grid { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem; }
-        .post-card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; border: 1px solid #2d2d44; transition: all 0.2s; display: flex; align-items: flex-start; gap: 1rem; }
-        .post-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .post-card:active { transform: scale(0.98); }
+        .post-card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; border: 1px solid #2d2d44; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: flex-start; gap: 1rem; }
+        .post-card:hover { border-color: var(--primary); transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
+        .post-card:active { transform: scale(0.97); }
         .post-vote-area { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.2rem 0.6rem 0.2rem 0.2rem; flex-shrink: 0; }
         .post-vote-area .score { font-weight: 700; font-size: 1rem; color: var(--text); }
         .post-content { flex: 1; min-width: 0; }
@@ -462,10 +698,10 @@
         .tag-tip { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
         .tag-help { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
         .tag-rate { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
-        .post-chat-toggle { cursor: pointer; display: inline-block; margin-top: 0.3rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; transition: color 0.2s; }
-        .post-chat-toggle:hover { color: var(--text); transform: translateY(-2px); }
-        .post-chat-toggle:active { transform: scale(0.95); }
-        .post-chat-toggle .arrow { display: inline-block; transition: transform 0.2s; }
+        .post-chat-toggle { cursor: pointer; display: inline-block; margin-top: 0.3rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; transition: all 0.25s; }
+        .post-chat-toggle:hover { color: var(--text); transform: translateY(-2px) scale(1.05); }
+        .post-chat-toggle:active { transform: scale(0.92); }
+        .post-chat-toggle .arrow { display: inline-block; transition: transform 0.25s; }
         .post-chat-toggle .arrow.open { transform: rotate(180deg); }
         .post-chat-container { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #2d2d44; display: none; }
         .post-chat-container.open { display: block; }
@@ -499,27 +735,6 @@
         .game-combobox .dropdown-item { padding: 0.6rem 1rem; cursor: pointer; transition: background 0.15s; }
         .game-combobox .dropdown-item:hover { background: var(--surface-hover); }
         .game-combobox .dropdown-item.selected { background: var(--primary); }
-        @media (max-width: 640px) {
-            .games-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 0 1rem 1rem; }
-            .stats-bar { padding: 0.3rem 0.8rem; gap: 0.4rem; }
-            .stat.clickable { padding: 0.15rem 0.5rem; font-size: 0.6rem; }
-            .stat .stat-value { font-size: 0.7rem; }
-            .stat .stat-icon { font-size: 0.7rem; }
-            .search-container { padding: 0.8rem 1rem; flex-wrap: wrap; }
-            .search-container .search-input-wrapper { flex: 1 1 100%; min-width: 120px; }
-            .search-container .search-select { flex: 1 1 auto; min-width: 80px !important; padding: 0.3rem 1.6rem 0.3rem 0.6rem !important; font-size: 0.7rem !important; }
-            header { padding: 0.4rem 0.8rem; flex-wrap: wrap; }
-            .nav-btn { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
-            .profile-header { flex-direction: column; text-align: center; }
-            .friends-grid { grid-template-columns: 1fr; }
-            .posts-grid { grid-template-columns: 1fr; }
-            .modal { max-width: 100%; margin: 0.5rem; }
-            .post-card { flex-direction: column; align-items: stretch; }
-            .post-vote-area { flex-direction: row; justify-content: flex-start; padding: 0.2rem 0; }
-            .chat-input-row { flex-direction: column; align-items: stretch; }
-            .chat-input-row .chat-input-wrapper { width: 100%; }
-            .chat-input-row button { width: 100%; }
-        }
     </style>
 </head>
 <body>
@@ -816,6 +1031,12 @@ service cloud.firestore {
                             <label class="checkbox-label" id="lfgLabel" style="display:none;"><input type="checkbox" id="lfgCheckbox" onchange="toggleLFG()"><span>👥 LFG</span></label>
                             <label class="checkbox-label" id="playLaterLabel"><input type="checkbox" id="playLaterCheckbox" onchange="togglePlayLater()"><span>📅 Play Later</span></label>
                         </div>
+                        <!-- Hours Played Input -->
+                        <div class="hours-input-container" id="hoursContainer">
+                            <label>🕐 Hours played:</label>
+                            <input type="number" id="hoursPlayedInput" min="0" step="0.5" placeholder="0">
+                            <button class="hours-save-btn" onclick="saveHoursPlayed()">Save Hours</button>
+                        </div>
                         <div id="completionDateContainer" style="margin-top:0.75rem;display:none;">
                             <label style="color:var(--text-muted);font-size:0.85rem;">Finished on:</label>
                             <input type="date" id="completionDate" style="width:auto;display:inline-block;margin-left:0.5rem;padding:0.3rem 0.6rem;">
@@ -871,6 +1092,16 @@ service cloud.firestore {
                     <h4 style="margin-bottom:0.75rem;">Friend Saves</h4>
                     <div id="friendSavesList"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Details Modal (for profile clicks) -->
+    <div class="modal-overlay" id="gameDetailsModal" onclick="closeGameDetailsModal(event)">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width:550px;">
+            <div class="modal-header"><h2 id="gameDetailsTitle" style="font-size:1.25rem;">Game Details</h2><button class="close-btn" onclick="closeGameDetailsModal()">×</button></div>
+            <div class="modal-body">
+                <div id="gameDetailsContent"></div>
             </div>
         </div>
     </div>
@@ -1101,7 +1332,8 @@ service cloud.firestore {
         let auth, db;
         let currentUser = null;
         let userProfile = null;
-        let myCompletions = [];
+        let myCompletions = [];           // array of {gameId, completedDate, hoursPlayed}
+        let myCompletionsMap = {};        // gameId -> {completedDate, hoursPlayed}
         let myPlaying = [];
         let myLooking = [];
         let myLFG = [];
@@ -1236,7 +1468,6 @@ service cloud.firestore {
 
         // --- REAL-TIME COMMUNITY RATINGS SUBSCRIPTION ---
         function subscribeCommunityRatings(gameId) {
-            // Unsubscribe from any previous listener
             if (communityRatingsUnsubscribe) {
                 communityRatingsUnsubscribe();
                 communityRatingsUnsubscribe = null;
@@ -1254,7 +1485,6 @@ service cloud.firestore {
                     ratings.push({
                         id: doc.id,
                         ...data,
-                        // User details are stored in the rating document
                         displayName: data.userDisplayName || 'Anonymous',
                         avatarColor: data.userAvatarColor || '#8b5cf6',
                         nameColor: data.userNameColor || '#f1f5f9',
@@ -1292,6 +1522,28 @@ service cloud.firestore {
                 `;
             });
             container.innerHTML = html;
+        }
+
+        // --- HOURS PLAYED ---
+        async function saveHoursPlayed() {
+            if (!currentGame) return;
+            const input = document.getElementById('hoursPlayedInput');
+            const hours = parseFloat(input.value);
+            if (isNaN(hours) || hours < 0) {
+                showToast("Please enter a valid number of hours", true);
+                return;
+            }
+            try {
+                const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(currentGame.id.toString());
+                await ref.update({ hoursPlayed: hours });
+                // Update local cache
+                if (myCompletionsMap[currentGame.id]) {
+                    myCompletionsMap[currentGame.id].hoursPlayed = hours;
+                }
+                showToast(`Hours saved: ${hours}h`);
+            } catch (err) {
+                showToast("Error: " + err.message, true);
+            }
         }
 
         // --- OPEN GAME MODAL ---
@@ -1356,20 +1608,36 @@ service cloud.firestore {
             document.getElementById("completeLabel").style.display = "flex";
             document.getElementById("lfgLabel").style.display = game.multiplayer ? "flex" : "none";
 
-            document.getElementById("completeCheckbox").checked = myCompletions.includes(game.id);
+            const isCompleted = myCompletions.includes(game.id);
+            document.getElementById("completeCheckbox").checked = isCompleted;
             document.getElementById("playingCheckbox").checked = myPlaying.includes(game.id);
             document.getElementById("lookingCheckbox").checked = myLooking.includes(game.id);
             document.getElementById("lfgCheckbox").checked = myLFG.includes(game.id);
             document.getElementById("playLaterCheckbox").checked = myPlayLater.includes(game.id);
             updateStatusLabels();
 
-            // Show/hide completion date
+            // Hours container
+            const hoursContainer = document.getElementById("hoursContainer");
+            const hoursInput = document.getElementById("hoursPlayedInput");
+            if (isCompleted) {
+                hoursContainer.classList.add("show");
+                const compData = myCompletionsMap[game.id];
+                if (compData && compData.hoursPlayed !== undefined && compData.hoursPlayed !== null) {
+                    hoursInput.value = compData.hoursPlayed;
+                } else {
+                    hoursInput.value = '';
+                }
+            } else {
+                hoursContainer.classList.remove("show");
+            }
+
+            // Completion date
             const dateContainer = document.getElementById("completionDateContainer");
-            if (myCompletions.includes(game.id)) {
+            if (isCompleted) {
                 dateContainer.style.display = "block";
-                const dateDoc = await db.collection("users").doc(currentUser.uid).collection("completions").doc(game.id.toString()).get();
-                if (dateDoc.exists && dateDoc.data().completedDate) {
-                    document.getElementById("completionDate").value = dateDoc.data().completedDate;
+                const compData = myCompletionsMap[game.id];
+                if (compData && compData.completedDate) {
+                    document.getElementById("completionDate").value = compData.completedDate;
                 } else {
                     document.getElementById("completionDate").value = new Date().toISOString().split('T')[0];
                 }
@@ -1393,7 +1661,6 @@ service cloud.firestore {
             if (!e || e.target === document.getElementById("gameModal")) {
                 document.getElementById("gameModal").classList.remove("active");
                 document.body.style.overflow = "";
-                // Unsubscribe from community ratings
                 if (communityRatingsUnsubscribe) {
                     communityRatingsUnsubscribe();
                     communityRatingsUnsubscribe = null;
@@ -1418,6 +1685,9 @@ service cloud.firestore {
             try {
                 const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(currentGame.id.toString());
                 await ref.update({ completedDate: date });
+                if (myCompletionsMap[currentGame.id]) {
+                    myCompletionsMap[currentGame.id].completedDate = date;
+                }
                 showToast("Completion date saved!");
             } catch (err) {
                 showToast("Error: " + err.message, true);
@@ -1472,7 +1742,6 @@ service cloud.firestore {
                     review: review,
                     gameTitle: currentGame.title,
                     gameId: currentGame.id,
-                    // Store user details directly for fast display
                     userDisplayName: userProfile.displayName,
                     userAvatarColor: userProfile.avatarColor,
                     userNameColor: userProfile.nameColor,
@@ -1481,7 +1750,6 @@ service cloud.firestore {
                 });
                 showToast("Rating & review saved!");
                 await loadUserRating(currentGame.id);
-                // The community listener will automatically pick up the new rating
             } catch (err) {
                 showToast("Error: " + err.message, true);
             }
@@ -1493,20 +1761,30 @@ service cloud.firestore {
             const cb = document.getElementById("completeCheckbox");
             const gameId = currentGame.id;
             const ref = db.collection("users").doc(currentUser.uid).collection("completions").doc(gameId.toString());
+            const hoursContainer = document.getElementById("hoursContainer");
+            const dateContainer = document.getElementById("completionDateContainer");
             try {
                 if (cb.checked) {
                     const date = new Date().toISOString().split('T')[0];
                     await ref.set({ 
                         completedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        completedDate: date
+                        completedDate: date,
+                        hoursPlayed: 0
                     });
-                    if (!myCompletions.includes(gameId)) myCompletions.push(gameId);
-                    document.getElementById("completionDateContainer").style.display = "block";
+                    if (!myCompletions.includes(gameId)) {
+                        myCompletions.push(gameId);
+                        myCompletionsMap[gameId] = { completedDate: date, hoursPlayed: 0 };
+                    }
+                    dateContainer.style.display = "block";
                     document.getElementById("completionDate").value = date;
+                    hoursContainer.classList.add("show");
+                    document.getElementById("hoursPlayedInput").value = '';
                 } else {
                     await ref.delete();
                     myCompletions = myCompletions.filter(id => id !== gameId);
-                    document.getElementById("completionDateContainer").style.display = "none";
+                    delete myCompletionsMap[gameId];
+                    dateContainer.style.display = "none";
+                    hoursContainer.classList.remove("show");
                 }
                 updateStatusLabels();
                 filterGames();
@@ -1675,7 +1953,73 @@ service cloud.firestore {
             if (has) { section.style.display = "block"; list.innerHTML = html; } else section.style.display = "none";
         }
 
-        // --- OPTIMIZED POSTS LISTENER ---
+        // --- GAME DETAILS MODAL (for profile clicks) ---
+        function openGameDetailsModal(gameId, listType) {
+            const game = games.find(g => g.id === gameId);
+            if (!game) { showToast("Game not found", true); return; }
+
+            let hoursPlayed = '-';
+            let completedDate = '-';
+            let rating = '-';
+            let review = '-';
+
+            // Get completion details
+            if (myCompletionsMap[gameId]) {
+                const comp = myCompletionsMap[gameId];
+                hoursPlayed = comp.hoursPlayed !== undefined && comp.hoursPlayed !== null ? `${comp.hoursPlayed}h` : '-';
+                completedDate = comp.completedDate || '-';
+            }
+
+            // Get rating & review
+            if (myRatings[gameId]) {
+                const r = myRatings[gameId];
+                rating = `${r.rating}/10`;
+                review = r.review || 'No review';
+            }
+
+            document.getElementById("gameDetailsTitle").textContent = game.title;
+            document.getElementById("gameDetailsContent").innerHTML = `
+                <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+                    <div style="width:120px;height:160px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;border:1px solid #2d2d44;">
+                        ${game.steamId ? `<img src="https://cdn.akamai.steamstatic.com/steam/apps/${game.steamId}/library_600x900.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:${getColor(game.id)};color:#fff;font-weight:600;font-size:0.8rem;text-align:center;padding:0.5rem;\\'>${game.title}</div>'">` : `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:${getColor(game.id)};color:#fff;font-weight:600;font-size:0.8rem;text-align:center;padding:0.5rem;">${game.title}</div>`}
+                    </div>
+                    <div style="flex:1;">
+                        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.5rem;">${game.genre} • ${game.year}</p>
+                        <div class="game-details-grid">
+                            <div class="detail-item">
+                                <div class="label">Status</div>
+                                <div class="value accent">${listType === 'completed' ? '✅ Completed' : listType === 'playing' ? '▶ Playing' : '📅 Play Later'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Hours Played</div>
+                                <div class="value gold">${hoursPlayed}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Finished Date</div>
+                                <div class="value">${completedDate}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Your Rating</div>
+                                <div class="value success">${rating}</div>
+                            </div>
+                        </div>
+                        ${review !== '-' ? `<div style="margin-top:0.75rem;padding:0.75rem;background:var(--surface);border-radius:var(--radius);border:1px solid #2d2d44;"><div class="label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Your Review</div><div style="color:var(--text-muted);font-size:0.9rem;margin-top:0.15rem;">"${review}"</div></div>` : ''}
+                        <button onclick="closeGameDetailsModal();openGameModal(game)" style="margin-top:1rem;width:100%;">Open Game Page</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById("gameDetailsModal").classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeGameDetailsModal(e) {
+            if (!e || e.target === document.getElementById("gameDetailsModal")) {
+                document.getElementById("gameDetailsModal").classList.remove("active");
+                document.body.style.overflow = "";
+            }
+        }
+
+        // --- POSTS LISTENER ---
         function loadPosts() {
             if (postsUnsubscribe) {
                 postsUnsubscribe();
@@ -2335,20 +2679,20 @@ service cloud.firestore {
             document.getElementById("profileSaves").textContent = totalSaves;
             document.getElementById("profileFriends").textContent = friendsList.length;
 
-            // Completed games
+            // Completed games - clickable
             const grid = document.getElementById("completedGamesGrid");
             grid.innerHTML = "";
-            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; grid.appendChild(div); }); }
+            if (!myCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet. Start your journey!</div>'; } else { myCompletions.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed profile-game-clickable"; const coverHtml = getCoverHTML(game); const comp = myCompletionsMap[id]; const hours = comp && comp.hoursPlayed !== undefined && comp.hoursPlayed !== null ? `🕐 ${comp.hoursPlayed}h` : ''; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre} ${hours}</div><div style="margin-top:0.3rem;"><button class="btn-secondary btn-small" onclick="event.stopPropagation();removeGameFromList(${game.id}, 'completed')">Remove</button></div></div>`; div.onclick = () => openGameDetailsModal(game.id, 'completed'); grid.appendChild(div); }); }
 
-            // Playing games
+            // Playing games - clickable
             const playingGrid = document.getElementById("playingGamesGrid");
             playingGrid.innerHTML = "";
-            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; playingGrid.appendChild(div); }); }
+            if (!myPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games right now</div>'; } else { myPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing profile-game-clickable"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.3rem;"><button class="btn-secondary btn-small" onclick="event.stopPropagation();removeGameFromList(${game.id}, 'playing')">Remove</button></div></div>`; div.onclick = () => openGameDetailsModal(game.id, 'playing'); playingGrid.appendChild(div); }); }
 
-            // Play Later games
+            // Play Later games - clickable
             const playLaterGrid = document.getElementById("playLaterGamesGrid");
             playLaterGrid.innerHTML = "";
-            if (!myPlayLater.length) { playLaterGrid.innerHTML = '<div class="empty-state">No games in your Play Later list</div>'; } else { myPlayLater.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card play_later"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.5rem;"><button class="btn-secondary btn-small" onclick="removeGameFromList(${game.id}, 'play_later')">Remove</button></div></div>`; playLaterGrid.appendChild(div); }); }
+            if (!myPlayLater.length) { playLaterGrid.innerHTML = '<div class="empty-state">No games in your Play Later list</div>'; } else { myPlayLater.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card play_later profile-game-clickable"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div><div style="margin-top:0.3rem;"><button class="btn-secondary btn-small" onclick="event.stopPropagation();removeGameFromList(${game.id}, 'play_later')">Remove</button></div></div>`; div.onclick = () => openGameDetailsModal(game.id, 'play_later'); playLaterGrid.appendChild(div); }); }
 
             // Ratings & Reviews
             const ratingsList = document.getElementById("profileRatingsList");
@@ -2393,8 +2737,10 @@ service cloud.firestore {
             }
             try {
                 await ref.delete();
-                if(listType === 'completed') myCompletions = myCompletions.filter(id => id !== gameId);
-                else if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
+                if(listType === 'completed') {
+                    myCompletions = myCompletions.filter(id => id !== gameId);
+                    delete myCompletionsMap[gameId];
+                } else if(listType === 'playing') myPlaying = myPlaying.filter(id => id !== gameId);
                 else if(listType === 'play_later') myPlayLater = myPlayLater.filter(id => id !== gameId);
                 showToast("Removed from list!");
                 renderProfile(); updateStats();
@@ -2552,7 +2898,6 @@ service cloud.firestore {
             if (!userDoc.exists) { showToast("User not found", true); return; }
             const profile = userDoc.data();
 
-            // Get friend's games
             const compSnap = await db.collection("users").doc(friendUid).collection("completions").get();
             const friendCompletions = compSnap.docs.map(d => ({ id: parseInt(d.id), ...d.data() }));
             
@@ -2562,7 +2907,6 @@ service cloud.firestore {
             const playLaterSnap = await db.collection("users").doc(friendUid).collection("gameStatus").where("status", "==", "play_later").get();
             const friendPlayLater = playLaterSnap.docs.map(d => parseInt(d.id));
 
-            // Get friend's ratings & reviews
             const ratingsSnap = await db.collection("users").doc(friendUid).collection("gameRatings").get();
             const friendRatings = {};
             ratingsSnap.docs.forEach(d => {
@@ -2570,18 +2914,15 @@ service cloud.firestore {
                 friendRatings[parseInt(d.id)] = data;
             });
 
-            // Get friend's saves
             const savesSnap = await db.collection("users").doc(friendUid).collection("saveFiles").get();
             const friendSaves = {};
             let totalFriendSaves = 0;
             savesSnap.docs.forEach(d => { const data = d.data(), gid = data.gameId; if (!friendSaves[gid]) friendSaves[gid] = []; friendSaves[gid].push(data); totalFriendSaves++; });
 
-            // Get friend's posts
             const postSnap = await db.collection("posts").where("userId", "==", friendUid).get();
             friendPosts = [];
             postSnap.docs.forEach(d => { friendPosts.push({ id: d.id, ...d.data() }); });
 
-            // Update UI
             const avatar = document.getElementById("friendProfileAvatar");
             if (profile.photoData) { avatar.style.backgroundImage = `url(${profile.photoData})`; avatar.style.backgroundSize = "cover"; avatar.style.backgroundPosition = "center"; avatar.textContent = ""; } else { avatar.style.backgroundImage = "none"; avatar.style.background = profile.avatarColor; avatar.textContent = getInitials(profile.displayName); }
             document.getElementById("friendProfileName").textContent = profile.displayName;
@@ -2592,14 +2933,12 @@ service cloud.firestore {
             document.getElementById("friendPlayLater").textContent = friendPlayLater.length;
             document.getElementById("friendSavesCount").textContent = totalFriendSaves;
 
-            // Social links
             const socialDiv = document.getElementById("friendSocialLinks");
             socialDiv.innerHTML = "";
             if (profile.discord) socialDiv.innerHTML += `<span class="badge badge-info">Discord: ${profile.discord}</span>`;
             if (profile.reddit) socialDiv.innerHTML += `<span class="badge badge-warning">Reddit: ${profile.reddit}</span>`;
             if (!profile.discord && !profile.reddit) socialDiv.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">No social links</span>';
 
-            // Posts
             const postsSection = document.getElementById("friendPostsSection");
             const postsList = document.getElementById("friendPostsList");
             if (friendPosts.length) {
@@ -2607,26 +2946,21 @@ service cloud.firestore {
                 postsList.innerHTML = friendPosts.map(p => `<div style="padding:0.5rem 0;border-bottom:1px solid #2d2d44;display:flex;justify-content:space-between;align-items:center;"><div><span class="post-tag ${getTagClass(p.tag)}" style="font-size:0.6rem;">${getTagLabel(p.tag)}</span><strong style="color:var(--accent);margin-left:0.5rem;">${p.gameTitle}</strong><div style="font-size:0.85rem;color:var(--text-muted);">${p.message || ''}</div></div><button class="btn-success btn-small" onclick="addFriendFromPost('${p.userId}')">Add Friend</button></div>`).join("");
             } else { postsSection.style.display = "none"; }
 
-            // Completed games
             const grid = document.getElementById("friendCompletedGrid");
             grid.innerHTML = "";
-            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(item => { const game = games.find(g => g.id === item.id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); const dateStr = item.completedDate ? ` 📅 ${item.completedDate}` : ''; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}${dateStr}</div></div>`; grid.appendChild(div); }); }
+            if (!friendCompletions.length) { grid.innerHTML = '<div class="empty-state">No completed games yet</div>'; } else { friendCompletions.forEach(item => { const game = games.find(g => g.id === item.id); if (!game) return; const div = document.createElement("div"); div.className = "game-card completed"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); const dateStr = item.completedDate ? ` 📅 ${item.completedDate}` : ''; const hoursStr = item.hoursPlayed !== undefined && item.hoursPlayed !== null ? ` 🕐 ${item.hoursPlayed}h` : ''; div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}${dateStr}${hoursStr}</div></div>`; grid.appendChild(div); }); }
 
-            // Playing games
             const playingGrid = document.getElementById("friendPlayingGrid");
             playingGrid.innerHTML = "";
             if (!friendPlaying.length) { playingGrid.innerHTML = '<div class="empty-state">Not playing any games</div>'; } else { friendPlaying.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card playing"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playingGrid.appendChild(div); }); }
 
-            // Play Later games
             const playLaterGrid = document.getElementById("friendPlayLaterGrid");
             playLaterGrid.innerHTML = "";
             if (!friendPlayLater.length) { playLaterGrid.innerHTML = '<div class="empty-state">No games in Play Later</div>'; } else { friendPlayLater.forEach(id => { const game = games.find(g => g.id === id); if (!game) return; const div = document.createElement("div"); div.className = "game-card play_later"; div.style.cursor = "default"; const coverHtml = getCoverHTML(game); div.innerHTML = `${coverHtml}<div class="game-info"><div class="game-title">${game.title}</div><div class="game-meta">${game.genre}</div></div>`; playLaterGrid.appendChild(div); }); }
 
-            // Ratings & Reviews
             const ratingsContainer = document.getElementById("friendRatingsList");
             renderRatingsList(ratingsContainer, friendRatings, false);
 
-            // Saves
             const savesContainer = document.getElementById("friendSavesContainer");
             const allSaves = [];
             Object.keys(friendSaves).forEach(gameId => { const game = games.find(g => g.id == gameId); if (game) { friendSaves[gameId].forEach(save => { allSaves.push({ ...save, gameTitle: game.title }); }); } });
@@ -2783,7 +3117,17 @@ service cloud.firestore {
         async function loadMyData() {
             try {
                 const compSnap = await db.collection("users").doc(currentUser.uid).collection("completions").get();
-                myCompletions = compSnap.docs.map(d => parseInt(d.id));
+                myCompletions = [];
+                myCompletionsMap = {};
+                compSnap.docs.forEach(d => {
+                    const id = parseInt(d.id);
+                    const data = d.data();
+                    myCompletions.push(id);
+                    myCompletionsMap[id] = {
+                        completedDate: data.completedDate || null,
+                        hoursPlayed: data.hoursPlayed !== undefined ? data.hoursPlayed : null
+                    };
+                });
                 const playingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "playing").get();
                 myPlaying = playingSnap.docs.map(d => parseInt(d.id));
                 const lookingSnap = await db.collection("users").doc(currentUser.uid).collection("gameStatus").where("status", "==", "looking").get();
@@ -2799,7 +3143,7 @@ service cloud.firestore {
             } catch (err) { console.error("loadMyData error:", err); showToast("Failed to load your data: " + err.message, true); }
         }
 
-        // --- MIGRATION SCRIPT (run once to add gameId and user info to old ratings) ---
+        // --- MIGRATION SCRIPT ---
         async function migrateMyRatingsWithUserInfo() {
             const uid = firebase.auth().currentUser.uid;
             const userDoc = await db.collection('users').doc(uid).get();
@@ -2824,8 +3168,6 @@ service cloud.firestore {
             }
             console.log('Migration complete!');
         }
-        // To run, uncomment the line below and execute in console:
-        // migrateMyRatingsWithUserInfo();
 
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
@@ -2833,6 +3175,7 @@ service cloud.firestore {
                 closeSearchModal();
                 closeFriendProfile();
                 closePostModal();
+                closeGameDetailsModal();
                 if (replyTarget) {
                     const postId = replyTarget.postId;
                     replyTarget = null;
