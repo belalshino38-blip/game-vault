@@ -156,7 +156,7 @@
         .stat.playing { color: var(--info); }
         .stat.accent { color: var(--accent); }
 
-        /* --- SEARCH CONTAINER (with wider dropdowns) --- */
+        /* --- SEARCH CONTAINER --- */
         .search-container {
             padding: 1rem 2rem;
             display: flex;
@@ -178,7 +178,6 @@
             padding: 0.6rem 1rem;
             font-size: 0.95rem;
         }
-        /* WIDER DROPDOWNS */
         .search-container .search-select {
             flex-shrink: 0;
             min-width: 130px !important;
@@ -254,42 +253,15 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .reply-indicator.active {
-            display: flex;
-        }
-        .reply-indicator .cancel-reply {
-            cursor: pointer;
-            color: var(--text-muted);
-            font-weight: bold;
-        }
-        .reply-indicator .cancel-reply:hover {
-            color: var(--danger);
-        }
-        .chat-message .reply-to {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            padding: 0.1rem 0.5rem;
-            border-left: 2px solid var(--primary);
-            margin-bottom: 0.1rem;
-            opacity: 0.8;
-        }
-        .chat-message .reply-to strong {
-            color: var(--accent);
-        }
-        .chat-message .reply-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 0.65rem;
-            cursor: pointer;
-            padding: 0 0.3rem;
-        }
-        .chat-message .reply-btn:hover {
-            color: var(--text);
-            text-decoration: underline;
-        }
+        .reply-indicator.active { display: flex; }
+        .reply-indicator .cancel-reply { cursor: pointer; color: var(--text-muted); font-weight: bold; }
+        .reply-indicator .cancel-reply:hover { color: var(--danger); }
+        .chat-message .reply-to { font-size: 0.7rem; color: var(--text-muted); padding: 0.1rem 0.5rem; border-left: 2px solid var(--primary); margin-bottom: 0.1rem; opacity: 0.8; }
+        .chat-message .reply-to strong { color: var(--accent); }
+        .chat-message .reply-btn { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; cursor: pointer; padding: 0 0.3rem; }
+        .chat-message .reply-btn:hover { color: var(--text); text-decoration: underline; }
 
-        /* --- REST OF STYLES (unchanged) --- */
+        /* --- REST OF STYLES --- */
         .setup-wizard { max-width: 700px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid #2d2d44; display: none; box-shadow: var(--shadow); }
         .setup-wizard.active { display: block; }
         .setup-wizard h1 { font-size: 1.75rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -525,14 +497,32 @@
             <div class="code-block">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Users can read/write their own profile
     match /users/{uid} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
+    // Users can read/write their own subcollections
     match /users/{uid}/{document=**} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
+    // Friend requests - allow ANY authenticated user to CREATE a request
+    // Only the target user can READ or DELETE their own requests
+    match /users/{uid}/requests/{requestId} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid != uid;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow update: if false;
+    }
+    // Friends list - users can manage their own friends
+    match /users/{uid}/friends/{friendId} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow update: if false;
+    }
+    // Posts
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
@@ -544,13 +534,14 @@ service cloud.firestore {
       );
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
+    // Post votes
     match /posts/{postId}/votes/{userId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }</div>
-            <p style="color:var(--success);margin-top:0.5rem;">✅ Allows real‑time chat updates (chatMessages, chatCount).</p>
+            <p style="color:var(--success);margin-top:0.5rem;">✅ Allows friend requests, real‑time chat, and post interactions.</p>
         </div>
     </div>
 
@@ -1006,7 +997,7 @@ service cloud.firestore {
         const MAX_RETRIES = 5;
 
         // --- REPLY STATE ---
-        let replyTarget = null; // { postId, msgId, displayName }
+        let replyTarget = null;
 
         // --- LOAD GAMES ---
         async function loadGames() {
@@ -1511,7 +1502,7 @@ service cloud.firestore {
             }
         }
 
-        // --- RENDER POSTS (with reply support) ---
+        // --- RENDER POSTS (with chat toggle defined) ---
         function renderPosts(filter = "", sort = "hot", tagFilter = "all") {
             let filtered = posts.filter(p => {
                 const gameMatch = p.gameTitle && p.gameTitle.toLowerCase().includes(filter.toLowerCase());
@@ -1609,17 +1600,25 @@ service cloud.firestore {
             });
         }
 
+        // --- TOGGLE CHAT (FIXED - function is now defined) ---
+        function toggleChat(postId) {
+            chatOpenState[postId] = !chatOpenState[postId];
+            renderPosts(
+                document.getElementById("postSearchInput").value,
+                document.getElementById("postSortFilter").value,
+                document.getElementById("postTagFilter").value
+            );
+        }
+
         // --- REPLY FUNCTIONS ---
         function setReplyTarget(postId, msgId, displayName) {
             replyTarget = { postId, msgId, displayName };
-            // Update reply indicator
             const indicator = document.getElementById(`replyIndicator_${postId}`);
             const nameSpan = document.getElementById(`replyTargetName_${postId}`);
             if (indicator && nameSpan) {
                 nameSpan.textContent = displayName;
                 indicator.classList.add('active');
             }
-            // Focus the input
             const input = document.getElementById(`chatInput_${postId}`);
             if (input) {
                 input.focus();
@@ -1637,21 +1636,19 @@ service cloud.firestore {
             }
         }
 
-        // --- SEND CHAT MESSAGE (with reply support) ---
+        // --- SEND CHAT MESSAGE ---
         async function sendChatMessage(postId) {
             const input = document.getElementById(`chatInput_${postId}`);
             const msg = input.value.trim();
             if (!msg) return;
             input.value = "";
 
-            // If we have a reply target for this post, include it
             let replyTo = null;
             if (replyTarget && replyTarget.postId === postId) {
                 replyTo = {
                     msgId: replyTarget.msgId,
                     displayName: replyTarget.displayName
                 };
-                // Clear reply target after sending
                 replyTarget = null;
                 const indicator = document.getElementById(`replyIndicator_${postId}`);
                 if (indicator) indicator.classList.remove('active');
@@ -1713,7 +1710,7 @@ service cloud.firestore {
             }
         }
 
-        // --- POST CRUD (unchanged) ---
+        // --- POST CRUD ---
         function filterPosts() {
             const search = document.getElementById("postSearchInput").value;
             const sort = document.getElementById("postSortFilter").value;
@@ -1953,7 +1950,7 @@ service cloud.firestore {
             if(tab === 'games') document.getElementById('navGames').classList.add('active');
             if(tab === 'friends') document.getElementById('navFriends').classList.add('active');
             if(tab === 'posts') document.getElementById('navPosts').classList.add('active');
-            if(tab === 'profile') document.getElementById('navProfile').classList.add('active');
+            // navProfile not a header button – removed
         }
 
         function updateStats() {
@@ -2380,7 +2377,6 @@ service cloud.firestore {
                 closeSearchModal();
                 closeFriendProfile();
                 closePostModal();
-                // Also cancel reply if open
                 if (replyTarget) {
                     const postId = replyTarget.postId;
                     replyTarget = null;
