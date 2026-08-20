@@ -1,8 +1,5 @@
 
-import json
-
-# Original data
-games = [
+[
   {"id":1,"title":"The Witcher 3","genre":"RPG","year":2015,"steamId":292030,"multiplayer":False},
   {"id":2,"title":"Red Dead Redemption 2","genre":"Action","year":2018,"steamId":1174180,"multiplayer":True},
   {"id":3,"title":"Elden Ring","genre":"RPG","year":2022,"steamId":1245620,"multiplayer":True},
@@ -304,40 +301,3 @@ games = [
   {"id":301,"title":"Car Mechanic Simulator 2018","genre":"Simulation","year":2017,"steamId":645630,"multiplayer":False}
 ]
 
-# Fixes based on SteamDB verification
-fixes = {
-    50: 1222690,   # Dragon Age Inquisition (was incorrectly 1222680 - Need for Speed Heat's ID)
-    78: 1284210,   # Guild Wars 2 (was incorrectly 1284190 - The Planet Crafter's ID)
-    34: 2357570,   # Overwatch 2 (was null, now on Steam)
-    266: 2172010,  # Until Dawn remake (was null, now on Steam)
-    267: 960990,   # Beyond: Two Souls (was null, now on Steam)
-    269: 960910,   # Heavy Rain (was null, now on Steam)
-}
-
-# Apply fixes
-for game in games:
-    if game['id'] in fixes:
-        game['steamId'] = fixes[game['id']]
-
-# Check for any remaining duplicate steamIds (excluding None)
-from collections import Counter
-steam_ids = [g['steamId'] for g in games if g['steamId'] is not None]
-duplicates = {sid: count for sid, count in Counter(steam_ids).items() if count > 1}
-print("Duplicate steamIds:", duplicates)
-
-# Print summary of changes
-print("\n=== CHANGES MADE ===")
-print(f"1. Dragon Age Inquisition (id:50): 1222680 → 1222690")
-print(f"2. Guild Wars 2 (id:78): 1284190 → 1284210")
-print(f"3. Overwatch 2 (id:34): null → 2357570")
-print(f"4. Until Dawn (id:266): null → 2172010")
-print(f"5. Beyond: Two Souls (id:267): null → 960990")
-print(f"6. Heavy Rain (id:269): null → 960910")
-print(f"\nRemaining null (not on Steam): League of Legends, Fortnite, Valorant, Gran Turismo 7")
-
-# Save to file
-output_path = "/mnt/agents/output/games_fixed_steamids.json"
-with open(output_path, 'w', encoding='utf-8') as f:
-    json.dump(games, f, indent=2, ensure_ascii=False)
-
-print(f"\nSaved to: {output_path}")
