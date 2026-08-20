@@ -630,17 +630,17 @@ service cloud.firestore {
                     <input type="text" id="postSearchInput" placeholder="Search posts..." oninput="filterPosts()">
                 </div>
                 <select id="postSortFilter" class="search-select" onchange="filterPosts()" style="min-width:44px;">
-                    <option value="hot">🔥</option>
-                    <option value="new">🕒</option>
-                    <option value="top">🏆</option>
+                    <option value="hot">🔥 Hot</option>
+                    <option value="new">🕒 New</option>
+                    <option value="top">🏆 Top</option>
                 </select>
                 <select id="postTagFilter" class="search-select" onchange="filterPosts()" style="min-width:44px;">
                     <option value="all">All</option>
-                    <option value="lfg">LFG</option>
-                    <option value="player">Looking</option>
-                    <option value="tip">Tip</option>
-                    <option value="help">Help</option>
-                    <option value="rate">Rate</option>
+                    <option value="lfg">👥 LFG</option>
+                    <option value="player">🔍 Looking</option>
+                    <option value="tip">💡 Tip</option>
+                    <option value="help">🆘 Help</option>
+                    <option value="rate">⭐ Rate</option>
                 </select>
             </div>
             <div class="posts-grid" id="postsGrid"></div>
