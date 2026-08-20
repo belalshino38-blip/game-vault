@@ -1467,30 +1467,17 @@ service cloud.firestore {
         }
 
         // --- REAL-TIME COMMUNITY RATINGS SUBSCRIPTION ---
-        function subscribeCommunityRatings(gameId) {
-            if (communityRatingsUnsubscribe) {
-                communityRatingsUnsubscribe();
-                communityRatingsUnsubscribe = null;
-            }
-
-            const query = db.collectionGroup('gameRatings')
-                .where('gameId', '==', gameId)
-                .orderBy('rating', 'desc')
-                .limit(20);
-
-            communityRatingsUnsubscribe = query.onSnapshot((snapshot) => {
-                const ratings = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    ratings.push({
-                        id: doc.id,
-                        ...data,
-                        displayName: data.userDisplayName || 'Anonymous',
-                        avatarColor: data.userAvatarColor || '#8b5cf6',
-                        nameColor: data.userNameColor || '#f1f5f9',
-                        photoData: data.userPhotoData || ''
-                    });
-                });
+       }, (error) => {
+    console.error("Community ratings listener error:", error);
+    const container = document.getElementById('communityRatingsList');
+    if (error.code === 'permission-denied') {
+        container.innerHTML = `<p style="color:var(--danger);">⛔ Permission denied. Please update Firestore rules to allow reads on <code>gameRatings</code>.</p>`;
+    } else if (error.code === 'failed-precondition' || error.message.includes('index')) {
+        container.innerHTML = `<p style="color:var(--warning);">⚠️ Missing composite index. Create one on <code>gameRatings</code> with fields <code>gameId</code> (asc) and <code>rating</code> (desc).</p>`;
+    } else {
+        container.innerHTML = `<p style="color:var(--danger);">Error: ${error.message}</p>`;
+    }
+});
                 renderCommunityRatings(ratings);
             }, (error) => {
                 console.error("Community ratings listener error:", error);
