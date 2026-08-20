@@ -1719,28 +1719,29 @@ service cloud.firestore {
         }
 
         async function saveRatingAndReview() {
-            if (!currentGame) { showToast("No game selected", true); return; }
-            if (selectedRating === 0) { showToast("Please select a rating (1-10 stars)", true); return; }
-            const review = document.getElementById("reviewInput").value.trim();
-            try {
-                const ref = db.collection("users").doc(currentUser.uid).collection("gameRatings").doc(currentGame.id.toString());
-                await ref.set({
-                    rating: selectedRating,
-                    review: review,
-                    gameTitle: currentGame.title,
-                    gameId: currentGame.id,
-                    userDisplayName: userProfile.displayName,
-                    userAvatarColor: userProfile.avatarColor,
-                    userNameColor: userProfile.nameColor,
-                    userPhotoData: userProfile.photoData || "",
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                showToast("Rating & review saved!");
-                await loadUserRating(currentGame.id);
-            } catch (err) {
-                showToast("Error: " + err.message, true);
-            }
-        }
+    if (!currentGame) { showToast("No game selected", true); return; }
+    if (selectedRating === 0) { showToast("Please select a rating (1-10 stars)", true); return; }
+    const review = document.getElementById("reviewInput").value.trim();
+    try {
+        const ref = db.collection("users").doc(currentUser.uid).collection("gameRatings").doc(currentGame.id.toString());
+        await ref.set({
+            rating: selectedRating,
+            review: review,
+            gameTitle: currentGame.title,
+            gameId: currentGame.id,          // ← THIS MUST BE PRESENT
+            userDisplayName: userProfile.displayName,
+            userAvatarColor: userProfile.avatarColor,
+            userNameColor: userProfile.nameColor,
+            userPhotoData: userProfile.photoData || "",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast("Rating & review saved!");
+        await loadUserRating(currentGame.id);
+        // The community listener will update automatically
+    } catch (err) {
+        showToast("Error: " + err.message, true);
+    }
+}
 
         // --- TOGGLE STATUSES ---
         async function toggleComplete() {
